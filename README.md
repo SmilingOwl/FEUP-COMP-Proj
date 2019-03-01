@@ -4,6 +4,7 @@
 
 EOF <br>
 Identifier  <br>
+IntegerLiteral <br>
 "class" <br>
 "extends" <br>
 "{" <br>
