@@ -1,0 +1,86 @@
+options
+{
+    LOOKAHEAD=1;
+}
+
+PARSER_BEGIN(Project)
+
+public class Project
+{
+    public static void main(String args[]) throws ParseException {
+        Project myCalc = new Project(System.in);
+        SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
+        root.dump("");// imprime no ecrã a árvore
+    }
+}
+
+PARSER_END(Project)
+
+SKIP :
+{
+    " " | "\r" | "\t"
+}
+
+TOKEN:
+{
+    < INTEGER: (["0"-"9"])+ >
+    |   < LF: "\n" >
+    |   <IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>
+    |   <SEMICOLON: ";">
+}
+
+
+SimpleNode Program(): {}
+{
+    ClassDeclaration() <LF>  {return jjtThis;}// código Java entre chavetas
+}
+
+void ClassDeclaration(): {} //TODO
+{
+    /*"class"*/ <IDENTIFIER> [/*"extends"*/ <IDENTIFIER>] "{" VarDeclaration() /*(MainDeclaration() | MethodDeclaration())*/ "}"
+}
+
+void VarDeclaration():{} //TODO
+{
+    <IDENTIFIER> <SEMICOLON>
+}
+
+void MainDeclaration():{} //TODO
+{
+    <IDENTIFIER> <SEMICOLON> 
+}
+
+void MethodDeclaration():{} //TODO
+{
+    <SEMICOLON>
+}
+
+void Type():{} //TODO
+{
+    <IDENTIFIER>
+}
+
+void Statement():{} //TODO
+{
+    <IDENTIFIER>
+}
+
+
+
+void Expr1(): {}
+{
+    Expr2() [("+" | "-") Expr2()]
+}
+
+void Expr2(): {}
+{
+    Expr3() [("*" | "/") Expr3()]
+}
+
+void Expr3(): {}
+{
+    <INTEGER>
+    | "-" <INTEGER>
+    | "(" Expr1() ")"
+}
+
