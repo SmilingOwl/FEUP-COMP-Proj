@@ -8,9 +8,11 @@ public interface ProjectTreeConstants
   public int JJTMETHODDECLARATION = 4;
   public int JJTTYPE = 5;
   public int JJTSTATEMENT = 6;
-  public int JJTEXPR1 = 7;
-  public int JJTEXPR2 = 8;
-  public int JJTEXPR3 = 9;
+  public int JJTEXPRESSION = 7;
+  public int JJTEXPRESSIONNEW = 8;
+  public int JJTEXPR1 = 9;
+  public int JJTEXPR2 = 10;
+  public int JJTEXPR3 = 11;
 
 
   public String[] jjtNodeName = {
@@ -21,9 +23,11 @@ public interface ProjectTreeConstants
     "MethodDeclaration",
     "Type",
     "Statement",
+    "Expression",
+    "ExpressionNew",
     "Expr1",
     "Expr2",
     "Expr3",
   };
 }
-/* JavaCC - OriginalChecksum=b327336902ffa06a40e3bc120411361d (do not edit this line) */
+/* JavaCC - OriginalChecksum=ef924454a148f8b32ac16455c517c3eb (do not edit this line) */

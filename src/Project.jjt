@@ -21,12 +21,43 @@ SKIP :
     " " | "\r" | "\t"
 }
 
-TOKEN:
+TOKEN :
 {
     < INTEGER: (["0"-"9"])+ >
-    |   < LF: "\n" >
-    |   <IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>
-    |   <SEMICOLON: ";">
+    | < LF: "\n" >
+    | < THIS: "this" >
+    | < NEW: "new" >
+    | < FALSE: "false" >
+    | < TRUE: "true" >
+    | < LENGTH: "length" >
+    | < COMA : "," >
+    | < DOT : "." >
+    | < NOT : "!" >
+    | < MULT : "*" >
+    | < DIV : "/" >
+    | < SUB : "-" >
+    | < ADD : "+" >
+    | < MINOR : "<" >
+    | < AND : "&&" >
+    | < EQUAL : "=" >
+    | < WHILE : "while" >
+    | < IF : "if" >
+    | < ELSE : "else" >
+    | < OPENSQBRACK : "[" >
+    | < CLOSESQBRACK : "]" >
+    | < INT : "int" >
+    | < BOOLEAN : "boolean" >
+    | < OPENPAR : "(" >
+    | < CLOSEPAR : ")" >
+    | < RETURN : "return" >
+    | < PUBLIC : "public" >
+    | < STATIC : "static" >
+    | < SEMICOLON : ";" >
+    | < OPENBRACK : "{" >
+    | < CLOSEBRACK : "}" >
+    | < CLASS : "class" >
+    | < EXTENDS : "extends" >
+    | <IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>
 }
 
 
@@ -65,6 +96,24 @@ void Statement():{} //TODO
     <IDENTIFIER>
 }
 
+
+void Expression():{} //TODO
+{
+    //IntegerLiteral()
+    <TRUE>
+    | <FALSE>
+    | <THIS>
+    | <NEW> ExpressionNew()
+    | <IDENTIFIER>
+    | <NOT> Expression()
+    | <OPENPAR> Expression() <CLOSEPAR>
+}
+
+void ExpressionNew():{}
+{
+    <IDENTIFIER> <OPENPAR> <CLOSEPAR>
+    | <INT> <OPENSQBRACK> Expression() <CLOSESQBRACK> 
+}
 
 
 void Expr1(): {}

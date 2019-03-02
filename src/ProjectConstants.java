@@ -13,9 +13,71 @@ public interface ProjectConstants {
   /** RegularExpression Id. */
   int LF = 5;
   /** RegularExpression Id. */
-  int IDENTIFIER = 6;
+  int THIS = 6;
   /** RegularExpression Id. */
-  int SEMICOLON = 7;
+  int NEW = 7;
+  /** RegularExpression Id. */
+  int FALSE = 8;
+  /** RegularExpression Id. */
+  int TRUE = 9;
+  /** RegularExpression Id. */
+  int LENGTH = 10;
+  /** RegularExpression Id. */
+  int COMA = 11;
+  /** RegularExpression Id. */
+  int DOT = 12;
+  /** RegularExpression Id. */
+  int NOT = 13;
+  /** RegularExpression Id. */
+  int MULT = 14;
+  /** RegularExpression Id. */
+  int DIV = 15;
+  /** RegularExpression Id. */
+  int SUB = 16;
+  /** RegularExpression Id. */
+  int ADD = 17;
+  /** RegularExpression Id. */
+  int MINOR = 18;
+  /** RegularExpression Id. */
+  int AND = 19;
+  /** RegularExpression Id. */
+  int EQUAL = 20;
+  /** RegularExpression Id. */
+  int WHILE = 21;
+  /** RegularExpression Id. */
+  int IF = 22;
+  /** RegularExpression Id. */
+  int ELSE = 23;
+  /** RegularExpression Id. */
+  int OPENSQBRACK = 24;
+  /** RegularExpression Id. */
+  int CLOSESQBRACK = 25;
+  /** RegularExpression Id. */
+  int INT = 26;
+  /** RegularExpression Id. */
+  int BOOLEAN = 27;
+  /** RegularExpression Id. */
+  int OPENPAR = 28;
+  /** RegularExpression Id. */
+  int CLOSEPAR = 29;
+  /** RegularExpression Id. */
+  int RETURN = 30;
+  /** RegularExpression Id. */
+  int PUBLIC = 31;
+  /** RegularExpression Id. */
+  int STATIC = 32;
+  /** RegularExpression Id. */
+  int SEMICOLON = 33;
+  /** RegularExpression Id. */
+  int OPENBRACK = 34;
+  /** RegularExpression Id. */
+  int CLOSEBRACK = 35;
+  /** RegularExpression Id. */
+  int CLASS = 36;
+  /** RegularExpression Id. */
+  int EXTENDS = 37;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 38;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -28,16 +90,39 @@ public interface ProjectConstants {
     "\"\\t\"",
     "<INTEGER>",
     "\"\\n\"",
-    "<IDENTIFIER>",
+    "\"this\"",
+    "\"new\"",
+    "\"false\"",
+    "\"true\"",
+    "\"length\"",
+    "\",\"",
+    "\".\"",
+    "\"!\"",
+    "\"*\"",
+    "\"/\"",
+    "\"-\"",
+    "\"+\"",
+    "\"<\"",
+    "\"&&\"",
+    "\"=\"",
+    "\"while\"",
+    "\"if\"",
+    "\"else\"",
+    "\"[\"",
+    "\"]\"",
+    "\"int\"",
+    "\"boolean\"",
+    "\"(\"",
+    "\")\"",
+    "\"return\"",
+    "\"public\"",
+    "\"static\"",
     "\";\"",
     "\"{\"",
     "\"}\"",
-    "\"+\"",
-    "\"-\"",
-    "\"*\"",
-    "\"/\"",
-    "\"(\"",
-    "\")\"",
+    "\"class\"",
+    "\"extends\"",
+    "<IDENTIFIER>",
   };
 
 }
