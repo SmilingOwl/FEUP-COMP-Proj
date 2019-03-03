@@ -61,6 +61,9 @@ TOKEN :
     | < CLOSEBRACK : "}" >
     | < CLASS : "class" >
     | < EXTENDS : "extends" >
+    | < DECIMAL: "-"?(["0"-"9"])+("_"["0"-"9"]+)* >
+    | < OCTAL: "0"["0"-"7"]+ >
+    | < HEX: "0"["xX"]["0"-"9","a"-"f","A"-"F"]* >
     | <IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>
 }
 
