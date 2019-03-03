@@ -27,8 +27,7 @@ SKIP :
 
 TOKEN :
 {
-    < INTEGER: (["0"-"9"])+ >
-    | < LF: "\n" >
+    < LF: "\n" >
     | < THIS: "this" >
     | < NEW: "new" >
     | < FALSE: "false" >
@@ -61,12 +60,54 @@ TOKEN :
     | < CLOSEBRACK : "}" >
     | < CLASS : "class" >
     | < EXTENDS : "extends" >
-    | < DECIMAL: "-"?(["0"-"9"])+("_"["0"-"9"]+)* >
-    | < OCTAL: "0"["0"-"7"]+ >
-    | < HEX: "0"["xX"]["0"-"9","a"-"f","A"-"F"]* >
-    | <IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>
+    | < OCTAL: "0"(["0"-"7"])+ >
+    | < BINARY: "0b"("1"|"0")+ >
+    | < HEX: "0"("x"|"X")(["0"-"9","a"-"f","A"-"F"])+ >
+    | < DECIMAL: ("-")?(["0"-"9"])+(("_")*(["0"-"9"])+)* >
+    | < IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])* >
 }
 
+void Empty() : {/*@bgen(jjtree) Empty */
+  SimpleNode jjtn000 = new SimpleNode(JJTEMPTY);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) Empty */
+     try {
+/*@egen*//*@bgen(jjtree)*/
+     {
+       jjtree.closeNodeScope(jjtn000, true);
+       jjtc000 = false;
+     }
+/*@egen*/
+     {}/*@bgen(jjtree)*/
+     } finally {
+       if (jjtc000) {
+         jjtree.closeNodeScope(jjtn000, true);
+       }
+     }
+/*@egen*/
+} 
+
+void IntegerLiteral(): {/*@bgen(jjtree) IntegerLiteral */
+  SimpleNode jjtn000 = new SimpleNode(JJTINTEGERLITERAL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) IntegerLiteral */
+    try {
+/*@egen*/
+    <OCTAL>
+    | <BINARY>
+    | <HEX>
+    | <DECIMAL>/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
 
 SimpleNode Program(): {/*@bgen(jjtree) Program */
   SimpleNode jjtn000 = new SimpleNode(JJTPROGRAM);
@@ -220,23 +261,91 @@ void Statement():{/*@bgen(jjtree) Statement */
 /*@egen*/
 }
 
-
 void Expression():{/*@bgen(jjtree) Expression */
   SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} //TODO
+/*@egen*/}
 {/*@bgen(jjtree) Expression */
     try {
 /*@egen*/
-    //IntegerLiteral()
+    ExpressionToken() ExpressionAux()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void ExpressionAux():{/*@bgen(jjtree) ExpressionAux */
+  SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSIONAUX);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} //TODO
+{/*@bgen(jjtree) ExpressionAux */
+    try {
+/*@egen*/
+    /*
+        FALTA:
+    Expression, ( "&&" | "<" | "+" | "-" | "*" | "/") , Expression
+    | Expression, "[", Expression, "]"
+    | Expression, ".", Identifier, "(", [ Expression { ",", Expression } ], ")"
+    */ 
+    <DOT> <LENGTH> ExpressionAux()
+    | Empty()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void ExpressionToken():{/*@bgen(jjtree) ExpressionToken */
+  SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSIONTOKEN);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} //TODO
+{/*@bgen(jjtree) ExpressionToken */
+    try {
+/*@egen*/
     <TRUE>
     | <FALSE>
     | <THIS>
     | <NEW> ExpressionNew()
-    | <IDENTIFIER>
     | <NOT> Expression()
-    | <OPENPAR> Expression() <CLOSEPAR>/*@bgen(jjtree)*/
+    | <OPENPAR> Expression() <CLOSEPAR>
+    | IntegerLiteral()
+    | <IDENTIFIER>/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -267,8 +376,8 @@ void ExpressionNew():{/*@bgen(jjtree) ExpressionNew */
 {/*@bgen(jjtree) ExpressionNew */
     try {
 /*@egen*/
-    <IDENTIFIER> <OPENPAR> <CLOSEPAR>
-    | <INT> <OPENSQBRACK> Expression() <CLOSESQBRACK>/*@bgen(jjtree)*/
+    <INT> <OPENSQBRACK> Expression() <CLOSESQBRACK>
+    | <IDENTIFIER> <OPENPAR> <CLOSEPAR>/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -289,100 +398,4 @@ void ExpressionNew():{/*@bgen(jjtree) ExpressionNew */
       }
     }
 /*@egen*/ 
-}
-
-
-void Expr1(): {/*@bgen(jjtree) Expr1 */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPR1);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
-{/*@bgen(jjtree) Expr1 */
-    try {
-/*@egen*/
-    Expr2() [("+" | "-") Expr2()]/*@bgen(jjtree)*/
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        throw (RuntimeException)jjte000;
-      }
-      if (jjte000 instanceof ParseException) {
-        throw (ParseException)jjte000;
-      }
-      throw (Error)jjte000;
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
-/*@egen*/
-}
-
-void Expr2(): {/*@bgen(jjtree) Expr2 */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPR2);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
-{/*@bgen(jjtree) Expr2 */
-    try {
-/*@egen*/
-    Expr3() [("*" | "/") Expr3()]/*@bgen(jjtree)*/
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        throw (RuntimeException)jjte000;
-      }
-      if (jjte000 instanceof ParseException) {
-        throw (ParseException)jjte000;
-      }
-      throw (Error)jjte000;
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
-/*@egen*/
-}
-
-void Expr3(): {/*@bgen(jjtree) Expr3 */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPR3);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
-{/*@bgen(jjtree) Expr3 */
-    try {
-/*@egen*/
-    <INTEGER>
-    | "-" <INTEGER>
-    | "(" Expr1() ")"/*@bgen(jjtree)*/
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        throw (RuntimeException)jjte000;
-      }
-      if (jjte000 instanceof ParseException) {
-        throw (ParseException)jjte000;
-      }
-      throw (Error)jjte000;
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
-/*@egen*/
 }

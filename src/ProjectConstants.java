@@ -9,75 +9,81 @@ public interface ProjectConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int INTEGER = 4;
+  int LF = 4;
   /** RegularExpression Id. */
-  int LF = 5;
+  int THIS = 5;
   /** RegularExpression Id. */
-  int THIS = 6;
+  int NEW = 6;
   /** RegularExpression Id. */
-  int NEW = 7;
+  int FALSE = 7;
   /** RegularExpression Id. */
-  int FALSE = 8;
+  int TRUE = 8;
   /** RegularExpression Id. */
-  int TRUE = 9;
+  int LENGTH = 9;
   /** RegularExpression Id. */
-  int LENGTH = 10;
+  int COMA = 10;
   /** RegularExpression Id. */
-  int COMA = 11;
+  int DOT = 11;
   /** RegularExpression Id. */
-  int DOT = 12;
+  int NOT = 12;
   /** RegularExpression Id. */
-  int NOT = 13;
+  int MULT = 13;
   /** RegularExpression Id. */
-  int MULT = 14;
+  int DIV = 14;
   /** RegularExpression Id. */
-  int DIV = 15;
+  int SUB = 15;
   /** RegularExpression Id. */
-  int SUB = 16;
+  int ADD = 16;
   /** RegularExpression Id. */
-  int ADD = 17;
+  int MINOR = 17;
   /** RegularExpression Id. */
-  int MINOR = 18;
+  int AND = 18;
   /** RegularExpression Id. */
-  int AND = 19;
+  int EQUAL = 19;
   /** RegularExpression Id. */
-  int EQUAL = 20;
+  int WHILE = 20;
   /** RegularExpression Id. */
-  int WHILE = 21;
+  int IF = 21;
   /** RegularExpression Id. */
-  int IF = 22;
+  int ELSE = 22;
   /** RegularExpression Id. */
-  int ELSE = 23;
+  int OPENSQBRACK = 23;
   /** RegularExpression Id. */
-  int OPENSQBRACK = 24;
+  int CLOSESQBRACK = 24;
   /** RegularExpression Id. */
-  int CLOSESQBRACK = 25;
+  int INT = 25;
   /** RegularExpression Id. */
-  int INT = 26;
+  int BOOLEAN = 26;
   /** RegularExpression Id. */
-  int BOOLEAN = 27;
+  int OPENPAR = 27;
   /** RegularExpression Id. */
-  int OPENPAR = 28;
+  int CLOSEPAR = 28;
   /** RegularExpression Id. */
-  int CLOSEPAR = 29;
+  int RETURN = 29;
   /** RegularExpression Id. */
-  int RETURN = 30;
+  int PUBLIC = 30;
   /** RegularExpression Id. */
-  int PUBLIC = 31;
+  int STATIC = 31;
   /** RegularExpression Id. */
-  int STATIC = 32;
+  int SEMICOLON = 32;
   /** RegularExpression Id. */
-  int SEMICOLON = 33;
+  int OPENBRACK = 33;
   /** RegularExpression Id. */
-  int OPENBRACK = 34;
+  int CLOSEBRACK = 34;
   /** RegularExpression Id. */
-  int CLOSEBRACK = 35;
+  int CLASS = 35;
   /** RegularExpression Id. */
-  int CLASS = 36;
+  int EXTENDS = 36;
   /** RegularExpression Id. */
-  int EXTENDS = 37;
+  int OCTAL = 37;
   /** RegularExpression Id. */
-  int IDENTIFIER = 38;
+  int BINARY = 38;
+  /** RegularExpression Id. */
+  int HEX = 39;
+  /** RegularExpression Id. */
+  int DECIMAL = 40;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 41;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -88,7 +94,6 @@ public interface ProjectConstants {
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
-    "<INTEGER>",
     "\"\\n\"",
     "\"this\"",
     "\"new\"",
@@ -122,6 +127,10 @@ public interface ProjectConstants {
     "\"}\"",
     "\"class\"",
     "\"extends\"",
+    "<OCTAL>",
+    "<BINARY>",
+    "<HEX>",
+    "<DECIMAL>",
     "<IDENTIFIER>",
   };
 

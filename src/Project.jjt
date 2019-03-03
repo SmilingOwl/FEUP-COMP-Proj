@@ -23,8 +23,7 @@ SKIP :
 
 TOKEN :
 {
-    < INTEGER: (["0"-"9"])+ >
-    | < LF: "\n" >
+    < LF: "\n" >
     | < THIS: "this" >
     | < NEW: "new" >
     | < FALSE: "false" >
@@ -57,9 +56,25 @@ TOKEN :
     | < CLOSEBRACK : "}" >
     | < CLASS : "class" >
     | < EXTENDS : "extends" >
-    | <IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])*>
+    | < OCTAL: "0"(["0"-"7"])+ >
+    | < BINARY: "0b"("1"|"0")+ >
+    | < HEX: "0"("x"|"X")(["0"-"9","a"-"f","A"-"F"])+ >
+    | < DECIMAL: ("-")?(["0"-"9"])+(("_")*(["0"-"9"])+)* >
+    | < IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])* >
 }
 
+void Empty() : {}
+{
+     {}
+} 
+
+void IntegerLiteral(): {}
+{
+    <OCTAL>
+    | <BINARY>
+    | <HEX>
+    | <DECIMAL>
+}
 
 SimpleNode Program(): {}
 {
@@ -96,26 +111,42 @@ void Statement():{} //TODO
     <IDENTIFIER>
 }
 
-
-void Expression():{} //TODO
+void Expression():{}
 {
-    //IntegerLiteral()
+    ExpressionToken() ExpressionAux()
+}
+
+void ExpressionAux():{} //TODO
+{
+    /*
+        FALTA:
+    Expression, ( "&&" | "<" | "+" | "-" | "*" | "/") , Expression
+    | Expression, "[", Expression, "]"
+    | Expression, ".", Identifier, "(", [ Expression { ",", Expression } ], ")"
+    */ 
+    <DOT> <LENGTH> ExpressionAux()
+    | Empty()
+}
+
+void ExpressionToken():{} //TODO
+{
     <TRUE>
     | <FALSE>
     | <THIS>
     | <NEW> ExpressionNew()
-    | <IDENTIFIER>
     | <NOT> Expression()
     | <OPENPAR> Expression() <CLOSEPAR>
+    | IntegerLiteral()
+    | <IDENTIFIER>
 }
 
 void ExpressionNew():{}
 {
-    <IDENTIFIER> <OPENPAR> <CLOSEPAR>
-    | <INT> <OPENSQBRACK> Expression() <CLOSESQBRACK> 
+    <INT> <OPENSQBRACK> Expression() <CLOSESQBRACK>
+    | <IDENTIFIER> <OPENPAR> <CLOSEPAR> 
 }
 
-
+/*
 void Expr1(): {}
 {
     Expr2() [("+" | "-") Expr2()]
@@ -132,4 +163,4 @@ void Expr3(): {}
     | "-" <INTEGER>
     | "(" Expr1() ")"
 }
-
+*/
