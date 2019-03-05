@@ -56,6 +56,9 @@ TOKEN :
     | < CLOSEBRACK : "}" >
     | < CLASS : "class" >
     | < EXTENDS : "extends" >
+    | < VOID : "void" >
+    | < MAIN : "main" >
+    | < STRING : "String" >
     | < OCTAL: "0"(["0"-"7"])+ >
     | < BINARY: "0b"("1"|"0")+ >
     | < HEX: "0"("x"|"X")(["0"-"9","a"-"f","A"-"F"])+ >
@@ -81,29 +84,45 @@ SimpleNode Program(): {}
     ClassDeclaration() <LF>  {return jjtThis;}// código Java entre chavetas
 }
 
+// Para testar já aceita: class test extends otherTest{int a; public static void main(String[] test2){boolean alp; boolean beta; int gamma;}}
+//                        class test extends otherTest{int a; public int foo(int input){boolean alp; boolean beta; int gamma; return beta;}}
+
+
 void ClassDeclaration(): {} //TODO
 {
-    /*"class"*/ <IDENTIFIER> [/*"extends"*/ <IDENTIFIER>] "{" VarDeclaration() /*(MainDeclaration() | MethodDeclaration())*/ "}"
+    <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <OPENBRACK> VarDeclaration() MainMethodDeclaration() <CLOSEBRACK>
 }
 
-void VarDeclaration():{} //TODO
+void VarDeclaration():{}
 {
-    <IDENTIFIER> <SEMICOLON>
+    Type() <IDENTIFIER> <SEMICOLON>
+}
+
+void MainMethodDeclaration():{}
+{
+    <PUBLIC> (MainDeclaration() | MethodDeclaration())
 }
 
 void MainDeclaration():{} //TODO
 {
-    <IDENTIFIER> <SEMICOLON> 
+    <STATIC> <VOID> <MAIN> <OPENPAR> <STRING> <OPENSQBRACK> <CLOSESQBRACK> <IDENTIFIER> <CLOSEPAR> <OPENBRACK> (VarDeclaration())* <CLOSEBRACK> 
 }
 
 void MethodDeclaration():{} //TODO
 {
-    <SEMICOLON>
+    Type() <IDENTIFIER> <OPENPAR> [Type() <IDENTIFIER> (<COMA> Type() <IDENTIFIER>)*] <CLOSEPAR> <OPENBRACK> (VarDeclaration())* <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
 }
 
-void Type():{} //TODO
+void Type():{}
 {
-    <IDENTIFIER>
+    <INT> TypeAux()
+    | <BOOLEAN>
+    | <IDENTIFIER>
+}
+
+void TypeAux():{}
+{
+    [<OPENSQBRACK> <CLOSESQBRACK>]
 }
 
 void Statement():{} //TODO

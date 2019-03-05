@@ -75,15 +75,21 @@ public interface ProjectConstants {
   /** RegularExpression Id. */
   int EXTENDS = 36;
   /** RegularExpression Id. */
-  int OCTAL = 37;
+  int VOID = 37;
   /** RegularExpression Id. */
-  int BINARY = 38;
+  int MAIN = 38;
   /** RegularExpression Id. */
-  int HEX = 39;
+  int STRING = 39;
   /** RegularExpression Id. */
-  int DECIMAL = 40;
+  int OCTAL = 40;
   /** RegularExpression Id. */
-  int IDENTIFIER = 41;
+  int BINARY = 41;
+  /** RegularExpression Id. */
+  int HEX = 42;
+  /** RegularExpression Id. */
+  int DECIMAL = 43;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 44;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -127,6 +133,9 @@ public interface ProjectConstants {
     "\"}\"",
     "\"class\"",
     "\"extends\"",
+    "\"void\"",
+    "\"main\"",
+    "\"String\"",
     "<OCTAL>",
     "<BINARY>",
     "<HEX>",

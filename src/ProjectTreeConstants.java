@@ -6,14 +6,16 @@ public interface ProjectTreeConstants
   public int JJTPROGRAM = 2;
   public int JJTCLASSDECLARATION = 3;
   public int JJTVARDECLARATION = 4;
-  public int JJTMAINDECLARATION = 5;
-  public int JJTMETHODDECLARATION = 6;
-  public int JJTTYPE = 7;
-  public int JJTSTATEMENT = 8;
-  public int JJTEXPRESSION = 9;
-  public int JJTEXPRESSIONAUX = 10;
-  public int JJTEXPRESSIONTOKEN = 11;
-  public int JJTEXPRESSIONNEW = 12;
+  public int JJTMAINMETHODDECLARATION = 5;
+  public int JJTMAINDECLARATION = 6;
+  public int JJTMETHODDECLARATION = 7;
+  public int JJTTYPE = 8;
+  public int JJTTYPEAUX = 9;
+  public int JJTSTATEMENT = 10;
+  public int JJTEXPRESSION = 11;
+  public int JJTEXPRESSIONAUX = 12;
+  public int JJTEXPRESSIONTOKEN = 13;
+  public int JJTEXPRESSIONNEW = 14;
 
 
   public String[] jjtNodeName = {
@@ -22,9 +24,11 @@ public interface ProjectTreeConstants
     "Program",
     "ClassDeclaration",
     "VarDeclaration",
+    "MainMethodDeclaration",
     "MainDeclaration",
     "MethodDeclaration",
     "Type",
+    "TypeAux",
     "Statement",
     "Expression",
     "ExpressionAux",
@@ -32,4 +36,4 @@ public interface ProjectTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=911a8381731cdc3da86a74e782479950 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7b92a70440107c4b29d7a322253579b5 (do not edit this line) */
