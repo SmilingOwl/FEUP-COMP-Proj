@@ -31,6 +31,7 @@ TOKEN :
     | < LENGTH: "length" >
     | < COMA : "," >
     | < DOT : "." >
+    | < SEMICOLON : ";" >
     | < NOT : "!" >
     | < MULT : "*" >
     | < DIV : "/" >
@@ -44,21 +45,20 @@ TOKEN :
     | < ELSE : "else" >
     | < OPENSQBRACK : "[" >
     | < CLOSESQBRACK : "]" >
-    | < INT : "int" >
-    | < BOOLEAN : "boolean" >
     | < OPENPAR : "(" >
     | < CLOSEPAR : ")" >
+    | < OPENBRACK : "{" >
+    | < CLOSEBRACK : "}" >
+    | < INT : "int" >
+    | < BOOLEAN : "boolean" >
+    | < STRING : "String">
+    | < VOID : "void" >
+    | < MAIN : "main" >
     | < RETURN : "return" >
     | < PUBLIC : "public" >
     | < STATIC : "static" >
-    | < SEMICOLON : ";" >
-    | < OPENBRACK : "{" >
-    | < CLOSEBRACK : "}" >
     | < CLASS : "class" >
     | < EXTENDS : "extends" >
-    | < VOID : "void" >
-    | < MAIN : "main" >
-    | < STRING : "String" >
     | < OCTAL: "0"(["0"-"7"])+ >
     | < BINARY: "0b"("1"|"0")+ >
     | < HEX: "0"("x"|"X")(["0"-"9","a"-"f","A"-"F"])+ >
@@ -139,15 +139,15 @@ void ExpressionAux():{} //TODO
 {
     /*
         FALTA:
-    Expression, ( "&&" | "<" | "+" | "-" | "*" | "/") , Expression
-    | Expression, "[", Expression, "]"
+    Expression, "[", Expression, "]"
     | Expression, ".", Identifier, "(", [ Expression { ",", Expression } ], ")"
     */ 
-    <DOT> <LENGTH> ExpressionAux()
+    (<AND> | <MINOR> | <ADD> | <SUB> | <MULT> | <DIV>) Expression() ExpressionAux()
+    | <DOT> <LENGTH> ExpressionAux()
     | Empty()
 }
 
-void ExpressionToken():{} //TODO
+void ExpressionToken():{}
 {
     <TRUE>
     | <FALSE>

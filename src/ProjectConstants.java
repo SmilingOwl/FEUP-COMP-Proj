@@ -25,61 +25,61 @@ public interface ProjectConstants {
   /** RegularExpression Id. */
   int DOT = 11;
   /** RegularExpression Id. */
-  int NOT = 12;
+  int SEMICOLON = 12;
   /** RegularExpression Id. */
-  int MULT = 13;
+  int NOT = 13;
   /** RegularExpression Id. */
-  int DIV = 14;
+  int MULT = 14;
   /** RegularExpression Id. */
-  int SUB = 15;
+  int DIV = 15;
   /** RegularExpression Id. */
-  int ADD = 16;
+  int SUB = 16;
   /** RegularExpression Id. */
-  int MINOR = 17;
+  int ADD = 17;
   /** RegularExpression Id. */
-  int AND = 18;
+  int MINOR = 18;
   /** RegularExpression Id. */
-  int EQUAL = 19;
+  int AND = 19;
   /** RegularExpression Id. */
-  int WHILE = 20;
+  int EQUAL = 20;
   /** RegularExpression Id. */
-  int IF = 21;
+  int WHILE = 21;
   /** RegularExpression Id. */
-  int ELSE = 22;
+  int IF = 22;
   /** RegularExpression Id. */
-  int OPENSQBRACK = 23;
+  int ELSE = 23;
   /** RegularExpression Id. */
-  int CLOSESQBRACK = 24;
+  int OPENSQBRACK = 24;
   /** RegularExpression Id. */
-  int INT = 25;
+  int CLOSESQBRACK = 25;
   /** RegularExpression Id. */
-  int BOOLEAN = 26;
+  int OPENPAR = 26;
   /** RegularExpression Id. */
-  int OPENPAR = 27;
+  int CLOSEPAR = 27;
   /** RegularExpression Id. */
-  int CLOSEPAR = 28;
+  int OPENBRACK = 28;
   /** RegularExpression Id. */
-  int RETURN = 29;
+  int CLOSEBRACK = 29;
   /** RegularExpression Id. */
-  int PUBLIC = 30;
+  int INT = 30;
   /** RegularExpression Id. */
-  int STATIC = 31;
+  int BOOLEAN = 31;
   /** RegularExpression Id. */
-  int SEMICOLON = 32;
+  int STRING = 32;
   /** RegularExpression Id. */
-  int OPENBRACK = 33;
+  int VOID = 33;
   /** RegularExpression Id. */
-  int CLOSEBRACK = 34;
+  int MAIN = 34;
   /** RegularExpression Id. */
-  int CLASS = 35;
+  int RETURN = 35;
   /** RegularExpression Id. */
-  int EXTENDS = 36;
+  int PUBLIC = 36;
   /** RegularExpression Id. */
-  int VOID = 37;
+  int STATIC = 37;
   /** RegularExpression Id. */
-  int MAIN = 38;
+  int CLASS = 38;
   /** RegularExpression Id. */
-  int STRING = 39;
+  int EXTENDS = 39;
   /** RegularExpression Id. */
   int OCTAL = 40;
   /** RegularExpression Id. */
@@ -108,6 +108,7 @@ public interface ProjectConstants {
     "\"length\"",
     "\",\"",
     "\".\"",
+    "\";\"",
     "\"!\"",
     "\"*\"",
     "\"/\"",
@@ -121,21 +122,20 @@ public interface ProjectConstants {
     "\"else\"",
     "\"[\"",
     "\"]\"",
-    "\"int\"",
-    "\"boolean\"",
     "\"(\"",
     "\")\"",
+    "\"{\"",
+    "\"}\"",
+    "\"int\"",
+    "\"boolean\"",
+    "\"String\"",
+    "\"void\"",
+    "\"main\"",
     "\"return\"",
     "\"public\"",
     "\"static\"",
-    "\";\"",
-    "\"{\"",
-    "\"}\"",
     "\"class\"",
     "\"extends\"",
-    "\"void\"",
-    "\"main\"",
-    "\"String\"",
     "<OCTAL>",
     "<BINARY>",
     "<HEX>",
