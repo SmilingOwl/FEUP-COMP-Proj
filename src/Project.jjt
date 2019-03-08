@@ -1,4 +1,4 @@
- options
+options
 {
     LOOKAHEAD=1;
 }
@@ -9,7 +9,7 @@ public class Project
 {
     public static void main(String args[]) throws ParseException {
         Project myCalc = new Project(System.in);
-        SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
+        SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
         root.dump("");// imprime no ecrã a árvore
     }
 }
@@ -62,7 +62,7 @@ TOKEN :
     | < OCTAL: "0"(["0"-"7"])+ >
     | < BINARY: "0b"("1"|"0")+ >
     | < HEX: "0"("x"|"X")(["0"-"9","a"-"f","A"-"F"])+ >
-    | < DECIMAL: ("-")?(["0"-"9"])+(("_")*(["0"-"9"])+)* >
+    | < DECIMAL: (["0"-"9"])+(("_")*(["0"-"9"])+)* >
     | < IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])* >
 }
 
@@ -77,6 +77,7 @@ void IntegerLiteral(): {}
     | <BINARY>
     | <HEX>
     | <DECIMAL>
+    | <SUB> <DECIMAL>
 }
 
 SimpleNode Program(): {}
@@ -171,7 +172,7 @@ void Expression():{}
 
 void ExpressionAux():{}
 {
-    (<AND> | <MINOR> | <ADD> | <SUB> | <MULT> | <DIV>) Expression() ExpressionAux()
+    (<SUB> | <AND> | <MINOR> | <ADD> | <MULT> | <DIV>) Expression() ExpressionAux()
     | <DOT> ExpressionAuxDot()
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
     | Empty()
@@ -180,23 +181,9 @@ void ExpressionAux():{}
 void ExpressionAuxDot():{}
 {
     <LENGTH> ExpressionAux()
-    | <IDENTIFIER> <OPENPAR> ExpressionAuxOptional() <CLOSEPAR>
+    | <IDENTIFIER> <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
 
 }
-
-void ExpressionAuxOptional():{}
-{
-    Expression() ExpressionAuxAsterisk()
-    | Empty()
-}
-
-void ExpressionAuxAsterisk():{}
-{
-    <COMA> Expression() ExpressionAuxAsterisk()
-    | Empty()
-}
-
-
 
 void ExpressionToken():{}
 {
@@ -206,8 +193,8 @@ void ExpressionToken():{}
     | <NEW> ExpressionNew()
     | <NOT> Expression()
     | <OPENPAR> Expression() <CLOSEPAR>
-    | IntegerLiteral()
     | <IDENTIFIER>
+    | IntegerLiteral()
 }
 
 void ExpressionNew():{}
