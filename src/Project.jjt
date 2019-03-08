@@ -1,4 +1,4 @@
-options
+ options
 {
     LOOKAHEAD=1;
 }
@@ -90,7 +90,7 @@ SimpleNode Program(): {}
 
 void ClassDeclaration(): {} 
 {
-    <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <OPENBRACK> VarDeclaration() MainMethodDeclaration() <CLOSEBRACK>
+    <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <OPENBRACK> (VarDeclaration())* MainMethodDeclaration() <CLOSEBRACK>
 }
 
 void VarDeclaration():{}
@@ -100,17 +100,17 @@ void VarDeclaration():{}
 
 void MainMethodDeclaration():{}
 {
-    <PUBLIC> (MainDeclaration() | MethodDeclaration())
+    (<PUBLIC> (MainDeclaration() | MethodDeclaration()))*
 }
 
 void MainDeclaration():{} 
 {
-    <STATIC> <VOID> <MAIN> <OPENPAR> <STRING> <OPENSQBRACK> <CLOSESQBRACK> <IDENTIFIER> <CLOSEPAR> <OPENBRACK> (VarDeclaration())* <CLOSEBRACK> 
+    <STATIC> <VOID> <MAIN> <OPENPAR> <STRING> <OPENSQBRACK> <CLOSESQBRACK> <IDENTIFIER> <CLOSEPAR> <OPENBRACK> (InMethod())* <CLOSEBRACK> 
 }
 
 void MethodDeclaration():{} 
 {
-    Type() <IDENTIFIER> <OPENPAR> [Type() <IDENTIFIER> (<COMA> Type() <IDENTIFIER>)*] <CLOSEPAR> <OPENBRACK> (VarDeclaration())* <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
+    Type() <IDENTIFIER> <OPENPAR> [Type() <IDENTIFIER> (<COMA> Type() <IDENTIFIER>)*] <CLOSEPAR> <OPENBRACK> (InMethod())* <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
 }
 
 void Type():{}
@@ -125,9 +125,43 @@ void TypeAux():{}
     [<OPENSQBRACK> <CLOSESQBRACK>]
 }
 
-void Statement():{} //TODO
+void InMethod():{} 
 {
-    <IDENTIFIER>
+    VarDeclaration() 
+    | Statement()
+}
+
+void Statement():{} 
+{
+    <OPENBRACK> (Statement())* <CLOSEBRACK>
+    | <IF> <OPENPAR> Expression() <CLOSEPAR> Statement() <ELSE> Statement()
+    | <WHILE> <OPENPAR> Expression() <CLOSEPAR> Statement()
+    | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER 
+    | <IDENTIFIER> [StatementAux() <EQUAL> Expression()] <SEMICOLON>
+}
+
+
+void StatementAux():{}
+{
+    [ <OPENSQBRACK> Expression() <CLOSESQBRACK> ] 
+}
+
+
+void ExpressionWoIdent():{}
+{
+    ExpressionTokenWoIdent() ExpressionAux()
+}
+
+
+void ExpressionTokenWoIdent():{}
+{
+    <TRUE>
+    | <FALSE>
+    | <THIS>
+    | <NEW> ExpressionNew()
+    | <NOT> Expression()
+    | <OPENPAR> Expression() <CLOSEPAR>
+    | IntegerLiteral()
 }
 
 void Expression():{}
@@ -161,6 +195,8 @@ void ExpressionAuxAsterisk():{}
     <COMA> Expression() ExpressionAuxAsterisk()
     | Empty()
 }
+
+
 
 void ExpressionToken():{}
 {
