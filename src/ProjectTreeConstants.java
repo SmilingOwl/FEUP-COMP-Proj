@@ -14,8 +14,11 @@ public interface ProjectTreeConstants
   public int JJTSTATEMENT = 10;
   public int JJTEXPRESSION = 11;
   public int JJTEXPRESSIONAUX = 12;
-  public int JJTEXPRESSIONTOKEN = 13;
-  public int JJTEXPRESSIONNEW = 14;
+  public int JJTEXPRESSIONAUXDOT = 13;
+  public int JJTEXPRESSIONAUXOPTIONAL = 14;
+  public int JJTEXPRESSIONAUXASTERISK = 15;
+  public int JJTEXPRESSIONTOKEN = 16;
+  public int JJTEXPRESSIONNEW = 17;
 
 
   public String[] jjtNodeName = {
@@ -32,8 +35,11 @@ public interface ProjectTreeConstants
     "Statement",
     "Expression",
     "ExpressionAux",
+    "ExpressionAuxDot",
+    "ExpressionAuxOptional",
+    "ExpressionAuxAsterisk",
     "ExpressionToken",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=7b92a70440107c4b29d7a322253579b5 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9104c43fc3ad5ca92f41831a289d316b (do not edit this line) */

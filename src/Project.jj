@@ -156,7 +156,7 @@ void ClassDeclaration(): {/*@bgen(jjtree) ClassDeclaration */
   SimpleNode jjtn000 = new SimpleNode(JJTCLASSDECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} //TODO
+/*@egen*/} 
 {/*@bgen(jjtree) ClassDeclaration */
     try {
 /*@egen*/
@@ -249,7 +249,7 @@ void MainDeclaration():{/*@bgen(jjtree) MainDeclaration */
   SimpleNode jjtn000 = new SimpleNode(JJTMAINDECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} //TODO
+/*@egen*/} 
 {/*@bgen(jjtree) MainDeclaration */
     try {
 /*@egen*/
@@ -280,7 +280,7 @@ void MethodDeclaration():{/*@bgen(jjtree) MethodDeclaration */
   SimpleNode jjtn000 = new SimpleNode(JJTMETHODDECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} //TODO
+/*@egen*/} 
 {/*@bgen(jjtree) MethodDeclaration */
     try {
 /*@egen*/
@@ -409,17 +409,110 @@ void ExpressionAux():{/*@bgen(jjtree) ExpressionAux */
   SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSIONAUX);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/} //TODO
+/*@egen*/}
 {/*@bgen(jjtree) ExpressionAux */
     try {
 /*@egen*/
-    /*
-        FALTA:
-    Expression, "[", Expression, "]"
-    | Expression, ".", Identifier, "(", [ Expression { ",", Expression } ], ")"
-    */ 
     (<AND> | <MINOR> | <ADD> | <SUB> | <MULT> | <DIV>) Expression() ExpressionAux()
-    | <DOT> <LENGTH> ExpressionAux()
+    | <DOT> ExpressionAuxDot()
+    | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
+    | Empty()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void ExpressionAuxDot():{/*@bgen(jjtree) ExpressionAuxDot */
+  SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSIONAUXDOT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) ExpressionAuxDot */
+    try {
+/*@egen*/
+    <LENGTH> ExpressionAux()
+    | <IDENTIFIER> <OPENPAR> ExpressionAuxOptional() <CLOSEPAR>/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+
+}
+
+void ExpressionAuxOptional():{/*@bgen(jjtree) ExpressionAuxOptional */
+  SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSIONAUXOPTIONAL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) ExpressionAuxOptional */
+    try {
+/*@egen*/
+    Expression() ExpressionAuxAsterisk()
+    | Empty()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void ExpressionAuxAsterisk():{/*@bgen(jjtree) ExpressionAuxAsterisk */
+  SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSIONAUXASTERISK);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) ExpressionAuxAsterisk */
+    try {
+/*@egen*/
+    <COMA> Expression() ExpressionAuxAsterisk()
     | Empty()/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {

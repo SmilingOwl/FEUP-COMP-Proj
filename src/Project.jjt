@@ -135,15 +135,31 @@ void Expression():{}
     ExpressionToken() ExpressionAux()
 }
 
-void ExpressionAux():{} //TODO
+void ExpressionAux():{}
 {
     (<AND> | <MINOR> | <ADD> | <SUB> | <MULT> | <DIV>) Expression() ExpressionAux()
-    | <DOT> <LENGTH> ExpressionAux()
+    | <DOT> ExpressionAuxDot()
+    | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
     | Empty()
-    | OPENSQBRACK Expression() <CLOSESQBRACK>
-    | (  <DOT>
-    |    <LENGTH>
-    |    <IDENTIFIER> <OPENPAR> [ Expression() <COMA> { Expression() } ] <CLOSEPAR> )
+}
+
+void ExpressionAuxDot():{}
+{
+    <LENGTH> ExpressionAux()
+    | <IDENTIFIER> <OPENPAR> ExpressionAuxOptional() <CLOSEPAR>
+
+}
+
+void ExpressionAuxOptional():{}
+{
+    Expression() ExpressionAuxAsterisk()
+    | Empty()
+}
+
+void ExpressionAuxAsterisk():{}
+{
+    <COMA> Expression() ExpressionAuxAsterisk()
+    | Empty()
 }
 
 void ExpressionToken():{}
@@ -181,3 +197,4 @@ void Expr3(): {}
     | "-" <INTEGER>
     | "(" Expr1() ")"
 }
+*/
