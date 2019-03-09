@@ -1,0 +1,10 @@
+
+src/ProjectTokenManager\.class
+
+*.class
+
+src/Project\.java
+
+*.java
+
+*.jj

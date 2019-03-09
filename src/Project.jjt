@@ -5,12 +5,34 @@ options
 
 PARSER_BEGIN(Project)
 
+import java.util.regex.*;
+
 public class Project
 {
     public static void main(String args[]) throws ParseException {
         Project myCalc = new Project(System.in);
-        SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
-        root.dump("");// imprime no ecrã a árvore
+        try {
+            SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
+            root.dump("");// imprime no ecrã a árvore
+        } catch (Exception e) {
+            System.out.println("Generic Unhandled Error");
+            //System.out.println(e.toString());
+            Pattern patternL = Pattern.compile("at line (.*?),");
+            Matcher matcherL = patternL.matcher(e.toString());
+            if (matcherL.find())
+            {
+                System.out.println("Line: " + matcherL.group(1));
+            }            
+            //System.out.println(e.toString());
+            Pattern patternC= Pattern.compile("column (.*?)\\.");
+            Matcher matcherC = patternC.matcher(e.toString());
+            if (matcherC.find())
+            {
+                System.out.println("Column: " + matcherC.group(1));
+            }  
+        }
+        
+       
     }
 }
 
