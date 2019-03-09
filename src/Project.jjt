@@ -99,9 +99,12 @@ void VarDeclaration():{}
     Type() <IDENTIFIER> <SEMICOLON>
 }
 
+//pode haver mais que uma MainDeclaration() uma forma de resolver seria logo a seguir
+//ao <OPENBRACK> fazer isto [<PUBLIC> MainDeclaration()] e ter uma funcao inClass()
+//que o que fazia era {VarDeclaration() | Statement()} 
 void MainMethodDeclaration():{}
 {
-    (<PUBLIC> (MainDeclaration() | MethodDeclaration()))*
+    (<PUBLIC> (MainDeclaration() | MethodDeclaration()))* 
 }
 
 void MainDeclaration():{} 
