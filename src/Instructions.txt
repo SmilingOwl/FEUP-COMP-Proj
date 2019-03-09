@@ -1,0 +1,7 @@
+jjtree Project.jjt
+
+javacc Project.jj
+
+javac *.java
+
+java Project
