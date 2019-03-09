@@ -6,6 +6,8 @@
 
 PARSER_BEGIN(Project)
 
+import java.util.regex.*;
+
 public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants/*@egen*/
 {/*@bgen(jjtree)*/
   protected static JJTProjectState jjtree = new JJTProjectState();
@@ -13,8 +15,28 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants/*@egen*/
 /*@egen*/
     public static void main(String args[]) throws ParseException {
         Project myCalc = new Project(System.in);
-        SimpleNode root = myCalc.Program(); // devolve refer\u00c3\u00aancia para o n\u00c3\u00b3 raizda \u00c3\u00a1rvore
-        root.dump("");// imprime no ecr\u00c3\u00a3 a \u00c3\u00a1rvore
+        try {
+            SimpleNode root = myCalc.Program(); // devolve refer\u00c3\u00aancia para o n\u00c3\u00b3 raizda \u00c3\u00a1rvore
+            root.dump("");// imprime no ecr\u00c3\u00a3 a \u00c3\u00a1rvore
+        } catch (Exception e) {
+            System.out.println("Generic Unhandled Error");
+            //System.out.println(e.toString());
+            Pattern patternL = Pattern.compile("at line (.*?),");
+            Matcher matcherL = patternL.matcher(e.toString());
+            if (matcherL.find())
+            {
+                System.out.println("Line: " + matcherL.group(1));
+            }            
+            //System.out.println(e.toString());
+            Pattern patternC= Pattern.compile("column (.*?)\\.");
+            Matcher matcherC = patternC.matcher(e.toString());
+            if (matcherC.find())
+            {
+                System.out.println("Column: " + matcherC.group(1));
+            }  
+        }
+        
+       
     }
 }
 
@@ -149,6 +171,8 @@ SimpleNode Program(): {/*@bgen(jjtree) Program */
 }
 
 // Para testar j\u00c3\u00a1 aceita: class test extends otherTest{int a; public static void main(String[] test2){boolean alp; boolean beta; int gamma;}}
+//                        class test extends otherTest{int a; public int foo(int input){boolean alp; boolean beta; int gamma; return beta;}}
+
 
 void ClassDeclaration(): {/*@bgen(jjtree) ClassDeclaration */
   SimpleNode jjtn000 = new SimpleNode(JJTCLASSDECLARATION);
@@ -158,7 +182,7 @@ void ClassDeclaration(): {/*@bgen(jjtree) ClassDeclaration */
 {/*@bgen(jjtree) ClassDeclaration */
     try {
 /*@egen*/
-    <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <OPENBRACK> VarDeclaration() MainMethodDeclaration() <CLOSEBRACK>/*@bgen(jjtree)*/
+    <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <OPENBRACK> (VarDeclaration())* MainMethodDeclaration() <CLOSEBRACK>/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
