@@ -1,3 +1,4 @@
+
 options
 {
     LOOKAHEAD=1;
@@ -6,14 +7,21 @@ options
 PARSER_BEGIN(Project)
 
 import java.util.regex.*;
+import java.util.ArrayList;
 
 public class Project
 {
+    public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
         Project myCalc = new Project(System.in);
+        myCalc.errors = new ArrayList<ParseException>();
         try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
-            root.dump("");// imprime no ecrã a árvore
+            if(myCalc.errors.size() != 0) {
+            for(int i = 0; i < myCalc.errors.size(); i++)
+                System.out.println(myCalc.errors.get(i).toString());
+            } else 
+                root.dump("");// imprime no ecrã a árvore
         } catch (Exception e) {
             System.out.println("Generic Unhandled Error");
             //System.out.println(e.toString());
@@ -104,7 +112,7 @@ void IntegerLiteral(): {}
 
 SimpleNode Program(): {}
 {
-    ClassDeclaration() <LF>  {return jjtThis;}// código Java entre chavetas
+    ClassDeclaration() <LF>  { return jjtThis; }// código Java entre chavetas
 }
 
 // Para testar já aceita: class test extends otherTest{int a; public static void main(String[] test2){boolean alp; boolean beta; int gamma;}}
@@ -161,7 +169,25 @@ void Statement():{}
 {
     <OPENBRACK> (Statement())* <CLOSEBRACK>
     | <IF> <OPENPAR> Expression() <CLOSEPAR> Statement() <ELSE> Statement()
-    | <WHILE> <OPENPAR> Expression() <CLOSEPAR> Statement()
+    
+    /*BEGINNING OF WHILE STATEMENT*/
+
+    | <WHILE> <OPENPAR> 
+    try {
+        Expression() <CLOSEPAR>  // se der para voltar atrás num token, põe-se fora do try o <CLOSEPAR> e no do while
+                                 // podemos pôr dentro do if todos os tokens que podem vir a seguir ao while (tipo a chaveta e isso)
+    }
+    catch(ParseException e) {
+        errors.add(e);
+        Token t;
+        do {
+            t = getNextToken();
+        } while (t.kind != CLOSEPAR);
+    }
+     Statement()
+
+    /*END OF WHILE STATEMENT*/
+
     | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER 
     | <IDENTIFIER> [StatementAux() <EQUAL> Expression()] <SEMICOLON>
 }
