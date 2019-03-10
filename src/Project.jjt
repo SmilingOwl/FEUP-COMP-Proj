@@ -18,8 +18,11 @@ public class Project
         try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
             if(myCalc.errors.size() != 0) {
-            for(int i = 0; i < myCalc.errors.size(); i++)
-                System.out.println(myCalc.errors.get(i).toString());
+                for(int i = 0; i < myCalc.errors.size(); i++){
+                    System.out.println("Error with symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred in" 
+                        + " Line:" + myCalc.errors.get(i).currentToken.beginLine 
+                        + ", Column:" + myCalc.errors.get(i).currentToken.beginColumn);
+                }
             } else 
                 root.dump("");// imprime no ecrã a árvore
         } catch (Exception e) {
