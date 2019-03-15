@@ -164,7 +164,7 @@ void TypeAux():{}
 
 void InMethod():{} 
 {
-    VarDeclaration() 
+    VarDeclarationWoIdent()
     | Statement()
 }
 
@@ -191,14 +191,20 @@ void Statement():{}
 
     /*END OF WHILE STATEMENT*/
 
-    | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER 
-    | <IDENTIFIER> [StatementAux() <EQUAL> Expression()] <SEMICOLON>
+    | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER
+    | <IDENTIFIER> StatementAux2()
 }
 
 
 void StatementAux():{}
 {
     [ <OPENSQBRACK> Expression() <CLOSESQBRACK> ] 
+}
+
+void StatementAux2():{}
+{
+    [StatementAux() <EQUAL> Expression()] <SEMICOLON> |
+    <IDENTIFIER> <SEMICOLON>
 }
 
 
@@ -217,6 +223,17 @@ void ExpressionTokenWoIdent():{}
     | <NOT> Expression()
     | <OPENPAR> Expression() <CLOSEPAR>
     | IntegerLiteral()
+}
+
+void VarDeclarationWoIdent():{}
+{
+    TypeWoIdent() <IDENTIFIER> <SEMICOLON>
+}
+
+void TypeWoIdent():{}
+{
+    <INT> TypeAux()
+    | <BOOLEAN>
 }
 
 void Expression():{}
