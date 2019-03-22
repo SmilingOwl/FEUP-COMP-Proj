@@ -15,7 +15,7 @@ public class Project
     public static void main(String args[]) throws ParseException {
         Project myCalc = new Project(System.in);
         myCalc.errors = new ArrayList<ParseException>();
-        //try {
+        try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); i++){
