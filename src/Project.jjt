@@ -172,17 +172,20 @@ void Statement():{}
 
     | <WHILE> <OPENPAR> 
     try {
-        Expression() <CLOSEPAR>  // se der para voltar atrás num token, põe-se fora do try o <CLOSEPAR> e no do while
-                                 // podemos pôr dentro do if todos os tokens que podem vir a seguir ao while (tipo a chaveta e isso)
+        Expression() <CLOSEPAR>
     }
     catch(ParseException e) {
         errors.add(e);
-        Token t;
-        do {
-            t = getNextToken();
-        } while (t.kind != CLOSEPAR);
+        Token next_token = getToken(1);
+        while(next_token.kind != CLOSEPAR && next_token.kind != OPENBRACK) {
+            getNextToken();
+            next_token = getToken(1);
+        }
+        if(next_token.kind == CLOSEPAR) {
+            getNextToken();
+        }
     }
-     Statement()
+    Statement()
 
     /*END OF WHILE STATEMENT*/
 
@@ -199,9 +202,7 @@ void StatementAux():{}
 void StatementAux2():{}
 {
     [StatementAux() <EQUAL> Expression()] <SEMICOLON> |
-    <IDENTIFIER> <SEMICOLON> //para que serve esta linha?
-    
-    //ALTEREI AQUI!!
+    <IDENTIFIER> <SEMICOLON>
     | <DOT> ExpressionAuxDot() <SEMICOLON>
 }
 
