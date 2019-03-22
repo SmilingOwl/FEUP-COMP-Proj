@@ -3,7 +3,25 @@ class test {
         while(a<){
             while(a<){
                 while(a+<2){
-
+                    while(a<){
+                        while(a<){
+                            while(a+<2){
+                                while(a<){
+                                    while(a<){
+                                        while(a+<2){
+                                            while(a<){
+                                                while(a<){
+                                                    while(a+<2){
+                                    
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

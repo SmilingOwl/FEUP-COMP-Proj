@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 public class Project
 {
+    public static int MAX_ERRORS = 10;
+
     public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
         Project myCalc = new Project(System.in);
@@ -18,10 +20,21 @@ public class Project
         try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
             if(myCalc.errors.size() != 0) {
-                for(int i = 0; i < myCalc.errors.size(); i++){
+                for(int i = 0; i < myCalc.errors.size(); ){
                     System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred in" 
                         + " Line:" + myCalc.errors.get(i).currentToken.beginLine 
                         + ", Column:" + myCalc.errors.get(i).currentToken.beginColumn);
+                        i++;
+                        if(i >= MAX_ERRORS){
+                            int remErrors = (myCalc.errors.size()-i);
+                            if(remErrors == 1)
+                                System.out.println("There is " + remErrors + " more error.");
+                            else if(remErrors == 0)
+                                break;
+                            else
+                                System.out.println("There are " + remErrors + " more errors.");
+                            break;
+                        }
                 }
             } else 
                 root.dump("");// imprime no ecrã a árvore
