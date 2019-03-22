@@ -15,7 +15,7 @@ public class Project
     public static void main(String args[]) throws ParseException {
         Project myCalc = new Project(System.in);
         myCalc.errors = new ArrayList<ParseException>();
-        try {
+        //try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); i++){
@@ -38,13 +38,13 @@ PARSER_END(Project)
 
 SKIP :
 {
-    " " | "\r" | "\t" | "\n"
+    " " | "\r" | "\t"
 }
 
 TOKEN :
 {
-    /*< LF: "\n" >*/  //to remove?
-     < THIS: "this" >
+    <LF : "\n">
+    |< THIS: "this" >
     | < NEW: "new" >
     | < FALSE: "false" >
     | < TRUE: "true" >
@@ -191,7 +191,10 @@ void StatementAux():{}
 void StatementAux2():{}
 {
     [StatementAux() <EQUAL> Expression()] <SEMICOLON> |
-    <IDENTIFIER> <SEMICOLON>
+    <IDENTIFIER> <SEMICOLON> //para que serve esta linha?
+    
+    //ALTEREI AQUI!!
+    | <DOT> ExpressionAuxDot() <SEMICOLON>
 }
 
 
@@ -225,13 +228,49 @@ void TypeWoIdent():{}
 
 void Expression():{}
 {
+    ExpressionMinor() ExpressionAnd()
+}
+
+void ExpressionAnd():{} {
+    <AND> ExpressionMinor() ExpressionAnd()
+    | Empty()
+}
+
+void ExpressionMinor():{} {
+    ExpressionAdd() ExpressionMinorAux()
+}
+
+void ExpressionMinorAux():{} {
+    <MINOR> ExpressionAdd() ExpressionMinorAux() 
+    | Empty()
+}
+
+void ExpressionAdd():{} {
+    ExpressionMult() ExpressionAddAux()
+}
+
+void ExpressionAddAux():{} {
+    (<ADD> | <SUB>) ExpressionMult() ExpressionAddAux() 
+    | Empty()
+}
+
+void ExpressionMult():{} {
+    ExpressionRestOfClauses() ExpressionMultAux()
+}
+
+void ExpressionMultAux():{} {
+    (<MULT> | <DIV>) ExpressionRestOfClauses() ExpressionMultAux() 
+    | Empty()
+}
+
+void ExpressionRestOfClauses():{} {
     ExpressionToken() ExpressionAux()
 }
 
 void ExpressionAux():{}
 {
-    (<SUB> | <AND> | <MINOR> | <ADD> | <MULT> | <DIV>) Expression() ExpressionAux()
-    | <DOT> ExpressionAuxDot()
+    //(<SUB> | <AND> | <MINOR> | <ADD> | <MULT> | <DIV>) Expression() ExpressionAux()
+    <DOT> ExpressionAuxDot()
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
     | Empty()
 }
