@@ -25,22 +25,9 @@ public class Project
                 }
             } else 
                 root.dump("");// imprime no ecrã a árvore
-        } catch (Exception e) {
-            System.out.println("Generic Unhandled Error");
-            //System.out.println(e.toString());
-            Pattern patternL = Pattern.compile("at line (.*?),");
-            Matcher matcherL = patternL.matcher(e.toString());
-            if (matcherL.find())
-            {
-                System.out.println("Line: " + matcherL.group(1));
-            }            
-            //System.out.println(e.toString());
-            Pattern patternC= Pattern.compile("column (.*?)\\.");
-            Matcher matcherC = patternC.matcher(e.toString());
-            if (matcherC.find())
-            {
-                System.out.println("Column: " + matcherC.group(1));
-            }  
+        } catch (ParseException e) {
+            System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);
+            System.out.println("\n\n" + e);
         }
         
        
@@ -51,13 +38,13 @@ PARSER_END(Project)
 
 SKIP :
 {
-    " " | "\r" | "\t"
+    " " | "\r" | "\t" | "\n"
 }
 
 TOKEN :
 {
-    < LF: "\n" >
-    | < THIS: "this" >
+    /*< LF: "\n" >*/  //to remove?
+     < THIS: "this" >
     | < NEW: "new" >
     | < FALSE: "false" >
     | < TRUE: "true" >
@@ -274,21 +261,3 @@ void ExpressionNew():{}
     | <IDENTIFIER> <OPENPAR> <CLOSEPAR> 
 }
 
-/*
-void Expr1(): {}
-{
-    Expr2() [("+" | "-") Expr2()]
-}
-
-void Expr2(): {}
-{
-    Expr3() [("*" | "/") Expr3()]
-}
-
-void Expr3(): {}
-{
-    <INTEGER>
-    | "-" <INTEGER>
-    | "(" Expr1() ")"
-}
-*/
