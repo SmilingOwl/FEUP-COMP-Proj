@@ -19,7 +19,7 @@ public class Project
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); i++){
-                    System.out.println("Error with symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred in" 
+                    System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred in" 
                         + " Line:" + myCalc.errors.get(i).currentToken.beginLine 
                         + ", Column:" + myCalc.errors.get(i).currentToken.beginColumn);
                 }
@@ -38,13 +38,12 @@ PARSER_END(Project)
 
 SKIP :
 {
-    " " | "\r" | "\t"
+    " " | "\r" | "\t" | "\n"
 }
 
 TOKEN :
 {
-    <LF : "\n">
-    |< THIS: "this" >
+    < THIS: "this" >
     | < NEW: "new" >
     | < FALSE: "false" >
     | < TRUE: "true" >
@@ -102,12 +101,8 @@ void IntegerLiteral(): {}
 
 SimpleNode Program(): {}
 {
-    ClassDeclaration() <LF>  { return jjtThis; }// código Java entre chavetas
+    ClassDeclaration() /*<LF>*/  { return jjtThis; }// código Java entre chavetas
 }
-
-// Para testar já aceita: class test extends otherTest{int a; public static void main(String[] test2){boolean alp; boolean beta; int gamma;}}
-//                        class test extends otherTest{int a; public int foo(int input){boolean alp; boolean beta; int gamma; return beta;}}
-
 
 void ClassDeclaration(): {} 
 {
