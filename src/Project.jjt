@@ -2,6 +2,8 @@
 options
 {
     LOOKAHEAD=1;
+    MULTI=true;
+    JJTREE_OUTPUT_DIRECTORY = "ASTFiles";
 }
 
 PARSER_BEGIN(Project)
@@ -146,9 +148,6 @@ void VarDeclarationWoIdent() #VarDecl :{}
 
 
 // MAIN/METHOD - START
-//pode haver mais que uma MainDeclaration() uma forma de resolver seria logo a seguir
-//ao <OPENBRACK> fazer isto [<PUBLIC> MainDeclaration()] e ter uma funcao inClass()
-//que o que fazia era {VarDeclaration() | Statement()} 
 void MainMethodDeclaration() #void :{}
 {
     (<PUBLIC> (MainDeclaration() | MethodDeclaration()))* 
@@ -183,7 +182,7 @@ void Type() #void:{}
 {
     <INT> #Int TypeAux()
     | <BOOLEAN> #Boolean
-    | <IDENTIFIER> //TODO por valor do identifier
+    | <IDENTIFIER> #Indentifier//TODO por valor do identifier
 }
 
 void TypeAux() #void :{}

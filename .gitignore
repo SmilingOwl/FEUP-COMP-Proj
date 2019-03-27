@@ -5,6 +5,6 @@ src/ProjectTokenManager\.class
 
 src/Project\.java
 
-*.java
+src/*\.java
 
 *.jj
