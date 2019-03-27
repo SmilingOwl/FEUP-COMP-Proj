@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTExpressionAddAux extends SimpleNode {
+  private String name;
+  
   public ASTExpressionAddAux(int id) {
     super(id);
   }
@@ -10,5 +12,14 @@ class ASTExpressionAddAux extends SimpleNode {
     super(p, id);
   }
 
+  public void setName(String n) {
+    name = n;
+  }
+
+  public String toString() {
+    if(name == null)
+      return "";
+    return "Operation: " + name;
+  }
 }
 /* JavaCC - OriginalChecksum=2a96d9500bc52c0937a2f4904c5e029a (do not edit this line) */

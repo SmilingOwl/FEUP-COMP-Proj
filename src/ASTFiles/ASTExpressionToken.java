@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTExpressionToken extends SimpleNode {
+  private String name;
+
   public ASTExpressionToken(int id) {
     super(id);
   }
@@ -10,5 +12,14 @@ class ASTExpressionToken extends SimpleNode {
     super(p, id);
   }
 
+  public void setName(String n) {
+    name = n;
+  }
+
+  public String toString() {
+    if(name == null)
+      return "";
+    return name;
+  }
 }
 /* JavaCC - OriginalChecksum=d3acc0df314cdda7f1d72bebc9d08c6c (do not edit this line) */

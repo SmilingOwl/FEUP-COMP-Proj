@@ -9,6 +9,5 @@ class ASTExpressionMult extends SimpleNode {
   public ASTExpressionMult(Project p, int id) {
     super(p, id);
   }
-
 }
 /* JavaCC - OriginalChecksum=2c06982c2ce498b79bb9ba7ad96f3d23 (do not edit this line) */

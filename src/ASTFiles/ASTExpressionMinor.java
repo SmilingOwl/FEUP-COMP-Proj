@@ -9,6 +9,5 @@ class ASTExpressionMinor extends SimpleNode {
   public ASTExpressionMinor(Project p, int id) {
     super(p, id);
   }
-
 }
 /* JavaCC - OriginalChecksum=128a70268a6be7e05d7233af2250defd (do not edit this line) */

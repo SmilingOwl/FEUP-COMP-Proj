@@ -12,21 +12,14 @@ public interface ProjectTreeConstants
   public int JJTMETHODDECLARATION = 8;
   public int JJTISARRAY = 9;
   public int JJTSTATEMENTAUX2 = 10;
-  public int JJTEXPRESSIONWOIDENT = 11;
-  public int JJTEXPRESSIONTOKENWOIDENT = 12;
-  public int JJTEXPRESSION = 13;
-  public int JJTEXPRESSIONAND = 14;
-  public int JJTEXPRESSIONMINOR = 15;
-  public int JJTEXPRESSIONMINORAUX = 16;
-  public int JJTEXPRESSIONADD = 17;
-  public int JJTEXPRESSIONADDAUX = 18;
-  public int JJTEXPRESSIONMULT = 19;
-  public int JJTEXPRESSIONMULTAUX = 20;
-  public int JJTEXPRESSIONRESTOFCLAUSES = 21;
-  public int JJTEXPRESSIONAUX = 22;
-  public int JJTEXPRESSIONAUXDOT = 23;
-  public int JJTEXPRESSIONTOKEN = 24;
-  public int JJTEXPRESSIONNEW = 25;
+  public int JJTEXPRESSIONTOKENWOIDENT = 11;
+  public int JJTEXPRESSIONAND = 12;
+  public int JJTEXPRESSIONMINORAUX = 13;
+  public int JJTEXPRESSIONADDAUX = 14;
+  public int JJTEXPRESSIONMULTAUX = 15;
+  public int JJTEXPRESSIONAUXDOT = 16;
+  public int JJTEXPRESSIONTOKEN = 17;
+  public int JJTEXPRESSIONNEW = 18;
 
 
   public String[] jjtNodeName = {
@@ -41,21 +34,14 @@ public interface ProjectTreeConstants
     "MethodDeclaration",
     "IsArray",
     "StatementAux2",
-    "ExpressionWoIdent",
     "ExpressionTokenWoIdent",
-    "Expression",
     "ExpressionAnd",
-    "ExpressionMinor",
     "ExpressionMinorAux",
-    "ExpressionAdd",
     "ExpressionAddAux",
-    "ExpressionMult",
     "ExpressionMultAux",
-    "ExpressionRestOfClauses",
-    "ExpressionAux",
     "ExpressionAuxDot",
     "ExpressionToken",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=4fa491ec8da3582c90db3fc3cdc2ba5c (do not edit this line) */
+/* JavaCC - OriginalChecksum=bc2d2b26b5e4c38c8bc70a58f3185090 (do not edit this line) */
