@@ -152,9 +152,9 @@ void Type():{}
     | <IDENTIFIER>
 }
 
-void TypeAux():{}
+void TypeAux()#void:{}
 {
-    [<OPENSQBRACK> <CLOSESQBRACK>]
+    [<OPENSQBRACK> <CLOSESQBRACK> #IsArray]
 }
 
 void InMethod():{} 
