@@ -269,23 +269,23 @@ void StatementAux2():{}
 
 
 // EXPRESSION - START
-void ExpressionWoIdent():{}
+void ExpressionWoIdent()#void:{}
 {
     ExpressionTokenWoIdent() ExpressionAux()
 }
 
-void ExpressionTokenWoIdent():{}
+void ExpressionTokenWoIdent():{Token t;}
 {
-    <TRUE>
-    | <FALSE>
+    t=<TRUE>{jjtThis.setName(t.image);}
+    |t=<FALSE>{jjtThis.setName(t.image);}
     | <THIS>
     | <NEW> ExpressionNew()
-    | <NOT> Expression()
+    | t=<NOT>{jjtThis.setName(t.image);} Expression()
     | <OPENPAR> Expression() <CLOSEPAR>
     | IntegerLiteral()
 }
 
-void Expression():{}
+void Expression() #void:{}
 {
     ExpressionMinor() ExpressionAnd()
 }
@@ -295,7 +295,7 @@ void ExpressionAnd():{Token t;} {
     | Empty()
 }
 
-void ExpressionMinor():{} {
+void ExpressionMinor() #void:{}{
     ExpressionAdd() ExpressionMinorAux()
 }
 
@@ -304,7 +304,7 @@ void ExpressionMinorAux():{Token t;} {
     | Empty()
 }
 
-void ExpressionAdd():{} {
+void ExpressionAdd()#void: {} {
     ExpressionMult() ExpressionAddAux()
 }
 
@@ -313,7 +313,7 @@ void ExpressionAddAux():{Token t;} {
     | Empty()
 }
 
-void ExpressionMult():{} {
+void ExpressionMult()#void: {} {
     ExpressionRestOfClauses() ExpressionMultAux()
 }
 
@@ -322,11 +322,11 @@ void ExpressionMultAux():{Token t;} {
     | Empty()
 }
 
-void ExpressionRestOfClauses():{} {
+void ExpressionRestOfClauses() #void:{} {
     ExpressionToken() ExpressionAux()
 }
 
-void ExpressionAux():{}
+void ExpressionAux() #void:{}
 {
     <DOT> ExpressionAuxDot()
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
@@ -343,17 +343,17 @@ void ExpressionToken():{Token t;}
 {
     t=<TRUE>{jjtThis.setName(t.image);}
     | t=<FALSE>{jjtThis.setName(t.image);}
-    | <THIS>
-    | <NEW> ExpressionNew()
-    | <NOT> Expression()
+    | t=<THIS>{jjtThis.setName(t.image);}
+    | t=<NEW>{jjtThis.setName(t.image);} ExpressionNew()
+    | t=<NOT>{jjtThis.setName(t.image);} Expression()
     | <OPENPAR> Expression() <CLOSEPAR>
     | Identifier()
     | IntegerLiteral()
 }
 
-void ExpressionNew():{}
+void ExpressionNew() :{}
 {
-    <INT> <OPENSQBRACK> Expression() <CLOSESQBRACK>
+    t=<INT>{jjtThis.setName(t.image);} <OPENSQBRACK> Expression() <CLOSESQBRACK>
     | Identifier() <OPENPAR> <CLOSEPAR> 
 }
 // EXPRESSION - END
