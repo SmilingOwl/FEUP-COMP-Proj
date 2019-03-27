@@ -107,13 +107,13 @@ void Empty() #void : {}
      {}
 } 
 
-void IntegerLiteral(): {}
+void IntegerLiteral(): {Token t, z;}
 {
-    <OCTAL>
-    | <BINARY>
-    | <HEX>
-    | <DECIMAL>
-    | <SUB> <DECIMAL>
+    t=<OCTAL>{jjtThis.setName(t.image);}
+    | t=<BINARY>{jjtThis.setName(t.image);}
+    | t=<HEX>{jjtThis.setName(t.image);}
+    | t=<DECIMAL>{jjtThis.setName(t.image);}
+    | t=<SUB> z=<DECIMAL> {jjtThis.setName(t.image + z.image);}
 }
 
 void Identifier():{Token t;}{
@@ -285,7 +285,7 @@ void ExpressionTokenWoIdent():{}
     | IntegerLiteral()
 }
 
-void Expression():{}
+void Expression() #void :{}
 {
     ExpressionMinor() ExpressionAnd()
 }
@@ -295,7 +295,7 @@ void ExpressionAnd():{Token t;} {
     | Empty()
 }
 
-void ExpressionMinor():{} {
+void ExpressionMinor() #void :{} {
     ExpressionAdd() ExpressionMinorAux()
 }
 
@@ -304,7 +304,7 @@ void ExpressionMinorAux():{Token t;} {
     | Empty()
 }
 
-void ExpressionAdd():{} {
+void ExpressionAdd() #void :{} {
     ExpressionMult() ExpressionAddAux()
 }
 
@@ -313,7 +313,7 @@ void ExpressionAddAux():{Token t;} {
     | Empty()
 }
 
-void ExpressionMult():{} {
+void ExpressionMult() #void :{} {
     ExpressionRestOfClauses() ExpressionMultAux()
 }
 
@@ -322,7 +322,7 @@ void ExpressionMultAux():{Token t;} {
     | Empty()
 }
 
-void ExpressionRestOfClauses():{} {
+void ExpressionRestOfClauses() #void :{} {
     ExpressionToken() ExpressionAux()
 }
 
@@ -335,7 +335,7 @@ void ExpressionAux():{}
 
 void ExpressionAuxDot():{Token t;}
 {
-    t=<LENGTH>{jjtThis.setName(t.image);}  ExpressionAux()
+    /*t=*/<LENGTH>/*{jjtThis.setName(t.image);} */ ExpressionAux()
     | Identifier() <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
 }
 

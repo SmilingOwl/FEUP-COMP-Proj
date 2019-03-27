@@ -9,6 +9,5 @@ class ASTExpressionAdd extends SimpleNode {
   public ASTExpressionAdd(Project p, int id) {
     super(p, id);
   }
-
 }
 /* JavaCC - OriginalChecksum=5bcc1de6716b3011f73a6580ef18fdac (do not edit this line) */

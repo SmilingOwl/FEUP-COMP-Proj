@@ -18,19 +18,14 @@ public interface ProjectTreeConstants
   public int JJTSTATEMENTAUX2 = 14;
   public int JJTEXPRESSIONWOIDENT = 15;
   public int JJTEXPRESSIONTOKENWOIDENT = 16;
-  public int JJTEXPRESSION = 17;
-  public int JJTEXPRESSIONAND = 18;
-  public int JJTEXPRESSIONMINOR = 19;
-  public int JJTEXPRESSIONMINORAUX = 20;
-  public int JJTEXPRESSIONADD = 21;
-  public int JJTEXPRESSIONADDAUX = 22;
-  public int JJTEXPRESSIONMULT = 23;
-  public int JJTEXPRESSIONMULTAUX = 24;
-  public int JJTEXPRESSIONRESTOFCLAUSES = 25;
-  public int JJTEXPRESSIONAUX = 26;
-  public int JJTEXPRESSIONAUXDOT = 27;
-  public int JJTEXPRESSIONTOKEN = 28;
-  public int JJTEXPRESSIONNEW = 29;
+  public int JJTEXPRESSIONAND = 17;
+  public int JJTEXPRESSIONMINORAUX = 18;
+  public int JJTEXPRESSIONADDAUX = 19;
+  public int JJTEXPRESSIONMULTAUX = 20;
+  public int JJTEXPRESSIONAUX = 21;
+  public int JJTEXPRESSIONAUXDOT = 22;
+  public int JJTEXPRESSIONTOKEN = 23;
+  public int JJTEXPRESSIONNEW = 24;
 
 
   public String[] jjtNodeName = {
@@ -51,19 +46,14 @@ public interface ProjectTreeConstants
     "StatementAux2",
     "ExpressionWoIdent",
     "ExpressionTokenWoIdent",
-    "Expression",
     "ExpressionAnd",
-    "ExpressionMinor",
     "ExpressionMinorAux",
-    "ExpressionAdd",
     "ExpressionAddAux",
-    "ExpressionMult",
     "ExpressionMultAux",
-    "ExpressionRestOfClauses",
     "ExpressionAux",
     "ExpressionAuxDot",
     "ExpressionToken",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=69aae018787885cd82d427fe40a87b59 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1145c2984d63868ccc3a7b4f781b2fe5 (do not edit this line) */
