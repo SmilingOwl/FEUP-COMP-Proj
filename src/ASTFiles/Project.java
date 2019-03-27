@@ -770,13 +770,24 @@ if (jjtc000) {
 
   static final public void StatementAux2() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case SEMICOLON:
-    case EQUAL:
+    case EQUAL:{
+      jj_consume_token(EQUAL);
+      Expression();
+      jj_consume_token(SEMICOLON);
+      break;
+      }
+    case DOT:{
+      jj_consume_token(DOT);
+      ExpressionAuxDot();
+      jj_consume_token(SEMICOLON);
+      break;
+      }
     case OPENSQBRACK:{
+      jj_consume_token(OPENSQBRACK);
+      Expression();
+      jj_consume_token(CLOSESQBRACK);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case EQUAL:
-      case OPENSQBRACK:{
-        StatementAux();
+      case EQUAL:{
         jj_consume_token(EQUAL);
         Expression();
         break;
@@ -785,17 +796,7 @@ if (jjtc000) {
         jj_la1[15] = jj_gen;
         ;
       }
-      jj_consume_token(SEMICOLON);
-      break;
-      }
-    case IDENTIFIER:{
-      jj_consume_token(IDENTIFIER);
-      jj_consume_token(SEMICOLON);
-      break;
-      }
-    case DOT:{
-      jj_consume_token(DOT);
-      ExpressionAuxDot();
+      ExpressionAux();
       jj_consume_token(SEMICOLON);
       break;
       }
@@ -806,6 +807,21 @@ if (jjtc000) {
     }
   }
 
+/*
+void StatementAuxMinor() :{} {
+    <MINOR> StatementAuxAdd() 
+    | StatementAuxAdd()
+}
+
+void StatementAuxAdd() :{} {
+    (<ADD> | <SUB>) StatementAuxMult()
+    | StatementAuxMult()
+}
+
+void StatementAuxMult() :{} {
+    (<MULT> | <DIV>) Expression()
+    | Expression() StatementAux2()
+}*/
 // STATEMENT - END
 
 
@@ -1363,10 +1379,10 @@ if (jjtc000) {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x40000,0x0,0x0,0x0,0x0,0x1000,0x0,0x51848780,0x51848780,0x0,0x4000000,0x0,0x51848780,0x51848780,0x4000000,0x4400000,0x4406000,0x10048780,0x200000,0x100000,0xc0000,0xc0000,0x30000,0x30000,0x4002000,0x1000,0x10048780,0x800,0x10048780,0x0,};
+      jj_la1_0 = new int[] {0x40000,0x0,0x0,0x0,0x0,0x1000,0x0,0x51848780,0x51848780,0x0,0x4000000,0x0,0x51848780,0x51848780,0x4000000,0x400000,0x4402000,0x10048780,0x200000,0x100000,0xc0000,0xc0000,0x30000,0x30000,0x4002000,0x1000,0x10048780,0x800,0x10048780,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x3c00,0x200,0x4003,0x40,0x4083,0x0,0x4003,0x7c03,0x7c03,0x4003,0x0,0x3,0x7c00,0x7c00,0x0,0x0,0x4000,0x3c00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7c00,0x4000,0x7c00,0x4001,};
+      jj_la1_1 = new int[] {0x3c00,0x200,0x4003,0x40,0x4083,0x0,0x4003,0x7c03,0x7c03,0x4003,0x0,0x3,0x7c00,0x7c00,0x0,0x0,0x0,0x3c00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7c00,0x4000,0x7c00,0x4001,};
    }
 
   /** Constructor with InputStream. */
