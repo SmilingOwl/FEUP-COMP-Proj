@@ -277,9 +277,9 @@ void ExpressionWoIdent()#void:{}
 void ExpressionTokenWoIdent():{Token t;}
 {
     t=<TRUE>{jjtThis.setName(t.image);}
-    |t=<FALSE>{jjtThis.setName(t.image);}
-    | <THIS>
-    | <NEW> ExpressionNew()
+    | t=<FALSE>{jjtThis.setName(t.image);}
+    | t=<THIS>{jjtThis.setName(t.image);}
+    | t=<NEW>{jjtThis.setName(t.image);} ExpressionNew()
     | t=<NOT>{jjtThis.setName(t.image);} Expression()
     | <OPENPAR> Expression() <CLOSEPAR>
     | IntegerLiteral()
@@ -335,7 +335,7 @@ void ExpressionAux() #void:{}
 
 void ExpressionAuxDot():{Token t;}
 {
-    /*t=*/<LENGTH>/*{jjtThis.setName(t.image);} */ ExpressionAux()
+    t=<LENGTH>{jjtThis.setName(t.image);} ExpressionAux()
     | Identifier() <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
 }
 
@@ -351,7 +351,7 @@ void ExpressionToken():{Token t;}
     | IntegerLiteral()
 }
 
-void ExpressionNew() :{}
+void ExpressionNew() :{Token t;}
 {
     t=<INT>{jjtThis.setName(t.image);} <OPENSQBRACK> Expression() <CLOSESQBRACK>
     | Identifier() <OPENPAR> <CLOSEPAR> 

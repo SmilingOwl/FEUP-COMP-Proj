@@ -2,12 +2,26 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTExpressionNew extends SimpleNode {
+  private String name;
+
   public ASTExpressionNew(int id) {
     super(id);
   }
 
   public ASTExpressionNew(Project p, int id) {
     super(p, id);
+  }
+
+  public void setName(String n) {
+    name = n;
+  }
+
+  public String toString() {
+    if(name == null)
+      return "";
+    if(name.equals("int"))
+      return "int array ";
+    return "";
   }
 
 }
