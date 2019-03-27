@@ -261,23 +261,9 @@ void StatementAux2():{}
 {
     <EQUAL> Expression() <SEMICOLON>
     | <DOT> ExpressionAuxDot() <SEMICOLON>
+    | <IDENTIFIER> <SEMICOLON>
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> [<EQUAL> Expression()] ExpressionAux() <SEMICOLON>
 }
-/*
-void StatementAuxMinor() :{} {
-    <MINOR> StatementAuxAdd() 
-    | StatementAuxAdd()
-}
-
-void StatementAuxAdd() :{} {
-    (<ADD> | <SUB>) StatementAuxMult()
-    | StatementAuxMult()
-}
-
-void StatementAuxMult() :{} {
-    (<MULT> | <DIV>) Expression()
-    | Expression() StatementAux2()
-}*/
 // STATEMENT - END
 
 
@@ -304,8 +290,8 @@ void Expression():{}
     ExpressionMinor() ExpressionAnd()
 }
 
-void ExpressionAnd():{} {
-    <AND> ExpressionMinor() ExpressionAnd()
+void ExpressionAnd():{Token t;} {
+    t=<AND>{jjtThis.setName(t.image);} ExpressionMinor() ExpressionAnd()
     | Empty()
 }
 
@@ -342,7 +328,6 @@ void ExpressionRestOfClauses():{} {
 
 void ExpressionAux():{}
 {
-    //(<SUB> | <AND> | <MINOR> | <ADD> | <MULT> | <DIV>) Expression() ExpressionAux()
     <DOT> ExpressionAuxDot()
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
     | Empty()

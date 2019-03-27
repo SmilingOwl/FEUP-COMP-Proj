@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTExpressionMinor extends SimpleNode {
-  private String name;
-  
   public ASTExpressionMinor(int id) {
     super(id);
   }
@@ -12,14 +10,5 @@ class ASTExpressionMinor extends SimpleNode {
     super(p, id);
   }
 
-  public void setName(String n) {
-    name = n;
-  }
-
-  public String toString() {
-    if(name == null)
-      return "";
-    return "Operation: " + name;
-  }
 }
 /* JavaCC - OriginalChecksum=128a70268a6be7e05d7233af2250defd (do not edit this line) */
