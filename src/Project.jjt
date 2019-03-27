@@ -21,9 +21,9 @@ public class Project
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); ){
-                    System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred in" 
-                        + " Line:" + myCalc.errors.get(i).currentToken.beginLine 
-                        + ", Column:" + myCalc.errors.get(i).currentToken.beginColumn);
+                    System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred after" 
+                        + " Line:" + myCalc.errors.get(i).currentToken.endLine 
+                        + ", Column:" + myCalc.errors.get(i).currentToken.endColumn);
                         i++;
                         if(i >= MAX_ERRORS){
                             int remErrors = (myCalc.errors.size()-i);
@@ -51,7 +51,7 @@ PARSER_END(Project)
 
 SKIP :
 {
-    " " | "\r" | "\t" | "\n"
+    " " | "\r" | "\t" | "\n" |  <"//"(~["\r","\n"])*> | <"/*"( ~["*"] | ("*"(~["/"])?) )* "*/">
 }
 
 TOKEN :
@@ -172,17 +172,34 @@ void Statement():{}
 
     | <WHILE> <OPENPAR> 
     try {
-        Expression() <CLOSEPAR>  // se der para voltar atrás num token, põe-se fora do try o <CLOSEPAR> e no do while
-                                 // podemos pôr dentro do if todos os tokens que podem vir a seguir ao while (tipo a chaveta e isso)
+        Expression() <CLOSEPAR>
     }
     catch(ParseException e) {
         errors.add(e);
-        Token t;
-        do {
-            t = getNextToken();
-        } while (t.kind != CLOSEPAR);
+        Token next_token = getToken(1);
+        /*
+        CLOSEPAR: when there's an error inside Expression() but there is the close parentesis
+        OPENBRACK: when there's an error in the expression but the close parentesis aren't there
+        CLOSEBRACK: when there's an error in the expression and there aren't parentesis or the open bracket
+        EOF: when the user starts the while expression but compiles before finishing it
+        SEMICOLON: when there's an error and there aren't parentesis and the expression doesn't have brackets
+        */
+        while(next_token.kind != CLOSEPAR
+                && next_token.kind != OPENBRACK
+                && next_token.kind != CLOSEBRACK
+                && next_token.kind != EOF
+                && next_token.kind != SEMICOLON) {
+            getNextToken();
+            next_token = getToken(1);
+        }
+        if(next_token.kind == CLOSEPAR || next_token.kind == SEMICOLON) {
+            getNextToken();
+        }
+        if(next_token.kind == EOF || next_token.kind == SEMICOLON) {
+            return;
+        }
     }
-     Statement()
+    Statement()
 
     /*END OF WHILE STATEMENT*/
 
@@ -199,9 +216,7 @@ void StatementAux():{}
 void StatementAux2():{}
 {
     [StatementAux() <EQUAL> Expression()] <SEMICOLON> |
-    <IDENTIFIER> <SEMICOLON> //para que serve esta linha?
-    
-    //ALTEREI AQUI!!
+    <IDENTIFIER> <SEMICOLON>
     | <DOT> ExpressionAuxDot() <SEMICOLON>
 }
 

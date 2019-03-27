@@ -1,0 +1,14 @@
+class test {
+    public static void main(String[] args){
+        while(a< 
+            a;
+            while(a< {
+                while(a<) {
+                    while(a<2 {
+                        a;
+                    }
+                }
+            }
+        }
+    }
+}
