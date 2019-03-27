@@ -1,5 +1,5 @@
 class Fac {
-    public int ComputeFac(int num){
+    public int ComputeFac(int num, boolean attr){
         int num_aux; 
 /*ola
 sgfuycdbsj*/

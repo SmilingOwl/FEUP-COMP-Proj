@@ -115,6 +115,14 @@ void IntegerLiteral(): {}
     | <DECIMAL>
     | <SUB> <DECIMAL>
 }
+
+void Identifier():{Token t;}{
+    t=<IDENTIFIER>
+    {
+        jjtThis.setName(t.image);
+    }
+
+}
 // UTILS - END
 
 
@@ -125,23 +133,23 @@ SimpleNode Program(): {}
     ClassDeclaration()  { return jjtThis; }// código Java entre chavetas
 }
 
-void ClassDeclaration(): {} 
+void ClassDeclaration(): {Token t;} 
 {
-    <CLASS> <IDENTIFIER> [<EXTENDS> <IDENTIFIER>] <OPENBRACK> (VarDeclaration())* MainMethodDeclaration() <CLOSEBRACK>
+    <CLASS> t=<IDENTIFIER>{jjtThis.setName(t.image);} [<EXTENDS> Identifier()] <OPENBRACK> (VarDeclaration())* MainMethodDeclaration() <CLOSEBRACK>
 }
 // PROGRAM/CLASS DECLARATION - END
 
 
 
 // VAR DECLARATION - START
-void VarDeclaration() #VarDecl :{}
+void VarDeclaration():{Token t;}
 {
-    Type() <IDENTIFIER> <SEMICOLON> //TODO: Show identifier
+    Type() t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON> //TODO: Show identifier
 }
 
-void VarDeclarationWoIdent() #VarDecl :{}
+void VarDeclarationWoIdent():{Token t;}
 {
-    TypeWoIdent() <IDENTIFIER> <SEMICOLON> //TODO: Show identifier
+    TypeWoIdent() t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON> //TODO: Show identifier
 }
 // VAR DECLARATION - END
 
@@ -155,12 +163,12 @@ void MainMethodDeclaration() #void :{}
 
 void MainDeclaration():{} 
 {
-    <STATIC> <VOID> <MAIN> <OPENPAR> <STRING> <OPENSQBRACK> <CLOSESQBRACK> <IDENTIFIER> <CLOSEPAR> <OPENBRACK> MainMethodBody() <CLOSEBRACK> 
+    <STATIC> <VOID> <MAIN> <OPENPAR> <STRING> <OPENSQBRACK> <CLOSESQBRACK> Identifier() <CLOSEPAR> <OPENBRACK> MainMethodBody() <CLOSEBRACK> 
 }
 
-void MethodDeclaration():{} 
+void MethodDeclaration():{Token t;} 
 {
-    Type() #Return <IDENTIFIER> <OPENPAR> [Type() #Argument <IDENTIFIER> (<COMA> Type() <IDENTIFIER>)*] <CLOSEPAR> <OPENBRACK> MainMethodBody() <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
+    Type() t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> [Type() t=<IDENTIFIER>{jjtThis.pushArg(t.image);} (<COMA> Type() t=<IDENTIFIER>{jjtThis.pushArg(t.image);})*] <CLOSEPAR> <OPENBRACK> MainMethodBody() <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
 }
 
 void MainMethodBody() #Body :{}
@@ -168,7 +176,7 @@ void MainMethodBody() #Body :{}
     (InMethod())*
 }
 
-void InMethod() #void :{} 
+void InMethod():{} 
 {
     VarDeclarationWoIdent()
     | Statement()
@@ -178,11 +186,11 @@ void InMethod() #void :{}
 
 
 // TYPE - START
-void Type() #void:{}
+void Type() #void :{}
 {
-    <INT> #Int TypeAux()
-    | <BOOLEAN> #Boolean
-    | <IDENTIFIER> #Indentifier//TODO por valor do identifier
+    <INT> TypeAux()
+    | <BOOLEAN> 
+    | Identifier()
 }
 
 void TypeAux() #void :{}
@@ -192,8 +200,8 @@ void TypeAux() #void :{}
 
 void TypeWoIdent() #void :{}
 {
-    <INT> #Int TypeAux()
-    | <BOOLEAN> #Boolean
+    <INT> TypeAux()
+    | <BOOLEAN>
 }
 // TYPE - END
 
@@ -241,18 +249,18 @@ void Statement():{}
     /*END OF WHILE STATEMENT*/
 
     | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER
-    | <IDENTIFIER> StatementAux2()
+    | Identifier() StatementAux2()
 }
 
-void StatementAux() #void :{}
+void StatementAux():{}
 {
     [ <OPENSQBRACK> Expression() <CLOSESQBRACK> ] 
 }
 
-void StatementAux2() #void :{}
+void StatementAux2():{}
 {
     [StatementAux() <EQUAL> Expression()] <SEMICOLON> |
-    <IDENTIFIER> <SEMICOLON>
+    Identifier() <SEMICOLON>
     | <DOT> ExpressionAuxDot() <SEMICOLON>
 }
 // STATEMENT - END
@@ -290,7 +298,7 @@ void ExpressionMinor():{} {
     ExpressionAdd() ExpressionMinorAux()
 }
 
-void ExpressionMinorAux() #void :{} {
+void ExpressionMinorAux():{} {
     <MINOR> ExpressionAdd() ExpressionMinorAux() 
     | Empty()
 }
@@ -299,7 +307,7 @@ void ExpressionAdd():{} {
     ExpressionMult() ExpressionAddAux()
 }
 
-void ExpressionAddAux() #void :{} {
+void ExpressionAddAux():{} {
     (<ADD> | <SUB>) ExpressionMult() ExpressionAddAux() 
     | Empty()
 }
@@ -308,7 +316,7 @@ void ExpressionMult():{} {
     ExpressionRestOfClauses() ExpressionMultAux()
 }
 
-void ExpressionMultAux() #void :{} {
+void ExpressionMultAux():{} {
     (<MULT> | <DIV>) ExpressionRestOfClauses() ExpressionMultAux() 
     | Empty()
 }
@@ -317,7 +325,7 @@ void ExpressionRestOfClauses():{} {
     ExpressionToken() ExpressionAux()
 }
 
-void ExpressionAux() #void :{}
+void ExpressionAux():{}
 {
     //(<SUB> | <AND> | <MINOR> | <ADD> | <MULT> | <DIV>) Expression() ExpressionAux()
     <DOT> ExpressionAuxDot()
@@ -325,10 +333,10 @@ void ExpressionAux() #void :{}
     | Empty()
 }
 
-void ExpressionAuxDot() #void :{}
+void ExpressionAuxDot():{}
 {
     <LENGTH> ExpressionAux()
-    | <IDENTIFIER> <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
+    | Identifier() <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
 }
 
 void ExpressionToken():{}
@@ -339,13 +347,13 @@ void ExpressionToken():{}
     | <NEW> ExpressionNew()
     | <NOT> Expression()
     | <OPENPAR> Expression() <CLOSEPAR>
-    | <IDENTIFIER>
+    | Identifier()
     | IntegerLiteral()
 }
 
 void ExpressionNew():{}
 {
     <INT> <OPENSQBRACK> Expression() <CLOSESQBRACK>
-    | <IDENTIFIER> <OPENPAR> <CLOSEPAR> 
+    | Identifier() <OPENPAR> <CLOSEPAR> 
 }
 // EXPRESSION - END
