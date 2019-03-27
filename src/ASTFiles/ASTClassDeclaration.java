@@ -3,6 +3,7 @@
 public
 class ASTClassDeclaration extends SimpleNode {
   private String name;
+  private String ext;
   
   public ASTClassDeclaration(int id) {
     super(id);
@@ -16,7 +17,14 @@ class ASTClassDeclaration extends SimpleNode {
     name = n;
   }
 
+  public void setExtends(String n) {
+    ext = n;
+  }
+
   public String toString() {
+    if(ext != null){
+      return "ClassDeclaration: " + name + " | Extends: " + ext;
+    }
     return "ClassDeclaration: " + name;
   }
 

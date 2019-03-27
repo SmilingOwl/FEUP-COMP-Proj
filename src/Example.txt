@@ -1,6 +1,10 @@
-class Fac {
+class Fac extends Something {
+    int global1; 
+    myClass myVar;
     public int ComputeFac(int num, boolean attr){
         int num_aux; 
+        myClass2 myVar2;
+
 /*ola
 sgfuycdbsj*/
         int[] num_array;
@@ -8,6 +12,16 @@ sgfuycdbsj*/
         num_array[0].a();
 
         num_aux = 3 + 6/3;
+
+        if(foo < 3){
+            t = 1;
+        }
+        else{
+            k = 1;
+        }
+        while(a < 1){
+            j = 1;
+        }
 
         int a;
         int b;

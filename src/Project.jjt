@@ -135,7 +135,7 @@ SimpleNode Program(): {}
 
 void ClassDeclaration(): {Token t;} 
 {
-    <CLASS> t=<IDENTIFIER>{jjtThis.setName(t.image);} [<EXTENDS> Identifier()] <OPENBRACK> (VarDeclaration())* MainMethodDeclaration() <CLOSEBRACK>
+    <CLASS> t=<IDENTIFIER>{jjtThis.setName(t.image);} [<EXTENDS> t=<IDENTIFIER>{jjtThis.setExtends(t.image);}] <OPENBRACK> (VarDeclaration())* MainMethodDeclaration() <CLOSEBRACK>
 }
 // PROGRAM/CLASS DECLARATION - END
 
@@ -171,12 +171,12 @@ void MethodDeclaration():{Token t;}
     Type() t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> [Type() t=<IDENTIFIER>{jjtThis.pushArg(t.image);} (<COMA> Type() t=<IDENTIFIER>{jjtThis.pushArg(t.image);})*] <CLOSEPAR> <OPENBRACK> MainMethodBody() <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
 }
 
-void MainMethodBody() #Body :{}
+void MainMethodBody() #void :{}
 {
     (InMethod())*
 }
 
-void InMethod():{} 
+void InMethod() #void :{} 
 {
     VarDeclarationWoIdent()
     | Statement()
@@ -190,7 +190,7 @@ void Type() #void :{}
 {
     <INT> TypeAux()
     | <BOOLEAN> 
-    | Identifier()
+    | <IDENTIFIER>
 }
 
 void TypeAux() #void :{}
@@ -208,7 +208,7 @@ void TypeWoIdent() #void :{}
 
 
 // STATEMENT - START
-void Statement():{} 
+void Statement() #void :{} 
 {
     <OPENBRACK> (Statement())* <CLOSEBRACK>
     | <IF> <OPENPAR> Expression() <CLOSEPAR> Statement() <ELSE> Statement()
@@ -249,35 +249,16 @@ void Statement():{}
     /*END OF WHILE STATEMENT*/
 
     | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER
-    | Identifier() StatementAux2()
+    | <IDENTIFIER> StatementAux2()
 }
 
-void StatementAux():{}
+void StatementAux2():{Token t;}
 {
-    [ <OPENSQBRACK> Expression() <CLOSESQBRACK> ] 
+    t=<EQUAL>{jjtThis.setOperation(t.image);} Expression() <SEMICOLON>
+    | t=<DOT>{jjtThis.setOperation(t.image);} ExpressionAuxDot() <SEMICOLON>
+    | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
+    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [<EQUAL> Expression()] ExpressionAux() <SEMICOLON>
 }
-
-void StatementAux2():{}
-{
-    <EQUAL> Expression() <SEMICOLON>
-    | <DOT> ExpressionAuxDot() <SEMICOLON>
-    | <OPENSQBRACK> Expression() <CLOSESQBRACK> [<EQUAL> Expression()] ExpressionAux() <SEMICOLON>
-}
-/*
-void StatementAuxMinor() :{} {
-    <MINOR> StatementAuxAdd() 
-    | StatementAuxAdd()
-}
-
-void StatementAuxAdd() :{} {
-    (<ADD> | <SUB>) StatementAuxMult()
-    | StatementAuxMult()
-}
-
-void StatementAuxMult() :{} {
-    (<MULT> | <DIV>) Expression()
-    | Expression() StatementAux2()
-}*/
 // STATEMENT - END
 
 
