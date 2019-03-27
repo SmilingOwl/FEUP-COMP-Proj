@@ -259,10 +259,25 @@ void StatementAux():{}
 
 void StatementAux2():{}
 {
-    [StatementAux() <EQUAL> Expression()] <SEMICOLON> |
-    Identifier() <SEMICOLON>
+    <EQUAL> Expression() <SEMICOLON>
     | <DOT> ExpressionAuxDot() <SEMICOLON>
+    | <OPENSQBRACK> Expression() <CLOSESQBRACK> [<EQUAL> Expression()] ExpressionAux() <SEMICOLON>
 }
+/*
+void StatementAuxMinor() :{} {
+    <MINOR> StatementAuxAdd() 
+    | StatementAuxAdd()
+}
+
+void StatementAuxAdd() :{} {
+    (<ADD> | <SUB>) StatementAuxMult()
+    | StatementAuxMult()
+}
+
+void StatementAuxMult() :{} {
+    (<MULT> | <DIV>) Expression()
+    | Expression() StatementAux2()
+}*/
 // STATEMENT - END
 
 
