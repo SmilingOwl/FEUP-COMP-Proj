@@ -263,21 +263,6 @@ void StatementAux2():{}
     | <DOT> ExpressionAuxDot() <SEMICOLON>
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> [<EQUAL> Expression()] ExpressionAux() <SEMICOLON>
 }
-/*
-void StatementAuxMinor() :{} {
-    <MINOR> StatementAuxAdd() 
-    | StatementAuxAdd()
-}
-
-void StatementAuxAdd() :{} {
-    (<ADD> | <SUB>) StatementAuxMult()
-    | StatementAuxMult()
-}
-
-void StatementAuxMult() :{} {
-    (<MULT> | <DIV>) Expression()
-    | Expression() StatementAux2()
-}*/
 // STATEMENT - END
 
 
@@ -304,8 +289,8 @@ void Expression():{}
     ExpressionMinor() ExpressionAnd()
 }
 
-void ExpressionAnd():{} {
-    <AND> ExpressionMinor() ExpressionAnd()
+void ExpressionAnd():{Token t;} {
+    t=<AND>{jjtThis.setName(t.image);} ExpressionMinor() ExpressionAnd()
     | Empty()
 }
 
@@ -313,8 +298,8 @@ void ExpressionMinor():{} {
     ExpressionAdd() ExpressionMinorAux()
 }
 
-void ExpressionMinorAux():{} {
-    <MINOR> ExpressionAdd() ExpressionMinorAux() 
+void ExpressionMinorAux():{Token t;} {
+    t=<MINOR>{jjtThis.setName(t.image);} ExpressionAdd() ExpressionMinorAux() 
     | Empty()
 }
 
@@ -322,8 +307,8 @@ void ExpressionAdd():{} {
     ExpressionMult() ExpressionAddAux()
 }
 
-void ExpressionAddAux():{} {
-    (<ADD> | <SUB>) ExpressionMult() ExpressionAddAux() 
+void ExpressionAddAux():{Token t;} {
+    (t=<ADD>{jjtThis.setName(t.image);}| t=<SUB>{jjtThis.setName(t.image);}) ExpressionMult() ExpressionAddAux() 
     | Empty()
 }
 
@@ -331,8 +316,8 @@ void ExpressionMult():{} {
     ExpressionRestOfClauses() ExpressionMultAux()
 }
 
-void ExpressionMultAux():{} {
-    (<MULT> | <DIV>) ExpressionRestOfClauses() ExpressionMultAux() 
+void ExpressionMultAux():{Token t;} {
+    (t=<MULT>{jjtThis.setName(t.image);} | t=<DIV>{jjtThis.setName(t.image);}) ExpressionRestOfClauses() ExpressionMultAux() 
     | Empty()
 }
 
@@ -342,22 +327,21 @@ void ExpressionRestOfClauses():{} {
 
 void ExpressionAux():{}
 {
-    //(<SUB> | <AND> | <MINOR> | <ADD> | <MULT> | <DIV>) Expression() ExpressionAux()
     <DOT> ExpressionAuxDot()
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
     | Empty()
 }
 
-void ExpressionAuxDot():{}
+void ExpressionAuxDot():{Token t;}
 {
-    <LENGTH> ExpressionAux()
+    t=<LENGTH>{jjtThis.setName(t.image);}  ExpressionAux()
     | Identifier() <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
 }
 
-void ExpressionToken():{}
+void ExpressionToken():{Token t;}
 {
-    <TRUE>
-    | <FALSE>
+    t=<TRUE>{jjtThis.setName(t.image);}
+    | t=<FALSE>{jjtThis.setName(t.image);}
     | <THIS>
     | <NEW> ExpressionNew()
     | <NOT> Expression()
