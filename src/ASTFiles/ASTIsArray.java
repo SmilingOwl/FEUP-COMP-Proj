@@ -10,5 +10,9 @@ class ASTIsArray extends SimpleNode {
     super(p, id);
   }
 
+  public String toString() {
+    return "";
+  }
+
 }
 /* JavaCC - OriginalChecksum=faf2725379f27f86d9f10beef308a596 (do not edit this line) */

@@ -20,7 +20,7 @@ class ASTExpressionNew extends SimpleNode {
     if(name == null)
       return "";
     if(name.equals("int"))
-      return "int array ";
+      return "int array \n";
     return "";
   }
 

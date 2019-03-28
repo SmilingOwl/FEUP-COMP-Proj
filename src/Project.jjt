@@ -286,7 +286,7 @@ void Expression() #void :{}
 }
 
 void ExpressionAnd():{Token t;} {
-    t=<AND>{jjtThis.setName(t.image);} ExpressionMinor() ExpressionAnd()
+    t=<AND>{jjtThis.setOp(t.image);} ExpressionMinor() ExpressionAnd()
     | Empty()
 }
 
@@ -295,7 +295,7 @@ void ExpressionMinor() #void :{} {
 }
 
 void ExpressionMinorAux():{Token t;} {
-    t=<MINOR>{jjtThis.setName(t.image);} ExpressionAdd() ExpressionMinorAux() 
+    t=<MINOR>{jjtThis.setOp(t.image);} ExpressionAdd() ExpressionMinorAux() 
     | Empty()
 }
 
@@ -304,7 +304,7 @@ void ExpressionAdd() #void :{} {
 }
 
 void ExpressionAddAux():{Token t;} {
-    (t=<ADD>{jjtThis.setName(t.image);}| t=<SUB>{jjtThis.setName(t.image);}) ExpressionMult() ExpressionAddAux() 
+    (t=<ADD>{jjtThis.setOp(t.image);}| t=<SUB>{jjtThis.setOp(t.image);}) ExpressionMult() ExpressionAddAux() 
     | Empty()
 }
 
@@ -313,7 +313,7 @@ void ExpressionMult() #void :{} {
 }
 
 void ExpressionMultAux():{Token t;} {
-    (t=<MULT>{jjtThis.setName(t.image);} | t=<DIV>{jjtThis.setName(t.image);}) ExpressionRestOfClauses() ExpressionMultAux() 
+    (t=<MULT>{jjtThis.setOp(t.image);} | t=<DIV>{jjtThis.setOp(t.image);}) ExpressionRestOfClauses() ExpressionMultAux() 
     | Empty()
 }
 
@@ -331,7 +331,7 @@ void ExpressionAux() #void:{}
 void ExpressionAuxDot():{Token t;}
 {
     t=<LENGTH>{jjtThis.setName(t.image);} ExpressionAux()
-    | Identifier() <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
+    | t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
 }
 
 void ExpressionToken():{Token t;}

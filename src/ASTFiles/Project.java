@@ -828,7 +828,7 @@ if (jjtc000) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case AND:{
         t = jj_consume_token(AND);
-jjtn000.setName(t.image);
+jjtn000.setOp(t.image);
         ExpressionMinor();
         ExpressionAnd();
         break;
@@ -871,7 +871,7 @@ if (jjtc000) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MINOR:{
         t = jj_consume_token(MINOR);
-jjtn000.setName(t.image);
+jjtn000.setOp(t.image);
         ExpressionAdd();
         ExpressionMinorAux();
         break;
@@ -917,12 +917,12 @@ if (jjtc000) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case ADD:{
           t = jj_consume_token(ADD);
-jjtn000.setName(t.image);
+jjtn000.setOp(t.image);
           break;
           }
         case SUB:{
           t = jj_consume_token(SUB);
-jjtn000.setName(t.image);
+jjtn000.setOp(t.image);
           break;
           }
         default:
@@ -975,12 +975,12 @@ if (jjtc000) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case MULT:{
           t = jj_consume_token(MULT);
-jjtn000.setName(t.image);
+jjtn000.setOp(t.image);
           break;
           }
         case DIV:{
           t = jj_consume_token(DIV);
-jjtn000.setName(t.image);
+jjtn000.setOp(t.image);
           break;
           }
         default:
@@ -1055,7 +1055,8 @@ jjtn000.setName(t.image);
         break;
         }
       case IDENTIFIER:{
-        Identifier();
+        t = jj_consume_token(IDENTIFIER);
+jjtn000.setName(t.image);
         jj_consume_token(OPENPAR);
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case THIS:

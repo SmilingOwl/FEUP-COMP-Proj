@@ -3,6 +3,8 @@
 public
 class ASTIntegerLiteral extends SimpleNode {
   private String name;
+  private int value;
+
   public ASTIntegerLiteral(int id) {
     super(id);
   }
@@ -16,7 +18,7 @@ class ASTIntegerLiteral extends SimpleNode {
   }
 
   public String toString() {
-    return "Integer Literal: " + name;
+    return "Integer Literal: " + name + "\n";
   }
 }
 /* JavaCC - OriginalChecksum=0e30c57416b634d965fb444985d35f79 (do not edit this line) */

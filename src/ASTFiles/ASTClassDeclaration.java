@@ -23,9 +23,9 @@ class ASTClassDeclaration extends SimpleNode {
 
   public String toString() {
     if(ext != null){
-      return "ClassDeclaration: " + name + " | Extends: " + ext;
+      return "ClassDeclaration: " + name + " | Extends: " + ext + "\n";
     }
-    return "ClassDeclaration: " + name;
+    return "ClassDeclaration: " + name + "\n";
   }
 
 }

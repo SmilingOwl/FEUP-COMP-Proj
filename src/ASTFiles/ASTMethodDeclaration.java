@@ -33,7 +33,7 @@ class ASTMethodDeclaration extends SimpleNode {
       else
         retArgs += (", " + args.get(i));
     }
-    return "MethodDeclaration: " + name + "() | Arguments:" + retArgs;
+    return "MethodDeclaration: " + name + "() | Arguments:" + retArgs + "\n";
   }
 
 }

@@ -17,7 +17,7 @@ class ASTVarDeclarationWoIdent extends SimpleNode {
   }
 
   public String toString() {
-    return "VarDeclaration: " + name;
+    return "VarDeclaration: " + name + "\n";
   }
 
 }

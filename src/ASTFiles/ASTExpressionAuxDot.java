@@ -17,7 +17,10 @@ class ASTExpressionAuxDot extends SimpleNode {
   }
 
   public String toString() {
-    return name;
+    if(name.equals("length"))
+      return name + "\n";
+    else
+      return name + "()\n";
   }
 }
 /* JavaCC - OriginalChecksum=f6a98dc84b7129651a430ef3043df81f (do not edit this line) */
