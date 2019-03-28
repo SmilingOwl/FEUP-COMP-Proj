@@ -10,5 +10,8 @@ class ASTExpression extends SimpleNode {
     super(p, id);
   }
 
+  public String toString() {
+    return "\n";
+  }
 }
 /* JavaCC - OriginalChecksum=a17cf35d1d2d8f58c455de1787aed92a (do not edit this line) */

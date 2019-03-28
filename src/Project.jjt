@@ -280,7 +280,7 @@ void ExpressionTokenWoIdent():{Token t;}
     | IntegerLiteral()
 }
 
-void Expression() #void :{}
+void Expression():{}
 {
     ExpressionMinor() ExpressionAnd()
 }

@@ -19,7 +19,7 @@ class ASTExpressionMinorAux extends SimpleNode {
   public String toString() {
     if(op == null)
       return "";
-    return "Operation: " + op  + "\n";
+    return "Operation: " + op;
   }
 }
 /* JavaCC - OriginalChecksum=5c2afa931c1381ddad191dfc5f7f8399 (do not edit this line) */

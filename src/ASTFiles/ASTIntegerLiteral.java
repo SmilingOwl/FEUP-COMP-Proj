@@ -18,7 +18,7 @@ class ASTIntegerLiteral extends SimpleNode {
   }
 
   public String toString() {
-    return "Integer Literal: " + name + "\n";
+    return "Integer Literal: " + name;
   }
 }
 /* JavaCC - OriginalChecksum=0e30c57416b634d965fb444985d35f79 (do not edit this line) */

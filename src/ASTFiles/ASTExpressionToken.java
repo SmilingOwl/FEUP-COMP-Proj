@@ -19,7 +19,7 @@ class ASTExpressionToken extends SimpleNode {
   public String toString() {
     if(name == null)
       return "";
-    return name + "\n";
+    return name;
   }
 }
 /* JavaCC - OriginalChecksum=d3acc0df314cdda7f1d72bebc9d08c6c (do not edit this line) */

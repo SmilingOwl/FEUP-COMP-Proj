@@ -19,7 +19,7 @@ class ASTExpressionMultAux extends SimpleNode {
   public String toString() {
     if(op == null)
       return "";
-    return "Operation: " + op + "\n";
+    return "Operation: " + op;
   }
 }
 /* JavaCC - OriginalChecksum=352e30bd2df3cdbb73e4b8acca6b6de3 (do not edit this line) */

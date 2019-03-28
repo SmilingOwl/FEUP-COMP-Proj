@@ -19,7 +19,7 @@ class ASTExpressionTokenWoIdent extends SimpleNode {
   public String toString() {
     if(name == null)
       return "";
-    return name + "\n";
+    return name;
   }
 }
 /* JavaCC - OriginalChecksum=5f032298520bd93ab3c1dc738fac158b (do not edit this line) */

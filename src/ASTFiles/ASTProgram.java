@@ -11,7 +11,7 @@ class ASTProgram extends SimpleNode {
   }
 
   public String toString() {
-    return "Program\n";
+    return "Program";
   }
 }
 /* JavaCC - OriginalChecksum=597ba62e875377e24747e87ea4125447 (do not edit this line) */

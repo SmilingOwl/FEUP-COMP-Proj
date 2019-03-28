@@ -19,7 +19,7 @@ class ASTExpressionAddAux extends SimpleNode {
   public String toString() {
     if(op == null)
       return "";
-    return "Operation: " + op + "\n";
+    return "Operation: " + op;
   }
 }
 /* JavaCC - OriginalChecksum=2a96d9500bc52c0937a2f4904c5e029a (do not edit this line) */

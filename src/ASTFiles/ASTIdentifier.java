@@ -17,7 +17,7 @@ class ASTIdentifier extends SimpleNode {
   }
 
   public String toString() {
-    return "Identifier: " + name + "\n";
+    return "Identifier: " + name;
   }
 
 }

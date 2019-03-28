@@ -23,7 +23,7 @@ class ASTStatementAux2 extends SimpleNode {
 
   public String toString() {
     if(name != null){
-      return "VarDeclaration: " + name + "\n";
+      return "VarDeclaration: " + name;
     }
 
     if(operation == "="){
@@ -35,7 +35,7 @@ class ASTStatementAux2 extends SimpleNode {
     else if(operation == "["){
       return "";
     }
-    return "ERROR STATEMENT!\n";
+    return "ERROR STATEMENT!";
   }
 
 }

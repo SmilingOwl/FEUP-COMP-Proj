@@ -815,9 +815,32 @@ if (jjtc000) {
     }
   }
 
-  static final public void Expression() throws ParseException {
-    ExpressionMinor();
-    ExpressionAnd();
+  static final public void Expression() throws ParseException {/*@bgen(jjtree) Expression */
+  ASTExpression jjtn000 = new ASTExpression(JJTEXPRESSION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      ExpressionMinor();
+      ExpressionAnd();
+    } catch (Throwable jjte000) {
+if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
   }
 
   static final public void ExpressionAnd() throws ParseException {/*@bgen(jjtree) ExpressionAnd */
