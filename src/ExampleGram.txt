@@ -1,0 +1,25 @@
+class Fac {
+    public int ComputeFac(boolean parameter, int[] ahpois){
+        int xerox;
+        int quero20pf;
+        int[] bytebufferAsVezes;
+        
+        a[5.Identifier()] = 33 - 33;
+        
+        a = 35 * 4;
+        10 < 12;
+        while (i.length < 10) {
+            a[i] = 15;
+        }
+        a[3] = 5 && 3;
+        1 + 33333 * 4 < 5 && 1 < Array.length && !false;
+        a = 30 * 1;
+        a[true / false] = b + this.yap(!true);
+
+        return num_aux;
+    }
+    public static void main(String[] a){
+        io.println(new Fac().ComputeFac(1, 2).length);
+        this.ComputeFac(2 * 5 && false);
+    }
+}
