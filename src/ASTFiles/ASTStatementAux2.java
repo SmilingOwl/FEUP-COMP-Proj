@@ -25,15 +25,16 @@ class ASTStatementAux2 extends SimpleNode {
     if(name != null){
       return "VarDeclaration: " + name;
     }
-
-    if(operation == "="){
+    if(operation == null)
+      return "";
+    if(operation.equals("=")){
+      return "Assign: =";
+    }
+    else if(operation.equals(".")){
       return "";
     }
-    else if(operation == "."){
-      return "";
-    }
-    else if(operation == "["){
-      return "";
+    else if(operation.equals("[")){
+      return "Accessing array at:";
     }
     return "ERROR STATEMENT!";
   }

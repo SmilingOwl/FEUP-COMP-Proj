@@ -249,15 +249,20 @@ void Statement() #void :{}
     /*END OF WHILE STATEMENT*/
 
     | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER
-    | <IDENTIFIER> StatementAux2()
+    | Identifier() StatementAux2()
 }
 
-void StatementAux2():{Token t;}
+void StatementAux1():{Token t;}
 {
-    t=<EQUAL>{jjtThis.setOperation(t.image);} Expression() <SEMICOLON>
+    t=<EQUAL>{jjtThis.setOperation(t.image);} Expression()
+}
+
+void StatementAux2():{Token t, z;}
+{
+    StatementAux1() <SEMICOLON>
     | t=<DOT>{jjtThis.setOperation(t.image);} ExpressionAuxDot() <SEMICOLON>
     | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
-    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [<EQUAL> Expression()] ExpressionAux() <SEMICOLON>
+    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [StatementAux1()] ExpressionAux() <SEMICOLON>
 }
 // STATEMENT - END
 

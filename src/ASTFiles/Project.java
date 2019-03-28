@@ -644,7 +644,7 @@ errors.add(e);
       break;
       }
     case IDENTIFIER:{
-      jj_consume_token(IDENTIFIER);
+      Identifier();
       StatementAux2();
       break;
       }
@@ -655,16 +655,43 @@ errors.add(e);
     }
   }
 
-  static final public void StatementAux2() throws ParseException {/*@bgen(jjtree) StatementAux2 */
-                      ASTStatementAux2 jjtn000 = new ASTStatementAux2(JJTSTATEMENTAUX2);
+  static final public void StatementAux1() throws ParseException {/*@bgen(jjtree) StatementAux1 */
+                      ASTStatementAux1 jjtn000 = new ASTStatementAux1(JJTSTATEMENTAUX1);
                       boolean jjtc000 = true;
                       jjtree.openNodeScope(jjtn000);Token t;
     try {
+      t = jj_consume_token(EQUAL);
+jjtn000.setOperation(t.image);
+      Expression();
+    } catch (Throwable jjte000) {
+if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+  }
+
+  static final public void StatementAux2() throws ParseException {/*@bgen(jjtree) StatementAux2 */
+                      ASTStatementAux2 jjtn000 = new ASTStatementAux2(JJTSTATEMENTAUX2);
+                      boolean jjtc000 = true;
+                      jjtree.openNodeScope(jjtn000);Token t, z;
+    try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case EQUAL:{
-        t = jj_consume_token(EQUAL);
-jjtn000.setOperation(t.image);
-        Expression();
+        StatementAux1();
         jj_consume_token(SEMICOLON);
         break;
         }
@@ -688,8 +715,7 @@ jjtn000.setOperation(t.image);
         jj_consume_token(CLOSESQBRACK);
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case EQUAL:{
-          jj_consume_token(EQUAL);
-          Expression();
+          StatementAux1();
           break;
           }
         default:

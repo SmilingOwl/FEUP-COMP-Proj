@@ -11,16 +11,17 @@ public interface ProjectTreeConstants
   public int JJTMAINDECLARATION = 7;
   public int JJTMETHODDECLARATION = 8;
   public int JJTISARRAY = 9;
-  public int JJTSTATEMENTAUX2 = 10;
-  public int JJTEXPRESSIONTOKENWOIDENT = 11;
-  public int JJTEXPRESSION = 12;
-  public int JJTEXPRESSIONAND = 13;
-  public int JJTEXPRESSIONMINORAUX = 14;
-  public int JJTEXPRESSIONADDAUX = 15;
-  public int JJTEXPRESSIONMULTAUX = 16;
-  public int JJTEXPRESSIONAUXDOT = 17;
-  public int JJTEXPRESSIONTOKEN = 18;
-  public int JJTEXPRESSIONNEW = 19;
+  public int JJTSTATEMENTAUX1 = 10;
+  public int JJTSTATEMENTAUX2 = 11;
+  public int JJTEXPRESSIONTOKENWOIDENT = 12;
+  public int JJTEXPRESSION = 13;
+  public int JJTEXPRESSIONAND = 14;
+  public int JJTEXPRESSIONMINORAUX = 15;
+  public int JJTEXPRESSIONADDAUX = 16;
+  public int JJTEXPRESSIONMULTAUX = 17;
+  public int JJTEXPRESSIONAUXDOT = 18;
+  public int JJTEXPRESSIONTOKEN = 19;
+  public int JJTEXPRESSIONNEW = 20;
 
 
   public String[] jjtNodeName = {
@@ -34,6 +35,7 @@ public interface ProjectTreeConstants
     "MainDeclaration",
     "MethodDeclaration",
     "IsArray",
+    "StatementAux1",
     "StatementAux2",
     "ExpressionTokenWoIdent",
     "Expression",
@@ -46,4 +48,4 @@ public interface ProjectTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=fa0767dddf078eb47110e7180f82d6af (do not edit this line) */
+/* JavaCC - OriginalChecksum=c04ea066856029a01369b4d45ae03f26 (do not edit this line) */
