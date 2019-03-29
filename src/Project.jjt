@@ -40,7 +40,7 @@ public class Project
                 }
             } else 
                 root.dump("");// imprime no ecrã a árvore
-        } catch (ParseException e) {
+       } catch (ParseException e) {
             System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);
             System.out.println("\n\n" + e);
         }
@@ -352,7 +352,7 @@ void ExpressionAux() #void :{Token t;}
 void ExpressionAuxDot():{Token t;}
 {
     t=<LENGTH>{jjtThis.setName(t.image);} ExpressionAux()
-    | t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR>
+    | t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> [Expression() (<COMA> Expression())*] <CLOSEPAR> ExpressionAux()
 }
 
 void ExpressionToken():{Token t;}

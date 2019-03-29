@@ -31,7 +31,7 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
                 }
             } else
                 root.dump("");// imprime no ecrã a árvore
-        } catch (ParseException e) {
+       } catch (ParseException e) {
             System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);
             System.out.println("\u005cn\u005cn" + e);
         }
@@ -1209,6 +1209,7 @@ jjtn000.setName(t.image);
           ;
         }
         jj_consume_token(CLOSEPAR);
+        ExpressionAux();
         break;
         }
       default:
