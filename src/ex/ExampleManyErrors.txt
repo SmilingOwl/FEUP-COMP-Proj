@@ -8,7 +8,7 @@ class test {
                             while(a+<2){
                                 while(a<){
                                     while(a<{
-                                        while(a+<2){
+                                        while(a+<2{
                                             while(a<){
                                                 while(a<){
                                                     while(a+<2){

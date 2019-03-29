@@ -1,11 +1,11 @@
 class test {
     public static void main(String[] args){
-        while(a<2) {
+        while(a<2 {
             a = 0;
-            while(a<2) {
-                while(a<2) {
+            while(a<2) 
+                while(a<2 {
                     while(a<2) {
-                        a =1;
+                        a = 1;
                     }
                 }
             }
