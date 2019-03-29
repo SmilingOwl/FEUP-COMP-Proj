@@ -21,8 +21,8 @@ public interface ProjectTreeConstants
   public int JJTIFBODY = 17;
   public int JJTELSEBODY = 18;
   public int JJTIFELSESTATEMENT = 19;
-  public int JJTWHILEBODY = 20;
-  public int JJTWHILESTATEMENT = 21;
+  public int JJTWHILESTATEMENT = 20;
+  public int JJTWHILEBODY = 21;
   public int JJTSTATEMENTSTARTIDENT = 22;
   public int JJTAND = 23;
   public int JJTMINOR = 24;
@@ -62,8 +62,8 @@ public interface ProjectTreeConstants
     "IfBody",
     "ElseBody",
     "IfElseStatement",
-    "WhileBody",
     "WhileStatement",
+    "WhileBody",
     "StatementStartIdent",
     "AND",
     "MINOR",
@@ -82,4 +82,4 @@ public interface ProjectTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=7fb818cda24306e1219ce8b05dc3a52c (do not edit this line) */
+/* JavaCC - OriginalChecksum=947cd4681697d5c039fb2c29c4d9fa04 (do not edit this line) */

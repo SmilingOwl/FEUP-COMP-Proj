@@ -23,10 +23,7 @@ public class Project
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); ){
-                    System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred after" 
-                        + " Line:" + myCalc.errors.get(i).currentToken.beginLine 
-                        + ", Column:" + myCalc.errors.get(i).currentToken.beginColumn);
-                    System.out.println("\n\n" + myCalc.errors.get(i));
+                    System.out.println("\n" + myCalc.errors.get(i));
                         i++;
                         if(i >= MAX_ERRORS){
                             int remErrors = (myCalc.errors.size()-i);
@@ -216,10 +213,13 @@ void Statement() #void :{}
 {
     <OPENBRACK> (Statement())* <CLOSEBRACK>
     | (<IF> <OPENPAR> (Expression() #Condition) <CLOSEPAR> (Statement() #IfBody) <ELSE> (Statement() #ElseBody) #IfElseStatement(3))
-    
-    /*BEGINNING OF WHILE STATEMENT*/
+    | WhileStatement()
+    | ExpressionWoIdent() <SEMICOLON> 
+    | StatementStartIdent()
+}
 
-    | (<WHILE> <OPENPAR> 
+void WhileStatement():{} {
+    <WHILE> <OPENPAR> 
     try {
         (Expression() #Condition) <CLOSEPAR>
     }
@@ -248,12 +248,7 @@ void Statement() #void :{}
             return;
         }
     } 
-    (Statement() #WhileBody) #WhileStatement(2))
-
-    /*END OF WHILE STATEMENT*/
-
-    | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER
-    | StatementStartIdent()
+    (Statement() #WhileBody)
 }
 
 void StatementStartIdent():{Token t=null;}
