@@ -142,14 +142,14 @@ void ClassDeclaration(): {Token t;}
 
 
 // VAR DECLARATION - START
-void VarDeclaration():{Token t;}
+void VarDeclaration():{}
 {
-    Type() t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON> //TODO: Show identifier
+    Type() Identifier() <SEMICOLON> //TODO: Show identifier
 }
 
 void VarDeclarationWoIdent():{Token t;}
 {
-    TypeWoIdent() t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON> //TODO: Show identifier
+    TypeWoIdent() Identifier() <SEMICOLON> //TODO: Show identifier
 }
 // VAR DECLARATION - END
 
@@ -168,10 +168,14 @@ void MainDeclaration():{Token t;}
 
 void MethodDeclaration():{Token t;} 
 {
-    Type() t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> [Type() t=<IDENTIFIER>{jjtThis.pushArg(t.image);} (<COMA> Type() t=<IDENTIFIER>{jjtThis.pushArg(t.image);})*] <CLOSEPAR> <OPENBRACK> MainMethodBody() <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
+    (Type() #Return) t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> MethodArgs() <CLOSEPAR> <OPENBRACK> MainMethodBody() <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
 }
 
-void MainMethodBody() #void :{}
+void MethodArgs():{Token t;}{
+    [(Type() Identifier() #Argument(2)) (<COMA> (Type() Identifier() #Argument(2)))*]
+}
+
+void MainMethodBody():{}
 {
     (InMethod())*
 }
@@ -186,22 +190,22 @@ void InMethod() #void :{}
 
 
 // TYPE - START
-void Type() #void :{}
+void Type():{Token t;}
 {
-    <INT> TypeAux()
-    | <BOOLEAN> 
-    | <IDENTIFIER>
+    t=<INT>{jjtThis.setName(t.image);} TypeAux()
+    | t=<BOOLEAN>{jjtThis.setName(t.image);}
+    | t=<IDENTIFIER>{jjtThis.setName(t.image);}
 }
 
-void TypeAux() #void :{}
+void TypeAux() #void:{}
 {
-    [<OPENSQBRACK> <CLOSESQBRACK> #IsArray]
+    ([<OPENSQBRACK> <CLOSESQBRACK>]) #IsArray
 }
 
-void TypeWoIdent() #void :{}
+void TypeWoIdent():{Token t;}
 {
-    <INT> TypeAux()
-    | <BOOLEAN>
+    t=<INT>{jjtThis.setName(t.image);} TypeAux()
+    | t=<BOOLEAN>{jjtThis.setName(t.image);}
 }
 // TYPE - END
 
@@ -211,13 +215,13 @@ void TypeWoIdent() #void :{}
 void Statement() #void :{} 
 {
     <OPENBRACK> (Statement())* <CLOSEBRACK>
-    | (<IF> <OPENPAR> Expression() <CLOSEPAR>) #IfElseStatement Statement() <ELSE> Statement()
+    | (<IF> <OPENPAR> (Expression() #Condition) <CLOSEPAR> (Statement() #IfBody) <ELSE> (Statement() #ElseBody) #IfElseStatement(3))
     
     /*BEGINNING OF WHILE STATEMENT*/
 
     | (<WHILE> <OPENPAR> 
     try {
-        Expression() <CLOSEPAR>
+        (Expression() #Condition) <CLOSEPAR>
     }
     catch(ParseException e) {
         errors.add(e);
@@ -243,26 +247,36 @@ void Statement() #void :{}
         if(next_token.kind == EOF || next_token.kind == SEMICOLON) {
             return;
         }
-    }) #WhileStatement
-    Statement()
+    } 
+    (Statement() #WhileBody) #WhileStatement(2))
 
     /*END OF WHILE STATEMENT*/
 
     | ExpressionWoIdent() <SEMICOLON> //criar Expression2 com ExpressionToken2 de maneira a nao usar IDENTIFIER
-    | Identifier() StatementAux2()
+    | StatementStartIdent()
 }
 
-void StatementAux1():{Token t;}
+void StatementStartIdent():{Token t;}
 {
-    t=<EQUAL>{jjtThis.setOperation(t.image);} Expression()
+    (Identifier() t=StatementAux2(){jjtThis.isVarDecl(t.image);})
 }
 
-void StatementAux2():{Token t, z;}
+Token StatementAux1():{Token t;}
 {
-    StatementAux1() <SEMICOLON>
-    | t=<DOT>{jjtThis.setOperation(t.image);} ExpressionAuxDot() <SEMICOLON>
+    (t=<EQUAL>{jjtThis.setOperation(t.image);} Expression()){
+        return t;
+    }   
+}
+
+Token StatementAux2():{Token t;}
+{
+    (t = StatementAux1() <SEMICOLON>
+    | (t = <DOT> ExpressionAuxDot() #Acessing) <SEMICOLON>
     | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
-    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [StatementAux1()] ExpressionAux() <SEMICOLON>
+    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [StatementAux1()] ExpressionAux() <SEMICOLON>){
+        return t;
+    }
+    
 }
 // STATEMENT - END
 
@@ -344,7 +358,7 @@ void ExpressionRestOfClausesWoIdent() #void :{} {
 
 void ExpressionAux() #void :{Token t;}
 {
-    <DOT> ExpressionAuxDot()
+    (<DOT> ExpressionAuxDot() #Acessing)
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
     | Empty()
 }

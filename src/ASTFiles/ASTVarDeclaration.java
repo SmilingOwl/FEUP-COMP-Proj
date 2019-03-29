@@ -2,7 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTVarDeclaration extends SimpleNode {
-  private String name;
   
   public ASTVarDeclaration(int id) {
     super(id);
@@ -12,13 +11,10 @@ class ASTVarDeclaration extends SimpleNode {
     super(p, id);
   }
 
-  public void setName(String n) {
-    name = n;
-  }
-
   public String toString() {
-    return "VarDeclaration: " + name;
+    return "VarDeclaration ";
   }
+  
 
 }
 /* JavaCC - OriginalChecksum=cc87660a8ce3868dc08e5bb551e07e7b (do not edit this line) */

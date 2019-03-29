@@ -10,20 +10,32 @@ public interface ProjectTreeConstants
   public int JJTVARDECLARATIONWOIDENT = 6;
   public int JJTMAINDECLARATION = 7;
   public int JJTMETHODDECLARATION = 8;
-  public int JJTISARRAY = 9;
-  public int JJTIFELSESTATEMENT = 10;
-  public int JJTWHILESTATEMENT = 11;
-  public int JJTSTATEMENTAUX1 = 12;
-  public int JJTSTATEMENTAUX2 = 13;
-  public int JJTEXPRESSIONTOKENWOIDENT = 14;
-  public int JJTEXPRESSION = 15;
-  public int JJTEXPRESSIONAND = 16;
-  public int JJTEXPRESSIONMINORAUX = 17;
-  public int JJTEXPRESSIONADDAUX = 18;
-  public int JJTEXPRESSIONMULTAUX = 19;
-  public int JJTEXPRESSIONAUXDOT = 20;
-  public int JJTEXPRESSIONTOKEN = 21;
-  public int JJTEXPRESSIONNEW = 22;
+  public int JJTRETURN = 9;
+  public int JJTMETHODARGS = 10;
+  public int JJTARGUMENT = 11;
+  public int JJTMAINMETHODBODY = 12;
+  public int JJTTYPE = 13;
+  public int JJTISARRAY = 14;
+  public int JJTTYPEWOIDENT = 15;
+  public int JJTCONDITION = 16;
+  public int JJTIFBODY = 17;
+  public int JJTELSEBODY = 18;
+  public int JJTIFELSESTATEMENT = 19;
+  public int JJTWHILEBODY = 20;
+  public int JJTWHILESTATEMENT = 21;
+  public int JJTSTATEMENTSTARTIDENT = 22;
+  public int JJTSTATEMENTAUX1 = 23;
+  public int JJTSTATEMENTAUX2 = 24;
+  public int JJTACESSING = 25;
+  public int JJTEXPRESSIONTOKENWOIDENT = 26;
+  public int JJTEXPRESSION = 27;
+  public int JJTEXPRESSIONAND = 28;
+  public int JJTEXPRESSIONMINORAUX = 29;
+  public int JJTEXPRESSIONADDAUX = 30;
+  public int JJTEXPRESSIONMULTAUX = 31;
+  public int JJTEXPRESSIONAUXDOT = 32;
+  public int JJTEXPRESSIONTOKEN = 33;
+  public int JJTEXPRESSIONNEW = 34;
 
 
   public String[] jjtNodeName = {
@@ -36,11 +48,23 @@ public interface ProjectTreeConstants
     "VarDeclarationWoIdent",
     "MainDeclaration",
     "MethodDeclaration",
+    "Return",
+    "MethodArgs",
+    "Argument",
+    "MainMethodBody",
+    "Type",
     "IsArray",
+    "TypeWoIdent",
+    "Condition",
+    "IfBody",
+    "ElseBody",
     "IfElseStatement",
+    "WhileBody",
     "WhileStatement",
+    "StatementStartIdent",
     "StatementAux1",
     "StatementAux2",
+    "Acessing",
     "ExpressionTokenWoIdent",
     "Expression",
     "ExpressionAnd",
@@ -52,4 +76,4 @@ public interface ProjectTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=46b7365b2bb64d660621ab18e471ac71 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9cbb54809f415155bc5d59aedc96596b (do not edit this line) */

@@ -9,7 +9,7 @@ class Fac extends Something {
 sgfuycdbsj*/
         int[] num_array;
         num_array[2] = 0;
-        num_array[0].a();
+        num_array[0].a(num, attr);
 
         num_aux = 3 + 6 / 3;
         num_aux = 3 / 6 + 3;

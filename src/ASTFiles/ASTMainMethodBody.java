@@ -10,5 +10,9 @@ class ASTMainMethodBody extends SimpleNode {
     super(p, id);
   }
 
+  public String toString() {
+    return "Function Body";
+  }
+
 }
 /* JavaCC - OriginalChecksum=66752e7eb4df65d262f86d859c1ce1f6 (do not edit this line) */
