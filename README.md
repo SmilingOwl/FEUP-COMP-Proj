@@ -1,7 +1,7 @@
 # FEUP-COMP-Proj
 
 Para compilar o programa, entre na pasta src/ASTFiles e corra o script make.bat
-Para correr o programa já compilado, ainda na pasta src/ASTFiles corra: java Project < ../ex/<filename>
+Para correr o programa já compilado, ainda na pasta src/ASTFiles corra: java Project < ../ex/\<filename\>
 
 Na pasta src/ex deixamos 4 exemplos:
  - O Example.txt é um exemplo relativamente simples, sem erros
