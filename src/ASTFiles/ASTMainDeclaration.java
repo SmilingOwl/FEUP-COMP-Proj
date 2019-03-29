@@ -16,5 +16,9 @@ class ASTMainDeclaration extends SimpleNode {
     name = n;
   }
 
+  public String toString() {
+    return "MainDeclaration | Arguments: " + name;
+  }
+
 }
 /* JavaCC - OriginalChecksum=2e000c90bc7662d39b34cdc430115222 (do not edit this line) */

@@ -161,9 +161,9 @@ void MainMethodDeclaration() #void :{}
     (<PUBLIC> (MainDeclaration() | MethodDeclaration()))* 
 }
 
-void MainDeclaration():{} 
+void MainDeclaration():{Token t;} 
 {
-    <STATIC> <VOID> <MAIN> <OPENPAR> <STRING> <OPENSQBRACK> <CLOSESQBRACK> Identifier() <CLOSEPAR> <OPENBRACK> MainMethodBody() <CLOSEBRACK> 
+    <STATIC> <VOID> <MAIN> <OPENPAR> <STRING> <OPENSQBRACK> <CLOSESQBRACK> t=<IDENTIFIER>{jjtThis.setName(t.image);} <CLOSEPAR> <OPENBRACK> MainMethodBody() <CLOSEBRACK> 
 }
 
 void MethodDeclaration():{Token t;} 
@@ -211,11 +211,11 @@ void TypeWoIdent() #void :{}
 void Statement() #void :{} 
 {
     <OPENBRACK> (Statement())* <CLOSEBRACK>
-    | <IF> <OPENPAR> Expression() <CLOSEPAR> Statement() <ELSE> Statement()
+    | (<IF> <OPENPAR> Expression() <CLOSEPAR>) #IfElseStatement Statement() <ELSE> Statement()
     
     /*BEGINNING OF WHILE STATEMENT*/
 
-    | <WHILE> <OPENPAR> 
+    | (<WHILE> <OPENPAR> 
     try {
         Expression() <CLOSEPAR>
     }
@@ -243,7 +243,7 @@ void Statement() #void :{}
         if(next_token.kind == EOF || next_token.kind == SEMICOLON) {
             return;
         }
-    }
+    }) #WhileStatement
     Statement()
 
     /*END OF WHILE STATEMENT*/
