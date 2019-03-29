@@ -21,7 +21,7 @@ sgfuycdbsj*/
             k = 1;
         }
         while(a < 1){
-            j = 1;
+            j = -1;
         }
 
         int a;

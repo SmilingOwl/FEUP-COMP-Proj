@@ -15,15 +15,16 @@ public interface ProjectTreeConstants
   public int JJTWHILESTATEMENT = 11;
   public int JJTSTATEMENTAUX1 = 12;
   public int JJTSTATEMENTAUX2 = 13;
-  public int JJTEXPRESSIONTOKENWOIDENT = 14;
-  public int JJTEXPRESSION = 15;
-  public int JJTEXPRESSIONAND = 16;
-  public int JJTEXPRESSIONMINORAUX = 17;
-  public int JJTEXPRESSIONADDAUX = 18;
-  public int JJTEXPRESSIONMULTAUX = 19;
+  public int JJTAND = 14;
+  public int JJTMINOR = 15;
+  public int JJTADD = 16;
+  public int JJTSUB = 17;
+  public int JJTMULT = 18;
+  public int JJTDIV = 19;
   public int JJTEXPRESSIONAUXDOT = 20;
   public int JJTEXPRESSIONTOKEN = 21;
-  public int JJTEXPRESSIONNEW = 22;
+  public int JJTEXPRESSIONTOKENWOIDENT = 22;
+  public int JJTEXPRESSIONNEW = 23;
 
 
   public String[] jjtNodeName = {
@@ -41,15 +42,16 @@ public interface ProjectTreeConstants
     "WhileStatement",
     "StatementAux1",
     "StatementAux2",
-    "ExpressionTokenWoIdent",
-    "Expression",
-    "ExpressionAnd",
-    "ExpressionMinorAux",
-    "ExpressionAddAux",
-    "ExpressionMultAux",
+    "AND",
+    "MINOR",
+    "ADD",
+    "SUB",
+    "MULT",
+    "DIV",
     "ExpressionAuxDot",
     "ExpressionToken",
+    "ExpressionTokenWoIdent",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=46b7365b2bb64d660621ab18e471ac71 (do not edit this line) */
+/* JavaCC - OriginalChecksum=fcc424c6599b45423396eb15f75a0aac (do not edit this line) */
