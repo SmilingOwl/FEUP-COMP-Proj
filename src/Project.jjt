@@ -254,20 +254,15 @@ void Statement() #void :{}
         | (<AND> ExpressionMinor()#AND(2))+ <SEMICOLON>
         | (<MINOR> ExpressionAdd()#MINOR(2))+ <SEMICOLON>
         | (<ADD> ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))+ <SEMICOLON>
-        | (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))+ <SEMICOLON>)
-}
-
-void StatementAux1():{Token t;}
-{
-    t=<EQUAL>{jjtThis.setOperation(t.image);} Expression()
+        | (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))+ <SEMICOLON>
+        | (<EQUAL> Expression() #EQUAL(2)) <SEMICOLON>)
 }
 
 void StatementAux2():{Token t, z;}
 {
-    StatementAux1() <SEMICOLON>
-    | t=<DOT>{jjtThis.setOperation(t.image);} ExpressionAuxDot() <SEMICOLON>
+    t=<DOT>{jjtThis.setOperation(t.image);} ExpressionAuxDot() <SEMICOLON>
     | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
-    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [StatementAux1()] ExpressionAux() <SEMICOLON>
+    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [(<EQUAL> Expression() #EQUAL(2))] ExpressionAux() <SEMICOLON>
     
 }
 // STATEMENT - END

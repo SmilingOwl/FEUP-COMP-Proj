@@ -683,7 +683,6 @@ if (jjtc002) {
       Identifier();
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case DOT:
-      case EQUAL:
       case OPENSQBRACK:
       case IDENTIFIER:{
         StatementAux2();
@@ -931,6 +930,35 @@ if (jjtc008) {
         jj_consume_token(SEMICOLON);
         break;
         }
+      case EQUAL:{
+        jj_consume_token(EQUAL);
+ASTEQUAL jjtn009 = new ASTEQUAL(JJTEQUAL);
+                     boolean jjtc009 = true;
+                     jjtree.openNodeScope(jjtn009);
+        try {
+          Expression();
+        } catch (Throwable jjte009) {
+if (jjtc009) {
+                       jjtree.clearNodeScope(jjtn009);
+                       jjtc009 = false;
+                     } else {
+                       jjtree.popNode();
+                     }
+                     if (jjte009 instanceof RuntimeException) {
+                       {if (true) throw (RuntimeException)jjte009;}
+                     }
+                     if (jjte009 instanceof ParseException) {
+                       {if (true) throw (ParseException)jjte009;}
+                     }
+                     {if (true) throw (Error)jjte009;}
+        } finally {
+if (jjtc009) {
+                       jjtree.closeNodeScope(jjtn009,  2);
+                     }
+        }
+        jj_consume_token(SEMICOLON);
+        break;
+        }
       default:
         jj_la1[19] = jj_gen;
         jj_consume_token(-1);
@@ -945,46 +973,12 @@ if (jjtc008) {
     }
   }
 
-  static final public void StatementAux1() throws ParseException {/*@bgen(jjtree) StatementAux1 */
-                      ASTStatementAux1 jjtn000 = new ASTStatementAux1(JJTSTATEMENTAUX1);
-                      boolean jjtc000 = true;
-                      jjtree.openNodeScope(jjtn000);Token t;
-    try {
-      t = jj_consume_token(EQUAL);
-jjtn000.setOperation(t.image);
-      Expression();
-    } catch (Throwable jjte000) {
-if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
-  }
-
   static final public void StatementAux2() throws ParseException {/*@bgen(jjtree) StatementAux2 */
                       ASTStatementAux2 jjtn000 = new ASTStatementAux2(JJTSTATEMENTAUX2);
                       boolean jjtc000 = true;
                       jjtree.openNodeScope(jjtn000);Token t, z;
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case EQUAL:{
-        StatementAux1();
-        jj_consume_token(SEMICOLON);
-        break;
-        }
       case DOT:{
         t = jj_consume_token(DOT);
 jjtn000.setOperation(t.image);
@@ -1005,7 +999,31 @@ jjtn000.setOperation(t.image);
         jj_consume_token(CLOSESQBRACK);
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case EQUAL:{
-          StatementAux1();
+          jj_consume_token(EQUAL);
+ASTEQUAL jjtn001 = new ASTEQUAL(JJTEQUAL);
+                                                                                              boolean jjtc001 = true;
+                                                                                              jjtree.openNodeScope(jjtn001);
+          try {
+            Expression();
+          } catch (Throwable jjte001) {
+if (jjtc001) {
+                                                                                                jjtree.clearNodeScope(jjtn001);
+                                                                                                jjtc001 = false;
+                                                                                              } else {
+                                                                                                jjtree.popNode();
+                                                                                              }
+                                                                                              if (jjte001 instanceof RuntimeException) {
+                                                                                                {if (true) throw (RuntimeException)jjte001;}
+                                                                                              }
+                                                                                              if (jjte001 instanceof ParseException) {
+                                                                                                {if (true) throw (ParseException)jjte001;}
+                                                                                              }
+                                                                                              {if (true) throw (Error)jjte001;}
+          } finally {
+if (jjtc001) {
+                                                                                                jjtree.closeNodeScope(jjtn001,  2);
+                                                                                              }
+          }
           break;
           }
         default:
@@ -1862,7 +1880,7 @@ if (jjtc000) {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x1000,0x0,0x51808780,0x51808780,0x0,0x4000000,0x0,0x51808780,0x200000,0x100000,0xc0000,0xc0000,0x30000,0x30000,0x47f2000,0x51808780,0x400000,0x4402000,0x200000,0x200000,0x100000,0x100000,0xc0000,0xc0000,0xc0000,0xc0000,0x30000,0x30000,0x30000,0x30000,0x4002000,0x1000,0x10008780,0x800,0x10008780,0x10008780,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x1000,0x0,0x51808780,0x51808780,0x0,0x4000000,0x0,0x51808780,0x200000,0x100000,0xc0000,0xc0000,0x30000,0x30000,0x47f2000,0x51808780,0x400000,0x4002000,0x200000,0x200000,0x100000,0x100000,0xc0000,0xc0000,0xc0000,0xc0000,0x30000,0x30000,0x30000,0x30000,0x4002000,0x1000,0x10008780,0x800,0x10008780,0x10008780,0x0,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x3c00,0x200,0x4003,0x40,0x4083,0x0,0x4003,0x7c03,0x7c03,0x4003,0x0,0x3,0x7c00,0x0,0x0,0x0,0x0,0x0,0x0,0x4000,0x7c00,0x0,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7c00,0x4000,0x7c00,0x3c00,0x4001,};

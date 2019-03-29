@@ -19,7 +19,7 @@ public interface ProjectTreeConstants
   public int JJTSUB = 15;
   public int JJTMULT = 16;
   public int JJTDIV = 17;
-  public int JJTSTATEMENTAUX1 = 18;
+  public int JJTEQUAL = 18;
   public int JJTSTATEMENTAUX2 = 19;
   public int JJTEXPRESSIONAUXDOT = 20;
   public int JJTEXPRESSIONTOKEN = 21;
@@ -46,7 +46,7 @@ public interface ProjectTreeConstants
     "SUB",
     "MULT",
     "DIV",
-    "StatementAux1",
+    "EQUAL",
     "StatementAux2",
     "ExpressionAuxDot",
     "ExpressionToken",
@@ -54,4 +54,4 @@ public interface ProjectTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=f694f5bd5debdad95723aa590a92c9ee (do not edit this line) */
+/* JavaCC - OriginalChecksum=c4cb1a508625b7fb0e476cb44db3665c (do not edit this line) */

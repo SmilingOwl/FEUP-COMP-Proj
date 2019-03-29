@@ -17,6 +17,7 @@ class ASTADD extends SimpleNode {
   }
 
   public String toString() {
+    op = "+";
     return "Operation: +";
   }
 
