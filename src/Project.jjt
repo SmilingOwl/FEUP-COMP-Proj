@@ -249,7 +249,12 @@ void Statement() #void :{}
     /*END OF WHILE STATEMENT*/
 
     | ExpressionWoIdent() <SEMICOLON>
-    | Identifier() StatementAux2()
+    | Identifier() 
+        (StatementAux2() 
+        | (<AND> ExpressionMinor()#AND(2))+ <SEMICOLON>
+        | (<MINOR> ExpressionAdd()#MINOR(2))+ <SEMICOLON>
+        | (<ADD> ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))+ <SEMICOLON>
+        | (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))+ <SEMICOLON>)
 }
 
 void StatementAux1():{Token t;}
@@ -263,6 +268,7 @@ void StatementAux2():{Token t, z;}
     | t=<DOT>{jjtThis.setOperation(t.image);} ExpressionAuxDot() <SEMICOLON>
     | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
     | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [StatementAux1()] ExpressionAux() <SEMICOLON>
+    
 }
 // STATEMENT - END
 
@@ -343,7 +349,7 @@ void ExpressionTokenWoIdent():{Token t;}
     | t=<FALSE>{jjtThis.setName(t.image);}
     | t=<THIS>{jjtThis.setName(t.image);}
     | t=<NEW>{jjtThis.setName(t.image);} ExpressionNew()
-    | t=<NOT>{jjtThis.setName(t.image);} ExpressionToken()
+    | t=<NOT>{jjtThis.setName(t.image);} ExpressionToken() ExpressionAux()
     | <OPENPAR> Expression() <CLOSEPAR>
     | IntegerLiteral()
 }

@@ -13,14 +13,14 @@ public interface ProjectTreeConstants
   public int JJTISARRAY = 9;
   public int JJTIFELSESTATEMENT = 10;
   public int JJTWHILESTATEMENT = 11;
-  public int JJTSTATEMENTAUX1 = 12;
-  public int JJTSTATEMENTAUX2 = 13;
-  public int JJTAND = 14;
-  public int JJTMINOR = 15;
-  public int JJTADD = 16;
-  public int JJTSUB = 17;
-  public int JJTMULT = 18;
-  public int JJTDIV = 19;
+  public int JJTAND = 12;
+  public int JJTMINOR = 13;
+  public int JJTADD = 14;
+  public int JJTSUB = 15;
+  public int JJTMULT = 16;
+  public int JJTDIV = 17;
+  public int JJTSTATEMENTAUX1 = 18;
+  public int JJTSTATEMENTAUX2 = 19;
   public int JJTEXPRESSIONAUXDOT = 20;
   public int JJTEXPRESSIONTOKEN = 21;
   public int JJTEXPRESSIONTOKENWOIDENT = 22;
@@ -40,18 +40,18 @@ public interface ProjectTreeConstants
     "IsArray",
     "IfElseStatement",
     "WhileStatement",
-    "StatementAux1",
-    "StatementAux2",
     "AND",
     "MINOR",
     "ADD",
     "SUB",
     "MULT",
     "DIV",
+    "StatementAux1",
+    "StatementAux2",
     "ExpressionAuxDot",
     "ExpressionToken",
     "ExpressionTokenWoIdent",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=fcc424c6599b45423396eb15f75a0aac (do not edit this line) */
+/* JavaCC - OriginalChecksum=f694f5bd5debdad95723aa590a92c9ee (do not edit this line) */

@@ -13,7 +13,9 @@ sgfuycdbsj*/
 
         num_aux = 3 + 6 / 3;
         num_aux = 3 / 6 + 3;
-
+        a<2;
+        a+2;
+        !2 && 3;
         if(foo < 3){
             t = 1;
         }
