@@ -34,12 +34,13 @@ public interface ProjectTreeConstants
   public int JJTSTATEMENTAUX2 = 30;
   public int JJTCALLING = 31;
   public int JJTEXPRESSIONRESTOFCLAUSES = 32;
-  public int JJTACESSING = 33;
-  public int JJTACCESSINGARRAYAT = 34;
-  public int JJTEXPRESSIONAUXDOT = 35;
-  public int JJTEXPRESSIONTOKEN = 36;
-  public int JJTEXPRESSIONTOKENWOIDENT = 37;
-  public int JJTEXPRESSIONNEW = 38;
+  public int JJTEXPRESSIONRESTOFCLAUSESWOIDENT = 33;
+  public int JJTACESSING = 34;
+  public int JJTACCESSINGARRAYAT = 35;
+  public int JJTEXPRESSIONAUXDOT = 36;
+  public int JJTEXPRESSIONTOKEN = 37;
+  public int JJTEXPRESSIONTOKENWOIDENT = 38;
+  public int JJTEXPRESSIONNEW = 39;
 
 
   public String[] jjtNodeName = {
@@ -76,6 +77,7 @@ public interface ProjectTreeConstants
     "StatementAux2",
     "Calling",
     "ExpressionRestOfClauses",
+    "ExpressionRestOfClausesWoIdent",
     "Acessing",
     "AccessingArrayAt",
     "ExpressionAuxDot",
@@ -84,4 +86,4 @@ public interface ProjectTreeConstants
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=453955e778c227c35162adbc398a4a62 (do not edit this line) */
+/* JavaCC - OriginalChecksum=0a9c5e06503d5d4e0aa25f1155d134b4 (do not edit this line) */

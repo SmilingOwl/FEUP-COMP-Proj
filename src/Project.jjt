@@ -260,15 +260,15 @@ void StatementStartIdent():{Token t=null;}
         | (t=<MINOR>{jjtThis.isVarDecl(t.image);} ExpressionAdd()#MINOR(2))+ <SEMICOLON>
         | (t=<ADD>{jjtThis.isVarDecl(t.image);} ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))+ <SEMICOLON>
         | (t=<MULT>{jjtThis.isVarDecl(t.image);} ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))+ <SEMICOLON>
-        | (t=<EQUAL>{jjtThis.isVarDecl(t.image);} Expression() #EQUAL(2)) <SEMICOLON>) )
+        | (t=<EQUAL>{jjtThis.isVarDecl(t.image);} Expression() #EQUAL(2)) <SEMICOLON>
+        | AccessingArrayAt() [(<EQUAL> Expression() #EQUAL(3))] ExpressionAux() t=<SEMICOLON>{jjtThis.isVarDecl(t.image);}))
 }
 
 Token StatementAux2():{Token t;}
 {
     
     ((t=<DOT> ExpressionAuxDot() #Calling) <SEMICOLON>
-    | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
-    | AccessingArrayAt() [(<EQUAL> Expression() #EQUAL(2))] ExpressionAux() t=<SEMICOLON>){
+    | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>){
         return t;
     }
     
@@ -317,7 +317,7 @@ void ExpressionRestOfClauses() :{} {
     ExpressionToken() ExpressionAux()
 }
 
-void ExpressionRestOfClausesWoIdent() #void :{} {
+void ExpressionRestOfClausesWoIdent():{} {
     ExpressionTokenWoIdent() ExpressionAux()
 }
 
