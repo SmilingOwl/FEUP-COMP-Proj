@@ -328,7 +328,7 @@ void ExpressionRestOfClausesWoIdent() #void :{} {
 void ExpressionAux() #void :{}
 {
     (<DOT> ExpressionAuxDot() #Acessing)
-    | <OPENSQBRACK> Expression() #Index <CLOSESQBRACK> ExpressionAux()
+    | (<OPENSQBRACK> Expression() <CLOSESQBRACK> #Index(2)) ExpressionAux()
     | Empty()
 }
 

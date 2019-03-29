@@ -11,7 +11,7 @@ class ASTIndex extends SimpleNode {
   }
 
   public String toString() {
-    return "array at:";
+    return "Array";
   }
 
 }

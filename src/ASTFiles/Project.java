@@ -1936,31 +1936,17 @@ if (jjtc001) {
       }
     case OPENSQBRACK:{
       jj_consume_token(OPENSQBRACK);
+      Expression();
 ASTIndex jjtn002 = new ASTIndex(JJTINDEX);
-                      boolean jjtc002 = true;
-                      jjtree.openNodeScope(jjtn002);
+                                    boolean jjtc002 = true;
+                                    jjtree.openNodeScope(jjtn002);
       try {
-        Expression();
-      } catch (Throwable jjte002) {
-if (jjtc002) {
-                        jjtree.clearNodeScope(jjtn002);
-                        jjtc002 = false;
-                      } else {
-                        jjtree.popNode();
-                      }
-                      if (jjte002 instanceof RuntimeException) {
-                        {if (true) throw (RuntimeException)jjte002;}
-                      }
-                      if (jjte002 instanceof ParseException) {
-                        {if (true) throw (ParseException)jjte002;}
-                      }
-                      {if (true) throw (Error)jjte002;}
+        jj_consume_token(CLOSESQBRACK);
       } finally {
 if (jjtc002) {
-                        jjtree.closeNodeScope(jjtn002, true);
-                      }
+                                      jjtree.closeNodeScope(jjtn002,  2);
+                                    }
       }
-      jj_consume_token(CLOSESQBRACK);
       ExpressionAux();
       break;
       }
