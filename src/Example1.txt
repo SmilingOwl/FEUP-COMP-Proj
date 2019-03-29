@@ -1,1 +1,0 @@
-class test extends otherTest{int a; public int foo(int input){boolean alp; boolean beta; int gamma; return beta;}}
