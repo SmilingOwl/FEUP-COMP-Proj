@@ -267,7 +267,7 @@ Token StatementAux2():{Token t;}
     
     ((t=<DOT> ExpressionAuxDot() #Calling) <SEMICOLON>
     | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
-    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [(<EQUAL> Expression() #EQUAL(2))] ExpressionAux() <SEMICOLON>){
+    | AccessingArrayAt() [(<EQUAL> Expression() #EQUAL(2))] ExpressionAux() t=<SEMICOLON>){
         return t;
     }
     
@@ -312,7 +312,7 @@ void ExpressionMultWoIdent() #void :{} {
     ExpressionRestOfClausesWoIdent() (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))*
 }
 
-void ExpressionRestOfClauses() #void :{} {
+void ExpressionRestOfClauses() :{} {
     ExpressionToken() ExpressionAux()
 }
 
@@ -323,8 +323,12 @@ void ExpressionRestOfClausesWoIdent() #void :{} {
 void ExpressionAux() #void :{}
 {
     (<DOT> ExpressionAuxDot() #Acessing)
-    | (<OPENSQBRACK> Expression() <CLOSESQBRACK> #Index(2)) ExpressionAux()
+    | AccessingArrayAt() ExpressionAux()
     | Empty()
+}
+
+void AccessingArrayAt() :{} {
+    (<OPENSQBRACK> Expression() <CLOSESQBRACK>)
 }
 
 void ExpressionAuxDot():{Token t;}
@@ -358,7 +362,7 @@ void ExpressionTokenWoIdent():{Token t;}
 
 void ExpressionNew() :{Token t;}
 {
-    t=<INT>{jjtThis.setName(t.image);} <OPENSQBRACK> Expression() <CLOSESQBRACK>
+    t=<INT>{jjtThis.setName(t.image);} AccessingArrayAt()
     | Identifier() <OPENPAR> <CLOSEPAR> 
 }
 // EXPRESSION - END

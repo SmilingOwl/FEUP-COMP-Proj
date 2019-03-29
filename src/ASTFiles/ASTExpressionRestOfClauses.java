@@ -10,5 +10,9 @@ class ASTExpressionRestOfClauses extends SimpleNode {
     super(p, id);
   }
 
+  public String toString() {
+    return "";
+  }
+
 }
 /* JavaCC - OriginalChecksum=84aec4c622fde83f025b8b7d39d58d13 (do not edit this line) */

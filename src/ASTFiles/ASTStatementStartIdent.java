@@ -17,7 +17,7 @@ class ASTStatementStartIdent extends SimpleNode {
   }
 
   public String toString() {
-    if(first == "." || first == "=" || first == "["){
+    if(first == "." || first == "=" || first == ";"){
       return "Statement ";
     }
     return "VarDeclaration ";

@@ -1338,36 +1338,33 @@ jjtn000.setName(t.image);
         break;
         }
       case OPENSQBRACK:{
-        t = jj_consume_token(OPENSQBRACK);
-jjtn000.setOperation(t.image);
-        Expression();
-        jj_consume_token(CLOSESQBRACK);
+        AccessingArrayAt();
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case EQUAL:{
           jj_consume_token(EQUAL);
 ASTEQUAL jjtn002 = new ASTEQUAL(JJTEQUAL);
-                                                                                              boolean jjtc002 = true;
-                                                                                              jjtree.openNodeScope(jjtn002);
+                                     boolean jjtc002 = true;
+                                     jjtree.openNodeScope(jjtn002);
           try {
             Expression();
           } catch (Throwable jjte002) {
 if (jjtc002) {
-                                                                                                jjtree.clearNodeScope(jjtn002);
-                                                                                                jjtc002 = false;
-                                                                                              } else {
-                                                                                                jjtree.popNode();
-                                                                                              }
-                                                                                              if (jjte002 instanceof RuntimeException) {
-                                                                                                {if (true) throw (RuntimeException)jjte002;}
-                                                                                              }
-                                                                                              if (jjte002 instanceof ParseException) {
-                                                                                                {if (true) throw (ParseException)jjte002;}
-                                                                                              }
-                                                                                              {if (true) throw (Error)jjte002;}
+                                       jjtree.clearNodeScope(jjtn002);
+                                       jjtc002 = false;
+                                     } else {
+                                       jjtree.popNode();
+                                     }
+                                     if (jjte002 instanceof RuntimeException) {
+                                       {if (true) throw (RuntimeException)jjte002;}
+                                     }
+                                     if (jjte002 instanceof ParseException) {
+                                       {if (true) throw (ParseException)jjte002;}
+                                     }
+                                     {if (true) throw (Error)jjte002;}
           } finally {
 if (jjtc002) {
-                                                                                                jjtree.closeNodeScope(jjtn002,  2);
-                                                                                              }
+                                       jjtree.closeNodeScope(jjtn002,  2);
+                                     }
           }
           break;
           }
@@ -1376,7 +1373,7 @@ if (jjtc002) {
           ;
         }
         ExpressionAux();
-        jj_consume_token(SEMICOLON);
+        t = jj_consume_token(SEMICOLON);
         break;
         }
       default:
@@ -1385,7 +1382,7 @@ if (jjtc002) {
         throw new ParseException();
       }
 jjtree.closeNodeScope(jjtn000, true);
-                                                                                                                                                   jjtc000 = false;
+                                                                                            jjtc000 = false;
 {if ("" != null) return t;}
     } catch (Throwable jjte000) {
 if (jjtc000) {
@@ -1895,9 +1892,32 @@ if (jjtc002) {
     }
   }
 
-  static final public void ExpressionRestOfClauses() throws ParseException {
-    ExpressionToken();
-    ExpressionAux();
+  static final public void ExpressionRestOfClauses() throws ParseException {/*@bgen(jjtree) ExpressionRestOfClauses */
+  ASTExpressionRestOfClauses jjtn000 = new ASTExpressionRestOfClauses(JJTEXPRESSIONRESTOFCLAUSES);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      ExpressionToken();
+      ExpressionAux();
+    } catch (Throwable jjte000) {
+if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
   }
 
   static final public void ExpressionRestOfClausesWoIdent() throws ParseException {
@@ -1936,24 +1956,42 @@ if (jjtc001) {
       break;
       }
     case OPENSQBRACK:{
-      jj_consume_token(OPENSQBRACK);
-      Expression();
-ASTIndex jjtn002 = new ASTIndex(JJTINDEX);
-                                    boolean jjtc002 = true;
-                                    jjtree.openNodeScope(jjtn002);
-      try {
-        jj_consume_token(CLOSESQBRACK);
-      } finally {
-if (jjtc002) {
-                                      jjtree.closeNodeScope(jjtn002,  2);
-                                    }
-      }
+      AccessingArrayAt();
       ExpressionAux();
       break;
       }
     default:
       jj_la1[35] = jj_gen;
       Empty();
+    }
+  }
+
+  static final public void AccessingArrayAt() throws ParseException {/*@bgen(jjtree) AccessingArrayAt */
+  ASTAccessingArrayAt jjtn000 = new ASTAccessingArrayAt(JJTACCESSINGARRAYAT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(OPENSQBRACK);
+      Expression();
+      jj_consume_token(CLOSESQBRACK);
+    } catch (Throwable jjte000) {
+if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
     }
   }
 
@@ -2207,9 +2245,7 @@ if (jjtc000) {
       case INT:{
         t = jj_consume_token(INT);
 jjtn000.setName(t.image);
-        jj_consume_token(OPENSQBRACK);
-        Expression();
-        jj_consume_token(CLOSESQBRACK);
+        AccessingArrayAt();
         break;
         }
       case IDENTIFIER:{
