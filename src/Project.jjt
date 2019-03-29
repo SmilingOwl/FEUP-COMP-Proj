@@ -20,12 +20,13 @@ public class Project
         Project myCalc = new Project(System.in);
         myCalc.errors = new ArrayList<ParseException>();
         try {
-            SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
+            SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); ){
                     System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.image + "\" occurred after" 
-                        + " Line:" + myCalc.errors.get(i).currentToken.endLine 
-                        + ", Column:" + myCalc.errors.get(i).currentToken.endColumn);
+                        + " Line:" + myCalc.errors.get(i).currentToken.beginLine 
+                        + ", Column:" + myCalc.errors.get(i).currentToken.beginColumn);
+                    System.out.println("\n\n" + myCalc.errors.get(i));
                         i++;
                         if(i >= MAX_ERRORS){
                             int remErrors = (myCalc.errors.size()-i);
@@ -96,7 +97,7 @@ TOKEN :
     | < OCTAL: "0"(["0"-"7"])+ >
     | < BINARY: "0b"("1"|"0")+ >
     | < HEX: "0"("x"|"X")(["0"-"9","a"-"f","A"-"F"])+ >
-    | < DECIMAL: (["0"-"9"])+(("_")*(["0"-"9"])+)* >
+    | < DECIMAL: (("-")?["0"-"9"])+(("_")*(["0"-"9"])+)* >
     | < IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])* >
 }
 
@@ -107,13 +108,12 @@ void Empty() #void : {}
      {}
 } 
 
-void IntegerLiteral(): {Token t, z;}
+void IntegerLiteral(): {Token t;}
 {
     t=<OCTAL>{jjtThis.setName(t.image);}
     | t=<BINARY>{jjtThis.setName(t.image);}
     | t=<HEX>{jjtThis.setName(t.image);}
     | t=<DECIMAL>{jjtThis.setName(t.image);}
-    | t=<SUB> z=<DECIMAL> {jjtThis.setName(t.image + z.image);}
 }
 
 void Identifier():{Token t;}{
@@ -258,7 +258,13 @@ void Statement() #void :{}
 
 void StatementStartIdent():{Token t;}
 {
-    (Identifier() t=StatementAux2(){jjtThis.isVarDecl(t.image);})
+    (Identifier()
+        (t=StatementAux2(){jjtThis.isVarDecl(t.image);} 
+        | (<AND> ExpressionMinor()#AND(2))+ <SEMICOLON>
+        | (<MINOR> ExpressionAdd()#MINOR(2))+ <SEMICOLON>
+        | (<ADD> ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))+ <SEMICOLON>
+        | (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))+ <SEMICOLON>
+        | (<EQUAL> Expression() #EQUAL(2)) <SEMICOLON>) )
 }
 
 Token StatementAux1():{Token t;}
@@ -270,10 +276,10 @@ Token StatementAux1():{Token t;}
 
 Token StatementAux2():{Token t;}
 {
-    (t = StatementAux1() <SEMICOLON>
-    | (t = <DOT> ExpressionAuxDot() #Acessing) <SEMICOLON>
+    
+    ((t=<DOT> ExpressionAuxDot() #Calling) <SEMICOLON>
     | t=<IDENTIFIER>{jjtThis.setName(t.image);} <SEMICOLON>
-    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [StatementAux1()] ExpressionAux() <SEMICOLON>){
+    | t=<OPENSQBRACK>{jjtThis.setOperation(t.image);} Expression() <CLOSESQBRACK> [(<EQUAL> Expression() #EQUAL(2))] ExpressionAux() <SEMICOLON>){
         return t;
     }
     
@@ -283,69 +289,39 @@ Token StatementAux2():{Token t;}
 
 
 // EXPRESSION - START
+
 void ExpressionWoIdent()#void:{}
 {
-    ExpressionMinorWoIdent() ExpressionAnd()
+    ExpressionMinorWoIdent() (<AND> ExpressionMinor()#AND(2))*
 }
 
-void ExpressionTokenWoIdent():{Token t;}
+void Expression() #void :{}
 {
-    t=<TRUE>{jjtThis.setName(t.image);}
-    | t=<FALSE>{jjtThis.setName(t.image);}
-    | t=<THIS>{jjtThis.setName(t.image);}
-    | t=<NEW>{jjtThis.setName(t.image);} ExpressionNew()
-    | t=<NOT>{jjtThis.setName(t.image);} Expression()
-    | <OPENPAR> Expression() <CLOSEPAR>
-    | IntegerLiteral()
-}
-
-void Expression():{}
-{
-    ExpressionMinor() ExpressionAnd()
-}
-
-void ExpressionAnd():{Token t;} {
-    t=<AND>{jjtThis.setOp(t.image);} ExpressionMinor() ExpressionAnd()
-    | Empty()
+    ExpressionMinor() (<AND> ExpressionMinor()#AND(2))*
 }
 
 void ExpressionMinor() #void :{} {
-    ExpressionAdd() ExpressionMinorAux()
+    ExpressionAdd() (<MINOR> ExpressionAdd()#MINOR(2))*
 }
 
 void ExpressionMinorWoIdent() #void :{} {
-    ExpressionAddWoIdent() ExpressionMinorAux()
-}
-
-void ExpressionMinorAux():{Token t;} {
-    t=<MINOR>{jjtThis.setOp(t.image);} ExpressionAdd() ExpressionMinorAux() 
-    | Empty()
+    ExpressionAddWoIdent() (<MINOR> ExpressionAdd()#MINOR(2))*
 }
 
 void ExpressionAdd() #void :{} {
-    ExpressionMult() ExpressionAddAux()
+    ExpressionMult() (<ADD> ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))*
 }
 
 void ExpressionAddWoIdent() #void :{} {
-    ExpressionMultWoIdent() ExpressionAddAux()
-}
-
-void ExpressionAddAux():{Token t;} {
-    (t=<ADD>{jjtThis.setOp(t.image);}| t=<SUB>{jjtThis.setOp(t.image);}) ExpressionMult() ExpressionAddAux() 
-    | Empty()
+    ExpressionMultWoIdent() (<ADD> ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))*
 }
 
 void ExpressionMult() #void :{} {
-    ExpressionRestOfClauses() ExpressionMultAux()
+    ExpressionRestOfClauses() (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))*
 }
 
 void ExpressionMultWoIdent() #void :{} {
-    ExpressionRestOfClausesWoIdent() ExpressionMultAux()
-}
-
-void ExpressionMultAux():{Token t;} {
-    (t=<MULT>{jjtThis.setOp(t.image);} | t=<DIV>{jjtThis.setOp(t.image);}) ExpressionRestOfClauses() ExpressionMultAux() 
-    | Empty()
+    ExpressionRestOfClausesWoIdent() (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))*
 }
 
 void ExpressionRestOfClauses() #void :{} {
@@ -356,7 +332,7 @@ void ExpressionRestOfClausesWoIdent() #void :{} {
     ExpressionTokenWoIdent() ExpressionAux()
 }
 
-void ExpressionAux() #void :{Token t;}
+void ExpressionAux() #void :{}
 {
     (<DOT> ExpressionAuxDot() #Acessing)
     | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
@@ -375,9 +351,20 @@ void ExpressionToken():{Token t;}
     | t=<FALSE>{jjtThis.setName(t.image);}
     | t=<THIS>{jjtThis.setName(t.image);}
     | t=<NEW>{jjtThis.setName(t.image);} ExpressionNew()
-    | t=<NOT>{jjtThis.setName(t.image);} Expression()
+    | t=<NOT>{jjtThis.setName(t.image);} ExpressionToken()
     | <OPENPAR> Expression() <CLOSEPAR>
     | Identifier()
+    | IntegerLiteral()
+}
+
+void ExpressionTokenWoIdent():{Token t;}
+{
+    t=<TRUE>{jjtThis.setName(t.image);}
+    | t=<FALSE>{jjtThis.setName(t.image);}
+    | t=<THIS>{jjtThis.setName(t.image);}
+    | t=<NEW>{jjtThis.setName(t.image);} ExpressionNew()
+    | t=<NOT>{jjtThis.setName(t.image);} ExpressionToken() ExpressionAux()
+    | <OPENPAR> Expression() <CLOSEPAR>
     | IntegerLiteral()
 }
 

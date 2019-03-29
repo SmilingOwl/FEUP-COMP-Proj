@@ -24,18 +24,21 @@ public interface ProjectTreeConstants
   public int JJTWHILEBODY = 20;
   public int JJTWHILESTATEMENT = 21;
   public int JJTSTATEMENTSTARTIDENT = 22;
-  public int JJTSTATEMENTAUX1 = 23;
-  public int JJTSTATEMENTAUX2 = 24;
-  public int JJTACESSING = 25;
-  public int JJTEXPRESSIONTOKENWOIDENT = 26;
-  public int JJTEXPRESSION = 27;
-  public int JJTEXPRESSIONAND = 28;
-  public int JJTEXPRESSIONMINORAUX = 29;
-  public int JJTEXPRESSIONADDAUX = 30;
-  public int JJTEXPRESSIONMULTAUX = 31;
-  public int JJTEXPRESSIONAUXDOT = 32;
-  public int JJTEXPRESSIONTOKEN = 33;
-  public int JJTEXPRESSIONNEW = 34;
+  public int JJTAND = 23;
+  public int JJTMINOR = 24;
+  public int JJTADD = 25;
+  public int JJTSUB = 26;
+  public int JJTMULT = 27;
+  public int JJTDIV = 28;
+  public int JJTEQUAL = 29;
+  public int JJTSTATEMENTAUX1 = 30;
+  public int JJTSTATEMENTAUX2 = 31;
+  public int JJTCALLING = 32;
+  public int JJTACESSING = 33;
+  public int JJTEXPRESSIONAUXDOT = 34;
+  public int JJTEXPRESSIONTOKEN = 35;
+  public int JJTEXPRESSIONTOKENWOIDENT = 36;
+  public int JJTEXPRESSIONNEW = 37;
 
 
   public String[] jjtNodeName = {
@@ -62,18 +65,21 @@ public interface ProjectTreeConstants
     "WhileBody",
     "WhileStatement",
     "StatementStartIdent",
+    "AND",
+    "MINOR",
+    "ADD",
+    "SUB",
+    "MULT",
+    "DIV",
+    "EQUAL",
     "StatementAux1",
     "StatementAux2",
+    "Calling",
     "Acessing",
-    "ExpressionTokenWoIdent",
-    "Expression",
-    "ExpressionAnd",
-    "ExpressionMinorAux",
-    "ExpressionAddAux",
-    "ExpressionMultAux",
     "ExpressionAuxDot",
     "ExpressionToken",
+    "ExpressionTokenWoIdent",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=9cbb54809f415155bc5d59aedc96596b (do not edit this line) */
+/* JavaCC - OriginalChecksum=195e91b6461d4aee4f982f16cc2d253b (do not edit this line) */

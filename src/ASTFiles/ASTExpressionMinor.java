@@ -2,12 +2,24 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 public
 class ASTExpressionMinor extends SimpleNode {
+  private String op;
+  
   public ASTExpressionMinor(int id) {
     super(id);
   }
 
   public ASTExpressionMinor(Project p, int id) {
     super(p, id);
+  }
+
+  public void setOp(String n) {
+    op = n;
+  }
+
+  public String toString() {
+    if(op == null)
+      return "";
+    return "Operation: " + op;
   }
 }
 /* JavaCC - OriginalChecksum=128a70268a6be7e05d7233af2250defd (do not edit this line) */
