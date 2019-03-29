@@ -166,7 +166,7 @@ void MainDeclaration():{Token t;}
 
 void MethodDeclaration():{Token t;} 
 {
-    (Type() #Return) t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> MethodArgs() <CLOSEPAR> <OPENBRACK> MainMethodBody() <RETURN> Expression() <SEMICOLON> <CLOSEBRACK>
+    (Type() #Return) t=<IDENTIFIER>{jjtThis.setName(t.image);} <OPENPAR> MethodArgs() <CLOSEPAR> <OPENBRACK> MainMethodBody() <RETURN> (Expression() #Return) <SEMICOLON> <CLOSEBRACK>
 }
 
 void MethodArgs():{Token t;}{

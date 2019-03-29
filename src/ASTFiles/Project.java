@@ -382,7 +382,30 @@ jjtn000.setName(t.image);
       jj_consume_token(OPENBRACK);
       MainMethodBody();
       jj_consume_token(RETURN);
-      Expression();
+ASTReturn jjtn002 = new ASTReturn(JJTRETURN);
+                                                                                                                                          boolean jjtc002 = true;
+                                                                                                                                          jjtree.openNodeScope(jjtn002);
+      try {
+        Expression();
+      } catch (Throwable jjte002) {
+if (jjtc002) {
+                                                                                                                                            jjtree.clearNodeScope(jjtn002);
+                                                                                                                                            jjtc002 = false;
+                                                                                                                                          } else {
+                                                                                                                                            jjtree.popNode();
+                                                                                                                                          }
+                                                                                                                                          if (jjte002 instanceof RuntimeException) {
+                                                                                                                                            {if (true) throw (RuntimeException)jjte002;}
+                                                                                                                                          }
+                                                                                                                                          if (jjte002 instanceof ParseException) {
+                                                                                                                                            {if (true) throw (ParseException)jjte002;}
+                                                                                                                                          }
+                                                                                                                                          {if (true) throw (Error)jjte002;}
+      } finally {
+if (jjtc002) {
+                                                                                                                                            jjtree.closeNodeScope(jjtn002, true);
+                                                                                                                                          }
+      }
       jj_consume_token(SEMICOLON);
       jj_consume_token(CLOSEBRACK);
     } catch (Throwable jjte000) {
