@@ -11,12 +11,13 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
         Project myCalc = new Project(System.in);
         myCalc.errors = new ArrayList<ParseException>();
         try {
-            SimpleNode root = myCalc.Program(); // devolve referência para o nó raizda árvore
+            SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); ){
                     System.out.println("Unexpected symbol \u005c"" + myCalc.errors.get(i).currentToken.image + "\u005c" occurred after"
-                        + " Line:" + myCalc.errors.get(i).currentToken.endLine
-                        + ", Column:" + myCalc.errors.get(i).currentToken.endColumn);
+                        + " Line:" + myCalc.errors.get(i).currentToken.beginLine
+                        + ", Column:" + myCalc.errors.get(i).currentToken.beginColumn);
+                    System.out.println("\u005cn\u005cn" + myCalc.errors.get(i));
                         i++;
                         if(i >= MAX_ERRORS){
                             int remErrors = (myCalc.errors.size()-i);
