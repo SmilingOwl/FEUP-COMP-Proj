@@ -14,7 +14,9 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); ){
-                    System.out.println("\u005cn" + myCalc.errors.get(i));
+                    System.out.println("Unexpected symbol \u005c"" + myCalc.errors.get(i).currentToken.next.image + "\u005c" occurred after"
+                        + " Line:" + myCalc.errors.get(i).currentToken.next.beginLine
+                        + ", Column:" + myCalc.errors.get(i).currentToken.next.beginColumn);
                         i++;
                         if(i >= MAX_ERRORS){
                             int remErrors = (myCalc.errors.size()-i);
