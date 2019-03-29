@@ -11,7 +11,7 @@ class ASTIsArray extends SimpleNode {
   }
 
   public String toString() {
-    return "";
+    return "is array";
   }
 
 }

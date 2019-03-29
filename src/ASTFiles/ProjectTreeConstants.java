@@ -31,10 +31,10 @@ public interface ProjectTreeConstants
   public int JJTMULT = 27;
   public int JJTDIV = 28;
   public int JJTEQUAL = 29;
-  public int JJTSTATEMENTAUX1 = 30;
-  public int JJTSTATEMENTAUX2 = 31;
-  public int JJTCALLING = 32;
-  public int JJTACESSING = 33;
+  public int JJTSTATEMENTAUX2 = 30;
+  public int JJTCALLING = 31;
+  public int JJTACESSING = 32;
+  public int JJTINDEX = 33;
   public int JJTEXPRESSIONAUXDOT = 34;
   public int JJTEXPRESSIONTOKEN = 35;
   public int JJTEXPRESSIONTOKENWOIDENT = 36;
@@ -72,14 +72,14 @@ public interface ProjectTreeConstants
     "MULT",
     "DIV",
     "EQUAL",
-    "StatementAux1",
     "StatementAux2",
     "Calling",
     "Acessing",
+    "Index",
     "ExpressionAuxDot",
     "ExpressionToken",
     "ExpressionTokenWoIdent",
     "ExpressionNew",
   };
 }
-/* JavaCC - OriginalChecksum=195e91b6461d4aee4f982f16cc2d253b (do not edit this line) */
+/* JavaCC - OriginalChecksum=7fb818cda24306e1219ce8b05dc3a52c (do not edit this line) */

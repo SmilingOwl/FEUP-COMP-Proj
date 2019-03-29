@@ -199,7 +199,7 @@ void Type():{Token t;}
 
 void TypeAux() #void:{}
 {
-    ([<OPENSQBRACK> <CLOSESQBRACK>]) #IsArray
+    ([<OPENSQBRACK> <CLOSESQBRACK> #IsArray])
 }
 
 void TypeWoIdent():{Token t;}
@@ -256,22 +256,15 @@ void Statement() #void :{}
     | StatementStartIdent()
 }
 
-void StatementStartIdent():{Token t;}
+void StatementStartIdent():{Token t=null;}
 {
     (Identifier()
         (t=StatementAux2(){jjtThis.isVarDecl(t.image);} 
-        | (<AND> ExpressionMinor()#AND(2))+ <SEMICOLON>
-        | (<MINOR> ExpressionAdd()#MINOR(2))+ <SEMICOLON>
-        | (<ADD> ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))+ <SEMICOLON>
-        | (<MULT> ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))+ <SEMICOLON>
-        | (<EQUAL> Expression() #EQUAL(2)) <SEMICOLON>) )
-}
-
-Token StatementAux1():{Token t;}
-{
-    (t=<EQUAL>{jjtThis.setOperation(t.image);} Expression()){
-        return t;
-    }   
+        | (t=<AND>{jjtThis.isVarDecl(t.image);} ExpressionMinor()#AND(2))+ <SEMICOLON>
+        | (t=<MINOR>{jjtThis.isVarDecl(t.image);} ExpressionAdd()#MINOR(2))+ <SEMICOLON>
+        | (t=<ADD>{jjtThis.isVarDecl(t.image);} ExpressionMult() #ADD(2) | <SUB> ExpressionMult() #SUB(2))+ <SEMICOLON>
+        | (t=<MULT>{jjtThis.isVarDecl(t.image);} ExpressionRestOfClauses() #MULT(2) | <DIV> ExpressionRestOfClauses() #DIV(2))+ <SEMICOLON>
+        | (t=<EQUAL>{jjtThis.isVarDecl(t.image);} Expression() #EQUAL(2)) <SEMICOLON>) )
 }
 
 Token StatementAux2():{Token t;}
@@ -335,7 +328,7 @@ void ExpressionRestOfClausesWoIdent() #void :{} {
 void ExpressionAux() #void :{}
 {
     (<DOT> ExpressionAuxDot() #Acessing)
-    | <OPENSQBRACK> Expression() <CLOSESQBRACK> ExpressionAux()
+    | <OPENSQBRACK> Expression() #Index <CLOSESQBRACK> ExpressionAux()
     | Empty()
 }
 
