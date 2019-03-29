@@ -45,7 +45,7 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
   static final public void IntegerLiteral() throws ParseException {/*@bgen(jjtree) IntegerLiteral */
                         ASTIntegerLiteral jjtn000 = new ASTIntegerLiteral(JJTINTEGERLITERAL);
                         boolean jjtc000 = true;
-                        jjtree.openNodeScope(jjtn000);Token t;
+                        jjtree.openNodeScope(jjtn000);Token t, z;
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case OCTAL:{
@@ -74,6 +74,14 @@ jjtn000.setName(t.image);
 jjtree.closeNodeScope(jjtn000, true);
                    jjtc000 = false;
 jjtn000.setName(t.image);
+        break;
+        }
+      case SUB:{
+        z = jj_consume_token(SUB);
+        t = jj_consume_token(DECIMAL);
+jjtree.closeNodeScope(jjtn000, true);
+                           jjtc000 = false;
+jjtn000.setName(z.image + t.image);
         break;
         }
       default:
@@ -510,6 +518,7 @@ if (jjtc000) {
         case FALSE:
         case TRUE:
         case NOT:
+        case SUB:
         case WHILE:
         case IF:
         case OPENPAR:
@@ -563,6 +572,7 @@ if (jjtc000) {
     case FALSE:
     case TRUE:
     case NOT:
+    case SUB:
     case WHILE:
     case IF:
     case OPENPAR:
@@ -723,6 +733,7 @@ if (jjtc000) {
         case FALSE:
         case TRUE:
         case NOT:
+        case SUB:
         case WHILE:
         case IF:
         case OPENPAR:
@@ -855,6 +866,7 @@ if (jjtc004) {
     case FALSE:
     case TRUE:
     case NOT:
+    case SUB:
     case OPENPAR:
     case OCTAL:
     case BINARY:
@@ -2017,6 +2029,7 @@ jjtn000.setName(t.image);
         case FALSE:
         case TRUE:
         case NOT:
+        case SUB:
         case OPENPAR:
         case OCTAL:
         case BINARY:
@@ -2124,6 +2137,7 @@ jjtn000.setName(t.image);
         Identifier();
         break;
         }
+      case SUB:
       case OCTAL:
       case BINARY:
       case HEX:
@@ -2203,6 +2217,7 @@ jjtn000.setName(t.image);
         jj_consume_token(CLOSEPAR);
         break;
         }
+      case SUB:
       case OCTAL:
       case BINARY:
       case HEX:
@@ -2298,7 +2313,7 @@ if (jjtc000) {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x1000,0x0,0x51808780,0x51808780,0x0,0x4000000,0x0,0x51808780,0x51808780,0x200000,0x100000,0xc0000,0xc0000,0x30000,0x30000,0x47f2000,0x400000,0x4002000,0x200000,0x200000,0x100000,0x100000,0xc0000,0xc0000,0xc0000,0xc0000,0x30000,0x30000,0x30000,0x30000,0x4002000,0x1000,0x10008780,0x800,0x10008780,0x10008780,0x0,};
+      jj_la1_0 = new int[] {0x40000,0x0,0x0,0x0,0x0,0x1000,0x0,0x51848780,0x51848780,0x0,0x4000000,0x0,0x51848780,0x51848780,0x200000,0x100000,0xc0000,0xc0000,0x30000,0x30000,0x47f2000,0x400000,0x4002000,0x200000,0x200000,0x100000,0x100000,0xc0000,0xc0000,0xc0000,0xc0000,0x30000,0x30000,0x30000,0x30000,0x4002000,0x1000,0x10048780,0x800,0x10048780,0x10048780,0x0,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x3c00,0x200,0x4003,0x40,0x4083,0x0,0x4003,0x7c03,0x7c03,0x4003,0x0,0x3,0x7c00,0x7c00,0x0,0x0,0x0,0x0,0x0,0x0,0x4000,0x0,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7c00,0x4000,0x7c00,0x3c00,0x4001,};

@@ -94,7 +94,7 @@ TOKEN :
     | < OCTAL: "0"(["0"-"7"])+ >
     | < BINARY: "0b"("1"|"0")+ >
     | < HEX: "0"("x"|"X")(["0"-"9","a"-"f","A"-"F"])+ >
-    | < DECIMAL: (("-")?["0"-"9"])+(("_")*(["0"-"9"])+)* >
+    | < DECIMAL: (["0"-"9"])+(("_")*(["0"-"9"])+)* >
     | < IDENTIFIER: ["a"-"z","A"-"Z"](["a"-"z","A"-"Z","0"-"9","_"])* >
 }
 
@@ -105,12 +105,13 @@ void Empty() #void : {}
      {}
 } 
 
-void IntegerLiteral(): {Token t;}
+void IntegerLiteral(): {Token t, z;}
 {
     t=<OCTAL>{jjtThis.setName(t.image);}
     | t=<BINARY>{jjtThis.setName(t.image);}
     | t=<HEX>{jjtThis.setName(t.image);}
     | t=<DECIMAL>{jjtThis.setName(t.image);}
+    | z=<SUB> t=<DECIMAL>{jjtThis.setName(z.image + t.image);}
 }
 
 void Identifier():{Token t;}{
