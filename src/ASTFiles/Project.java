@@ -1501,7 +1501,6 @@ jjtn000.setName(t.image);
       case NOT:{
         t = jj_consume_token(NOT);
 jjtn000.setName(t.image);
-        Expression();
         ExpressionToken();
         break;
         }
