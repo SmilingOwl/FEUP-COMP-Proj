@@ -351,7 +351,7 @@ void ExpressionToken():{Token t;}
     | t=<FALSE>{jjtThis.setName(t.image);}
     | t=<THIS>{jjtThis.setName(t.image);}
     | t=<NEW>{jjtThis.setName(t.image);} ExpressionNew()
-    | t=<NOT>{jjtThis.setName(t.image);} ExpressionToken()
+    | t=<NOT>{jjtThis.setName(t.image);} ExpressionToken() ExpressionAux()
     | <OPENPAR> Expression() <CLOSEPAR>
     | Identifier()
     | IntegerLiteral()

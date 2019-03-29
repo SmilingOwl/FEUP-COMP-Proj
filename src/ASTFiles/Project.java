@@ -2091,6 +2091,7 @@ jjtn000.setName(t.image);
         t = jj_consume_token(NOT);
 jjtn000.setName(t.image);
         ExpressionToken();
+        ExpressionAux();
         break;
         }
       case OPENPAR:{
