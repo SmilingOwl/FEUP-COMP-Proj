@@ -3,6 +3,7 @@ options
 {
     LOOKAHEAD=1;
     MULTI=true;
+    VISITOR = true;
     JJTREE_OUTPUT_DIRECTORY = "ASTFiles";
 }
 
@@ -17,10 +18,12 @@ public class Project
 
     public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
-        Project myCalc = new Project(System.in);
+        Project myCalc = new Project(System.in); 
         myCalc.errors = new ArrayList<ParseException>();
         try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
+            ProjectClassVisitor v=new ProjectClassVisitor();
+            root.jjtAccept(v, null);
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); ){
                     System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.next.image + "\" occurred after" 
@@ -38,8 +41,8 @@ public class Project
                             break;
                         }
                 }
-            } else 
-                root.dump("");// imprime no ecrã a árvore
+            } //else 
+                //root.dump("");// imprime no ecrã a árvore
        } catch (ParseException e) {
             System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);
             System.out.println("\n\n" + e);

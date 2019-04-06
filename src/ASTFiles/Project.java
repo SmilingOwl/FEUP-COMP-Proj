@@ -12,6 +12,8 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
         myCalc.errors = new ArrayList<ParseException>();
         try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
+            ProjectClassVisitor v=new ProjectClassVisitor();
+            root.jjtAccept(v, null);
             if(myCalc.errors.size() != 0) {
                 for(int i = 0; i < myCalc.errors.size(); ){
                     System.out.println("Unexpected symbol \u005c"" + myCalc.errors.get(i).currentToken.next.image + "\u005c" occurred after"
@@ -29,8 +31,8 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
                             break;
                         }
                 }
-            } else
-                root.dump("");// imprime no ecrã a árvore
+            } //else 
+                //root.dump("");// imprime no ecrã a árvore
        } catch (ParseException e) {
             System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);
             System.out.println("\u005cn\u005cn" + e);
