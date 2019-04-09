@@ -21,6 +21,10 @@ class ASTStatementAux2 extends SimpleNode {
     name = n;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public String toString() {
     if(name != null){
       return "Identifier: " + name;

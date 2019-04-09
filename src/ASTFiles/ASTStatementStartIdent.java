@@ -13,6 +13,10 @@ class ASTStatementStartIdent extends SimpleNode {
     super(p, id);
   }
 
+  public String get_type() {
+    return this.type;
+  }
+
   public void isVarDecl(String n) {
     first = n;
     if(first.equals(".") || first.equals("=") || first.equals(";"))

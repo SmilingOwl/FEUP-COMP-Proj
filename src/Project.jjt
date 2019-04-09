@@ -11,6 +11,7 @@ PARSER_BEGIN(Project)
 
 import java.util.regex.*;
 import java.util.ArrayList;
+import java.io.FileReader;
 
 public class Project
 {
@@ -18,7 +19,18 @@ public class Project
 
     public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
-        Project myCalc = new Project(System.in); 
+        if(args.length != 1) {
+            System.out.println("ERROR: Wrong number of arguments");
+            return;
+        }
+        FileReader file = null;
+        try {
+            file = new FileReader(args[0]);
+        } catch (Exception exc) {
+            System.out.println("File not found");
+            return;
+        }
+        Project myCalc = new Project(file); 
         myCalc.errors = new ArrayList<ParseException>();
         try {
             SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
