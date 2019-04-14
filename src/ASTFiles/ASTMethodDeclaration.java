@@ -16,6 +16,10 @@ class ASTMethodDeclaration extends SimpleNode {
     name = n;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public String toString() {
     return "MethodDeclaration: " + name + "()";
   }

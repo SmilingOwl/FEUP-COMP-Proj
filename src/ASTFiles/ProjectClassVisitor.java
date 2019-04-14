@@ -1,7 +1,12 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class ProjectClassVisitor implements ProjectVisitor{
-    private HashMap<String, String> symbolTable=new HashMap<String, String>();
+  private ArrayList<SymbolTable> symbolTables;
+  private SymbolTable currentTable;
+
+  public ProjectClassVisitor() {
+    this.symbolTables = new ArrayList<SymbolTable>();
+  }
 
   public Object defaultVisit(SimpleNode node, Object data){
     node.childrenAccept(this, data);
@@ -21,68 +26,87 @@ public class ProjectClassVisitor implements ProjectVisitor{
   }
   public Object visit(ASTProgram node, Object data){
     node.childrenAccept(this, data);
+    System.out.println("There are " + this.symbolTables.size() + " tables in the system: \n");
+    for(int i = 0; i < this.symbolTables.size(); i++) {
+      this.symbolTables.get(i).print();
+      System.out.println("\n");
+    }
     return data;
   }
   public Object visit(ASTClassDeclaration node, Object data){
+    String name = node.getName();
+    SymbolTable table = new SymbolTable(name, "class", null);
+    this.currentTable = table;
+    this.symbolTables.add(table);
     node.childrenAccept(this, data);
     return data;
   }
   public Object visit(ASTVarDeclaration node, Object data){
     node.childrenAccept(this, data);
-    System.out.println("Inside VarDeclaration");
     if(node.jjtGetParent() instanceof ASTClassDeclaration) {
         ASTClassDeclaration parent_node = (ASTClassDeclaration) node.jjtGetParent();
-        System.out.println(" Belongs to class: " + parent_node.getName());
     }
     String type = "", name = "";
     if(node.jjtGetNumChildren() == 2) {
         if(node.jjtGetChild(0) instanceof ASTType) {
             ASTType new_node = (ASTType) node.jjtGetChild(0);
             type = new_node.getName();
+            if(new_node.jjtGetNumChildren() == 1)
+                type+="[]";
         } else if(node.jjtGetChild(0) instanceof ASTTypeWoIdent) {
             ASTTypeWoIdent new_node = (ASTTypeWoIdent) node.jjtGetChild(0);
             type = new_node.getName();
+            if(new_node.jjtGetNumChildren() == 1)
+                type+="[]";
         }
         if(node.jjtGetChild(1) instanceof ASTIdentifier) {
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(1);
             name = new_node.getName();
         }
     }
-    System.out.println(" Type = " + type + "\n Name = " + name + "\n");
-    symbolTable.put(name, type);
+    this.currentTable.get_symbols().put(name, type);
     return data;
   }
   public Object visit(ASTVarDeclarationWoIdent node, Object data){
     node.childrenAccept(this, data);
-    System.out.println("Inside VarDeclarationWoIdent");
     if(node.jjtGetParent() instanceof ASTMainMethodBody) {
         ASTMainMethodBody parent_node = (ASTMainMethodBody) node.jjtGetParent();
-        //System.out.println(" Belongs to class: " + parent_node.getName());
     }
     String type = "", name = "";
     if(node.jjtGetNumChildren() == 2) {
         if(node.jjtGetChild(0) instanceof ASTType) {
             ASTType new_node = (ASTType) node.jjtGetChild(0);
             type = new_node.getName();
+            if(new_node.jjtGetNumChildren() == 1)
+                type+="[]";
         } else if(node.jjtGetChild(0) instanceof ASTTypeWoIdent) {
             ASTTypeWoIdent new_node = (ASTTypeWoIdent) node.jjtGetChild(0);
             type = new_node.getName();
+            if(new_node.jjtGetNumChildren() == 1)
+                type+="[]";
         }
         if(node.jjtGetChild(1) instanceof ASTIdentifier) {
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(1);
             name = new_node.getName();
         }
     }
-    System.out.println(" Type = " + type + "\n Name = " + name + "\n");
-    symbolTable.put(name, type);
+    this.currentTable.get_symbols().put(name, type);
     return data;
   }
   public Object visit(ASTMainDeclaration node, Object data){
+    SymbolTable table = new SymbolTable("main", "main", this.currentTable);
+    this.currentTable = table;
+    this.symbolTables.add(table);
     node.childrenAccept(this, data);
+    this.currentTable = this.currentTable.get_parent();
     return data;
   }
   public Object visit(ASTMethodDeclaration node, Object data){
+    SymbolTable table = new SymbolTable(node.getName(), "method", this.currentTable);
+    this.currentTable = table;
+    this.symbolTables.add(table);
     node.childrenAccept(this, data);
+    this.currentTable = this.currentTable.get_parent();
     return data;
   }
   public Object visit(ASTReturn node, Object data){
@@ -140,20 +164,18 @@ public class ProjectClassVisitor implements ProjectVisitor{
   public Object visit(ASTStatementStartIdent node, Object data){
     node.childrenAccept(this, data);
     if(node.get_type().equals("VarDeclaration")){
-      System.out.println("Inside ASTStatementStartIdent for VarDeclaration");
-      /*if(node.jjtGetParent() instanceof ASTClassDeclaration) {
-          ASTClassDeclaration parent_node = (ASTClassDeclaration) node.jjtGetParent();
-          System.out.println(" Belongs to class: " + parent_node.getName());
-      }*/
       String type = "", name = "";
-      System.out.println("Num children: " + node.jjtGetNumChildren());
       if(node.jjtGetNumChildren() == 2) {
           if(node.jjtGetChild(0) instanceof ASTType) {
               ASTType new_node = (ASTType) node.jjtGetChild(0);
               type = new_node.getName();
+              if(new_node.jjtGetNumChildren() == 1)
+                type+="[]";
           } else if(node.jjtGetChild(0) instanceof ASTTypeWoIdent) {
               ASTTypeWoIdent new_node = (ASTTypeWoIdent) node.jjtGetChild(0);
               type = new_node.getName();
+              if(new_node.jjtGetNumChildren() == 1)
+                type+="[]";
           } else if(node.jjtGetChild(0) instanceof ASTIdentifier) {
               ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
               type = new_node.getName();
@@ -164,10 +186,8 @@ public class ProjectClassVisitor implements ProjectVisitor{
                 name = new_node.getName();
               }
           }
-      } else 
-        System.out.println("child type = " + node.jjtGetChild(0).getClass());
-      System.out.println(" Type = " + type + "\n Name = " + name + "\n");
-      symbolTable.put(name, type);
+      }
+      this.currentTable.get_symbols().put(name, type);
     }
     return data;
   }
