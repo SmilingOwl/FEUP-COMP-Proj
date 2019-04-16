@@ -18,13 +18,23 @@ public class SymbolTable {
     private String name;
     private String type; //class, method, main
     private SymbolTable parent;
+    private HashMap<String, String> args;
     private HashMap<String, String> symbols;
+    private String return_type;
 
     public SymbolTable(String name, String type, SymbolTable parent) {
         this.symbols = new HashMap<String, String>();
+        this.args = new HashMap<String, String>();
         this.name = name;
         this.type = type;
+        if(this.type.equals("main")) {
+            this.return_type = "void";
+        }
         this.parent = parent;
+    }
+
+    public String get_return_type() {
+        return this.return_type;
     }
 
     public String get_name() {
@@ -43,10 +53,29 @@ public class SymbolTable {
         return this.parent;
     }
 
+    public HashMap<String, String> get_args() {
+        return this.args;
+    }
+
+    public void set_return_type(String ret_type) {
+        this.return_type = ret_type;
+    }
+
     public void print() {
         System.out.println("- My name is " + this.name + " -");
+        if(this.return_type != null)
+            System.out.println("return type: " + this.return_type);
         for(String key : symbols.keySet()) {
-            System.out.println(key + " - " + symbols.get(key));
+            System.out.println(" " + key + " - " + symbols.get(key));
+        }
+        if(!args.isEmpty()) {
+            System.out.println("\n\n   " + this.name + "@arguments");
+        }
+        for(String key : args.keySet()) {
+            System.out.println("    " + key + " - " + args.get(key));
+        }
+        if(!args.isEmpty()) {
+            System.out.println("   end of @arguments\n");
         }
         if(this.parent != null)
             System.out.println("- My parent's name is " + parent.get_name() + " -");

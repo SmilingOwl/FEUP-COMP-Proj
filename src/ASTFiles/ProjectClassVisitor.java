@@ -42,7 +42,6 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTVarDeclaration node, Object data){
-    node.childrenAccept(this, data);
     if(node.jjtGetParent() instanceof ASTClassDeclaration) {
         ASTClassDeclaration parent_node = (ASTClassDeclaration) node.jjtGetParent();
     }
@@ -65,10 +64,10 @@ public class ProjectClassVisitor implements ProjectVisitor{
         }
     }
     this.currentTable.get_symbols().put(name, type);
+    node.childrenAccept(this, data);
     return data;
   }
   public Object visit(ASTVarDeclarationWoIdent node, Object data){
-    node.childrenAccept(this, data);
     if(node.jjtGetParent() instanceof ASTMainMethodBody) {
         ASTMainMethodBody parent_node = (ASTMainMethodBody) node.jjtGetParent();
     }
@@ -91,6 +90,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         }
     }
     this.currentTable.get_symbols().put(name, type);
+    node.childrenAccept(this, data);
     return data;
   }
   public Object visit(ASTMainDeclaration node, Object data){
@@ -110,6 +110,15 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTReturn node, Object data){
+    if(node.jjtGetNumChildren() == 1) {
+      if(node.jjtGetChild(0) instanceof ASTType) {
+        ASTType new_node = (ASTType) node.jjtGetChild(0);
+        this.currentTable.set_return_type(new_node.getName());
+      }
+      if(node.jjtGetChild(0) instanceof ASTIdentifier) {
+        //compare type with return type of table.
+      }
+    }
     node.childrenAccept(this, data);
     return data;
   }
@@ -118,6 +127,20 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTArgument node, Object data){
+    String type = null, name = null;
+    if(node.jjtGetNumChildren() == 2) {
+        if(node.jjtGetChild(0) instanceof ASTType) {
+            ASTType new_node = (ASTType) node.jjtGetChild(0);
+            type = new_node.getName();
+            if(new_node.jjtGetNumChildren() == 1)
+                type+="[]";
+        } 
+        if(node.jjtGetChild(1) instanceof ASTIdentifier) {
+            ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(1);
+            name = new_node.getName();
+        }
+    }
+    this.currentTable.get_args().put(name, type);
     node.childrenAccept(this, data);
     return data;
   }
@@ -162,7 +185,6 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTStatementStartIdent node, Object data){
-    node.childrenAccept(this, data);
     if(node.get_type().equals("VarDeclaration")){
       String type = "", name = "";
       if(node.jjtGetNumChildren() == 2) {
@@ -189,6 +211,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
       }
       this.currentTable.get_symbols().put(name, type);
     }
+    node.childrenAccept(this, data);
     return data;
   }
   public Object visit(ASTAND node, Object data){
