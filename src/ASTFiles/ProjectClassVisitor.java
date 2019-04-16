@@ -63,7 +63,10 @@ public class ProjectClassVisitor implements ProjectVisitor{
             name = new_node.getName();
         }
     }
-    this.currentTable.get_symbols().put(name, type);
+    if(this.currentTable.exists(name) != null) {
+      System.out.println("Semantic Error: variable " + name + " already exists.");
+    }
+    else this.currentTable.get_symbols().put(name, type);
     node.childrenAccept(this, data);
     return data;
   }
@@ -89,7 +92,10 @@ public class ProjectClassVisitor implements ProjectVisitor{
             name = new_node.getName();
         }
     }
-    this.currentTable.get_symbols().put(name, type);
+    if(this.currentTable.exists(name) != null) {
+      System.out.println("Semantic Error: variable " + name + " already exists.");
+    }
+    else this.currentTable.get_symbols().put(name, type);
     node.childrenAccept(this, data);
     return data;
   }
@@ -140,8 +146,11 @@ public class ProjectClassVisitor implements ProjectVisitor{
             name = new_node.getName();
         }
     }
-    this.currentTable.get_args().put(name, type);
-    node.childrenAccept(this, data);
+    if(this.currentTable.exists(name) != null) {
+      System.out.println("Semantic Error: variable " + name + " already exists.");
+    }
+    else this.currentTable.get_args().put(name, type);
+      node.childrenAccept(this, data);
     return data;
   }
   public Object visit(ASTMainMethodBody node, Object data){
@@ -209,7 +218,10 @@ public class ProjectClassVisitor implements ProjectVisitor{
               }
           }
       }
-      this.currentTable.get_symbols().put(name, type);
+      if(this.currentTable.exists(name) != null) {
+      System.out.println("Semantic Error: variable " + name + " already exists.");
+    }
+    else this.currentTable.get_symbols().put(name, type);
     }
     node.childrenAccept(this, data);
     return data;
