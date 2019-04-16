@@ -44,13 +44,13 @@ public class SymbolTable {
     public String get_type() {
         return this.type;
     }
-    
-    public HashMap<String, String> get_symbols() {
-        return this.symbols;
-    }
 
     public SymbolTable get_parent() {
         return this.parent;
+    }
+    
+    public HashMap<String, String> get_symbols() {
+        return this.symbols;
     }
 
     public HashMap<String, String> get_args() {
@@ -67,7 +67,7 @@ public class SymbolTable {
             if(checking.get_symbols().get(name) != null)
                 return checking.get_symbols().get(name);
             if(checking.get_args().get(name) != null)
-                return checking.get_symbols().get(name);
+                return checking.get_args().get(name);
             checking = checking.parent;
         }
         return null;

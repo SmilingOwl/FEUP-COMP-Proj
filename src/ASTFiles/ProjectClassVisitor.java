@@ -26,11 +26,11 @@ public class ProjectClassVisitor implements ProjectVisitor{
   }
   public Object visit(ASTProgram node, Object data){
     node.childrenAccept(this, data);
-    System.out.println("There are " + this.symbolTables.size() + " tables in the system: \n");
-    for(int i = 0; i < this.symbolTables.size(); i++) {
-      this.symbolTables.get(i).print();
-      System.out.println("\n");
-    }
+    // System.out.println("There are " + this.symbolTables.size() + " tables in the system: \n");
+    // for(int i = 0; i < this.symbolTables.size(); i++) {
+    //   this.symbolTables.get(i).print();
+    //   System.out.println("\n");
+    // }
     return data;
   }
   public Object visit(ASTClassDeclaration node, Object data){
@@ -239,6 +239,12 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTEQUAL node, Object data){
+    if(node.jjtGetChild(0) instanceof ASTIdentifier) {
+      ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
+      if(currentTable.exists(new_node.getName()) == null) {
+        System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
+      }
+    }
     node.childrenAccept(this, data);
     return data;
   }
@@ -251,6 +257,25 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTExpressionRestOfClauses node, Object data){
+    if(node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+      ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
+      if(currentTable.exists(new_node.getName()) == null) {
+        // System.out.println(node.jjtGetChild(0).getClass());
+        // System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
+        System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
+      } /*else {
+        System.out.println("\n!---");
+        System.out.println(node.jjtGetChild(0).getClass());
+        System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
+        System.out.println("variable " + new_node.getName() + " exists.");
+        System.out.println("---!");
+      }*/
+    } /*else {
+      System.out.println("\n>-----------");
+      System.out.println(node.jjtGetChild(0).getClass());
+      System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
+      System.out.println("-----------<");
+    }*/
     node.childrenAccept(this, data);
     return data;
   }
