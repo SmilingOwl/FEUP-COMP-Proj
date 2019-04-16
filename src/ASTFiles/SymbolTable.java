@@ -61,16 +61,16 @@ public class SymbolTable {
         this.return_type = ret_type;
     }
 
-    public boolean exists(String name) {
+    public String exists(String name) {
         SymbolTable checking = this;
         while(checking != null){
             if(checking.get_symbols().get(name) != null)
-                return true;
+                return checking.get_symbols().get(name);
             if(checking.get_args().get(name) != null)
-                return true;
+                return checking.get_symbols().get(name);
             checking = checking.parent;
         }
-        return false;
+        return null;
     }
 
     public void print() {
