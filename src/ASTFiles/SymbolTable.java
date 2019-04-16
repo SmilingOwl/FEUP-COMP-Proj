@@ -61,6 +61,18 @@ public class SymbolTable {
         this.return_type = ret_type;
     }
 
+    public boolean exists(String name) {
+        SymbolTable checking = this;
+        while(checking != null){
+            if(checking.get_symbols().get(name) != null)
+                return true;
+            if(checking.get_args().get(name) != null)
+                return true;
+            checking = checking.parent;
+        }
+        return false;
+    }
+
     public void print() {
         System.out.println("- My name is " + this.name + " -");
         if(this.return_type != null)
@@ -70,11 +82,9 @@ public class SymbolTable {
         }
         if(!args.isEmpty()) {
             System.out.println("\n\n   " + this.name + "@arguments");
-        }
-        for(String key : args.keySet()) {
-            System.out.println("    " + key + " - " + args.get(key));
-        }
-        if(!args.isEmpty()) {
+            for(String key : args.keySet()) {
+                System.out.println("    " + key + " - " + args.get(key));
+            }
             System.out.println("   end of @arguments\n");
         }
         if(this.parent != null)
