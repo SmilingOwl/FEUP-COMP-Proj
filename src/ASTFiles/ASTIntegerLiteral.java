@@ -17,6 +17,10 @@ class ASTIntegerLiteral extends SimpleNode {
     name = n;
   }
 
+  public int getValue() {
+    return value;
+  }
+
   public String toString() {
     return "Integer Literal: " + name;
   }

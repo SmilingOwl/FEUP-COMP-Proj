@@ -26,11 +26,6 @@ public class ProjectClassVisitor implements ProjectVisitor{
   }
   public Object visit(ASTProgram node, Object data){
     node.childrenAccept(this, data);
-    // System.out.println("There are " + this.symbolTables.size() + " tables in the system: \n");
-    // for(int i = 0; i < this.symbolTables.size(); i++) {
-    //   this.symbolTables.get(i).print();
-    //   System.out.println("\n");
-    // }
     return data;
   }
   public Object visit(ASTClassDeclaration node, Object data){
@@ -116,13 +111,28 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTReturn node, Object data){
-    if(node.jjtGetNumChildren() == 1) {
+    if(node.jjtGetNumChildren() == 1 && this.currentTable.get_return_type() != null) {
+      System.out.println("entered");
       if(node.jjtGetChild(0) instanceof ASTType) {
         ASTType new_node = (ASTType) node.jjtGetChild(0);
         this.currentTable.set_return_type(new_node.getName());
-      }
-      if(node.jjtGetChild(0) instanceof ASTIdentifier) {
+      } else if(node.jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionToken) {
         //compare type with return type of table.
+        ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0).jjtGetChild(0);
+        if(new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+          ASTIdentifier new_identifier_node = (ASTIdentifier) new_node.jjtGetChild(0);
+          String type = this.currentTable.exists(new_identifier_node.getName());
+          if(type != null && !type.equals(this.currentTable.get_return_type())) {
+            System.out.println("Semantic Error: Invalid return value for function: " + this.currentTable.get_name() + ".");
+          }
+        } else if(new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIntegerLiteral) {
+          if(!this.currentTable.get_return_type().equals("int")) {
+            System.out.println("Semantic Error: Invalid return value for function: " + this.currentTable.get_name() + ".");
+          }
+        } else if(new_node.getName() != null && (new_node.getName().equals("true") || new_node.getName().equals("false")) 
+            && !this.currentTable.get_return_type().equals("boolean")) {
+          System.out.println("Semantic Error: Invalid return value for function: " + this.currentTable.get_name() + ".");
+        }
       }
     }
     node.childrenAccept(this, data);
@@ -224,6 +234,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
     else this.currentTable.get_symbols().put(name, type);
     }
     node.childrenAccept(this, data);
+
     return data;
   }
   public Object visit(ASTAND node, Object data){
@@ -269,25 +280,12 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTExpressionRestOfClauses node, Object data){
-    if(node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+    if(node.jjtGetNumChildren() != 0 && node.jjtGetChild(0).jjtGetNumChildren() != 0 && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
       ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
       if(currentTable.exists(new_node.getName()) == null) {
-        // System.out.println(node.jjtGetChild(0).getClass());
-        // System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
         System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
-      } /*else {
-        System.out.println("\n!---");
-        System.out.println(node.jjtGetChild(0).getClass());
-        System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
-        System.out.println("variable " + new_node.getName() + " exists.");
-        System.out.println("---!");
-      }*/
-    } /*else {
-      System.out.println("\n>-----------");
-      System.out.println(node.jjtGetChild(0).getClass());
-      System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
-      System.out.println("-----------<");
-    }*/
+      }
+    }
     node.childrenAccept(this, data);
     return data;
   }
