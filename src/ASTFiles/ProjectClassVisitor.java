@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class ProjectClassVisitor implements ProjectVisitor{
   private ArrayList<SymbolTable> symbolTables;
   private SymbolTable currentTable;
+  private LinkedList stack = new LinkedList();
 
   public ProjectClassVisitor() {
     this.symbolTables = new ArrayList<SymbolTable>();
@@ -236,6 +238,21 @@ public class ProjectClassVisitor implements ProjectVisitor{
   }
   public Object visit(ASTADD node, Object data){
     node.childrenAccept(this, data);
+    
+    System.out.println("\nAdd: ");
+    //System.out.println("\t" + node.jjtGetChild(0).jjtGetChild(0).getClass());
+    //System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    //System.out.println("\t" + node.jjtGetChild(0).getClass());
+    
+    if(node.jjtGetChild(0) instanceof ASTADD){ // Second and foward
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+    else{ //First operation, has 2 literals
+      System.out.println("\t" + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+
+    
     return data;
   }
   public Object visit(ASTSUB node, Object data){
@@ -258,6 +275,11 @@ public class ProjectClassVisitor implements ProjectVisitor{
       }
     }
     node.childrenAccept(this, data);
+
+    System.out.println("\nAssign: ");
+    System.out.println("\t" + node.jjtGetChild(0));
+    System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).getClass());
+
     return data;
   }
   public Object visit(ASTStatementAux2 node, Object data){
@@ -319,4 +341,14 @@ public class ProjectClassVisitor implements ProjectVisitor{
     node.childrenAccept(this, data);
     return data;
   }
+
+/*
+  public Object pop(){
+    return stack.removeFirst();
+  }
+
+  public void push(Object o){
+    stack.addFirst(o);
+  }
+  */
 }
