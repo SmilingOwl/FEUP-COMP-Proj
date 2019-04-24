@@ -4,9 +4,9 @@ class Fac extends Something {
         int a;
         a = 1;
 
-        a = 8+9;
+        a = True && False && True;
 
-        return 1+2+3+4+5+6;
+        return 1*2/3+4-5;
     }
 
     public static void main(String[] a){

@@ -354,6 +354,8 @@ public class ProjectClassVisitor implements ProjectVisitor{
     String type = null;
     node.childrenAccept(this, data);
 
+    //Semantic
+
     if (node.jjtGetNumChildren() == 2) {
 
       if (node.jjtGetChild(0) instanceof ASTIntegerLiteral) {
@@ -379,6 +381,19 @@ public class ProjectClassVisitor implements ProjectVisitor{
         }
       }
     }
+
+    //Code generation
+
+    System.out.println("\nSub: ");
+
+    if(node.jjtGetChild(0) instanceof ASTSUB){ // Second and foward
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+    else{ //First operation, has 2 literals
+      System.out.println("\t" + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+
     return data;
   }
 
@@ -387,6 +402,8 @@ public class ProjectClassVisitor implements ProjectVisitor{
     String type = null;
     node.childrenAccept(this, data);
 
+    //Semantic
+
     if (node.jjtGetNumChildren() == 2) {
 
       if (node.jjtGetChild(0) instanceof ASTIntegerLiteral) {
@@ -412,6 +429,19 @@ public class ProjectClassVisitor implements ProjectVisitor{
         }
       }
     }
+
+    //Code generation
+
+    System.out.println("\nMult: ");
+    
+    if(node.jjtGetChild(0) instanceof ASTMULT){ // Second and foward
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+    else{ //First operation, has 2 literals
+      System.out.println("\t" + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+
     return data;
   }
 
@@ -420,6 +450,8 @@ public class ProjectClassVisitor implements ProjectVisitor{
     String type = null;
     node.childrenAccept(this, data);
 
+    //Semantic
+
     if (node.jjtGetNumChildren() == 2) {
 
       if (node.jjtGetChild(0) instanceof ASTIntegerLiteral) {
@@ -445,6 +477,19 @@ public class ProjectClassVisitor implements ProjectVisitor{
         }
       }
     }
+
+    //Code generation
+
+    System.out.println("\nDiv: ");
+    
+    if(node.jjtGetChild(0) instanceof ASTDIV){ // Second and foward
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+    else{ //First operation, has 2 literals
+      System.out.println("\t" + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
+      System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+    }
+
     return data;
   }
   public Object visit(ASTEQUAL node, Object data){
