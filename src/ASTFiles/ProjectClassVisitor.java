@@ -111,8 +111,8 @@ public class ProjectClassVisitor implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTReturn node, Object data){
-    if(node.jjtGetNumChildren() == 1 && this.currentTable.get_return_type() != null) {
-      System.out.println("entered");
+
+    if(node.jjtGetNumChildren() == 1) {
       if(node.jjtGetChild(0) instanceof ASTType) {
         ASTType new_node = (ASTType) node.jjtGetChild(0);
         this.currentTable.set_return_type(new_node.getName());
@@ -427,7 +427,6 @@ public class ProjectClassVisitor implements ProjectVisitor{
     }
     return data;
   }
-
   public Object visit(ASTEQUAL node, Object data){
     if(node.jjtGetChild(0) instanceof ASTIdentifier) {
       ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
@@ -484,6 +483,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
     }else{
       //expression...
     }
+    node.childrenAccept(this, data);
     return data;
   }
   public Object visit(ASTExpressionAuxDot node, Object data){
