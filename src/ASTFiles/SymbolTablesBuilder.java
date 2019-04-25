@@ -5,7 +5,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
   private ArrayList<SymbolTable> symbolTables;
   private SymbolTable currentTable;
   private boolean show_symbol_tables = false;
-  private boolean show_semantic_analysis = true;
+  private boolean show_semantic_analysis = false;
 
   public SymbolTablesBuilder() {
     this.symbolTables = new ArrayList<SymbolTable>();

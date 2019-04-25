@@ -16,6 +16,10 @@ class ASTExpressionAuxDot extends SimpleNode {
     name = n;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public String toString() {
     if(name.equals("length"))
       return "length";

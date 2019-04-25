@@ -10,6 +10,8 @@ class Fac extends Something {
         int[] num_array;
         num_array[2] = 0;
         num_array[0].a(num, attr);
+        this;
+        this.ComputeFac();
 
         num_aux = s + 1;
 
@@ -38,6 +40,7 @@ class Fac extends Something {
     }
 
     public static void main(String[] a){
-        io.println(new Fac().ComputeFac(10));
+        FindMaximum f;
+        io.println(f.get_array(a));
     }
 }
