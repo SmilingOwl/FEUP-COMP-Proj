@@ -3,6 +3,7 @@ options
 {
     LOOKAHEAD=1;
     MULTI=true;
+    STATIC=false;
     VISITOR = true;
     JJTREE_OUTPUT_DIRECTORY = "ASTFiles";
 }

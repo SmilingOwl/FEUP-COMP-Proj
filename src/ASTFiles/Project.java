@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.io.FileReader;
 
 public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectConstants {/*@bgen(jjtree)*/
-  protected static JJTProjectState jjtree = new JJTProjectState();public static int MAX_ERRORS = 10;
+  protected JJTProjectState jjtree = new JJTProjectState();public static int MAX_ERRORS = 10;
 
     public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
@@ -64,11 +64,11 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
     }
 
 // UTILS - START
-  static final public void Empty() throws ParseException {
+  final public void Empty() throws ParseException {
 
   }
 
-  static final public void IntegerLiteral() throws ParseException {/*@bgen(jjtree) IntegerLiteral */
+  final public void IntegerLiteral() throws ParseException {/*@bgen(jjtree) IntegerLiteral */
                         ASTIntegerLiteral jjtn000 = new ASTIntegerLiteral(JJTINTEGERLITERAL);
                         boolean jjtc000 = true;
                         jjtree.openNodeScope(jjtn000);Token t, z;
@@ -122,7 +122,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void Identifier() throws ParseException {/*@bgen(jjtree) Identifier */
+  final public void Identifier() throws ParseException {/*@bgen(jjtree) Identifier */
                    ASTIdentifier jjtn000 = new ASTIdentifier(JJTIDENTIFIER);
                    boolean jjtc000 = true;
                    jjtree.openNodeScope(jjtn000);Token t;
@@ -143,7 +143,7 @@ if (jjtc000) {
 
 
 // PROGRAM/CLASS DECLARATION - START
-  static final public SimpleNode Program() throws ParseException {/*@bgen(jjtree) Program */
+  final public SimpleNode Program() throws ParseException {/*@bgen(jjtree) Program */
   ASTProgram jjtn000 = new ASTProgram(JJTPROGRAM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -174,7 +174,7 @@ if (jjtc000) {
     throw new Error("Missing return statement in function");
   }
 
-  static final public void ClassDeclaration() throws ParseException {/*@bgen(jjtree) ClassDeclaration */
+  final public void ClassDeclaration() throws ParseException {/*@bgen(jjtree) ClassDeclaration */
                           ASTClassDeclaration jjtn000 = new ASTClassDeclaration(JJTCLASSDECLARATION);
                           boolean jjtc000 = true;
                           jjtree.openNodeScope(jjtn000);Token t;
@@ -237,7 +237,7 @@ if (jjtc000) {
 
 
 // VAR DECLARATION - START
-  static final public void VarDeclaration() throws ParseException {/*@bgen(jjtree) VarDeclaration */
+  final public void VarDeclaration() throws ParseException {/*@bgen(jjtree) VarDeclaration */
   ASTVarDeclaration jjtn000 = new ASTVarDeclaration(JJTVARDECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -266,7 +266,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void VarDeclarationWoIdent() throws ParseException {/*@bgen(jjtree) VarDeclarationWoIdent */
+  final public void VarDeclarationWoIdent() throws ParseException {/*@bgen(jjtree) VarDeclarationWoIdent */
                               ASTVarDeclarationWoIdent jjtn000 = new ASTVarDeclarationWoIdent(JJTVARDECLARATIONWOIDENT);
                               boolean jjtc000 = true;
                               jjtree.openNodeScope(jjtn000);Token t;
@@ -300,7 +300,7 @@ if (jjtc000) {
 
 
 // MAIN/METHOD - START
-  static final public void MainMethodDeclaration() throws ParseException {
+  final public void MainMethodDeclaration() throws ParseException {
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -332,7 +332,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void MainDeclaration() throws ParseException {/*@bgen(jjtree) MainDeclaration */
+  final public void MainDeclaration() throws ParseException {/*@bgen(jjtree) MainDeclaration */
                         ASTMainDeclaration jjtn000 = new ASTMainDeclaration(JJTMAINDECLARATION);
                         boolean jjtc000 = true;
                         jjtree.openNodeScope(jjtn000);Token t;
@@ -371,7 +371,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void MethodDeclaration() throws ParseException {/*@bgen(jjtree) MethodDeclaration */
+  final public void MethodDeclaration() throws ParseException {/*@bgen(jjtree) MethodDeclaration */
                           ASTMethodDeclaration jjtn000 = new ASTMethodDeclaration(JJTMETHODDECLARATION);
                           boolean jjtc000 = true;
                           jjtree.openNodeScope(jjtn000);Token t;
@@ -455,7 +455,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void MethodArgs() throws ParseException {/*@bgen(jjtree) MethodArgs */
+  final public void MethodArgs() throws ParseException {/*@bgen(jjtree) MethodArgs */
                    ASTMethodArgs jjtn000 = new ASTMethodArgs(JJTMETHODARGS);
                    boolean jjtc000 = true;
                    jjtree.openNodeScope(jjtn000);Token t;
@@ -554,7 +554,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void MainMethodBody() throws ParseException {/*@bgen(jjtree) MainMethodBody */
+  final public void MainMethodBody() throws ParseException {/*@bgen(jjtree) MainMethodBody */
   ASTMainMethodBody jjtn000 = new ASTMainMethodBody(JJTMAINMETHODBODY);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -609,7 +609,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void InMethod() throws ParseException {
+  final public void InMethod() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INT:
     case BOOLEAN:{
@@ -646,7 +646,7 @@ if (jjtc000) {
 
 
 // TYPE - START
-  static final public void Type() throws ParseException {/*@bgen(jjtree) Type */
+  final public void Type() throws ParseException {/*@bgen(jjtree) Type */
              ASTType jjtn000 = new ASTType(JJTTYPE);
              boolean jjtc000 = true;
              jjtree.openNodeScope(jjtn000);Token t;
@@ -698,7 +698,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void TypeAux() throws ParseException {
+  final public void TypeAux() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case OPENSQBRACK:{
       jj_consume_token(OPENSQBRACK);
@@ -720,7 +720,7 @@ if (jjtc001) {
     }
   }
 
-  static final public void TypeWoIdent() throws ParseException {/*@bgen(jjtree) TypeWoIdent */
+  final public void TypeWoIdent() throws ParseException {/*@bgen(jjtree) TypeWoIdent */
                     ASTTypeWoIdent jjtn000 = new ASTTypeWoIdent(JJTTYPEWOIDENT);
                     boolean jjtc000 = true;
                     jjtree.openNodeScope(jjtn000);Token t;
@@ -770,7 +770,7 @@ if (jjtc000) {
 
 
 // STATEMENT - START
-  static final public void Statement() throws ParseException {
+  final public void Statement() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case OPENBRACK:{
       jj_consume_token(OPENBRACK);
@@ -936,7 +936,7 @@ if (jjtc004) {
     }
   }
 
-  static final public void WhileStatement() throws ParseException {/*@bgen(jjtree) WhileStatement */
+  final public void WhileStatement() throws ParseException {/*@bgen(jjtree) WhileStatement */
   ASTWhileStatement jjtn000 = new ASTWhileStatement(JJTWHILESTATEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -1039,7 +1039,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void StatementStartIdent() throws ParseException {/*@bgen(jjtree) StatementStartIdent */
+  final public void StatementStartIdent() throws ParseException {/*@bgen(jjtree) StatementStartIdent */
                             ASTStatementStartIdent jjtn000 = new ASTStatementStartIdent(JJTSTATEMENTSTARTIDENT);
                             boolean jjtc000 = true;
                             jjtree.openNodeScope(jjtn000);Token t=null;
@@ -1398,7 +1398,7 @@ if (jjtc000) {
     }
   }
 
-  static final public Token StatementAux2() throws ParseException {/*@bgen(jjtree) StatementAux2 */
+  final public Token StatementAux2() throws ParseException {/*@bgen(jjtree) StatementAux2 */
                        ASTStatementAux2 jjtn000 = new ASTStatementAux2(JJTSTATEMENTAUX2);
                        boolean jjtc000 = true;
                        jjtree.openNodeScope(jjtn000);Token t;
@@ -1474,7 +1474,7 @@ if (jjtc000) {
 
 
 // EXPRESSION - START
-  static final public 
+  final public 
 void ExpressionWoIdent() throws ParseException {
     ExpressionMinorWoIdent();
     label_10:
@@ -1516,7 +1516,7 @@ if (jjtc001) {
     }
   }
 
-  static final public void Expression() throws ParseException {
+  final public void Expression() throws ParseException {
     ExpressionMinor();
     label_11:
     while (true) {
@@ -1557,7 +1557,7 @@ if (jjtc001) {
     }
   }
 
-  static final public void ExpressionMinor() throws ParseException {
+  final public void ExpressionMinor() throws ParseException {
     ExpressionAdd();
     label_12:
     while (true) {
@@ -1598,7 +1598,7 @@ if (jjtc001) {
     }
   }
 
-  static final public void ExpressionMinorWoIdent() throws ParseException {
+  final public void ExpressionMinorWoIdent() throws ParseException {
     ExpressionAddWoIdent();
     label_13:
     while (true) {
@@ -1639,7 +1639,7 @@ if (jjtc001) {
     }
   }
 
-  static final public void ExpressionAdd() throws ParseException {
+  final public void ExpressionAdd() throws ParseException {
     ExpressionMult();
     label_14:
     while (true) {
@@ -1718,7 +1718,7 @@ if (jjtc002) {
     }
   }
 
-  static final public void ExpressionAddWoIdent() throws ParseException {
+  final public void ExpressionAddWoIdent() throws ParseException {
     ExpressionMultWoIdent();
     label_15:
     while (true) {
@@ -1797,7 +1797,7 @@ if (jjtc002) {
     }
   }
 
-  static final public void ExpressionMult() throws ParseException {
+  final public void ExpressionMult() throws ParseException {
     ExpressionRestOfClauses();
     label_16:
     while (true) {
@@ -1876,7 +1876,7 @@ if (jjtc002) {
     }
   }
 
-  static final public void ExpressionMultWoIdent() throws ParseException {
+  final public void ExpressionMultWoIdent() throws ParseException {
     ExpressionRestOfClausesWoIdent();
     label_17:
     while (true) {
@@ -1955,7 +1955,7 @@ if (jjtc002) {
     }
   }
 
-  static final public void ExpressionRestOfClauses() throws ParseException {/*@bgen(jjtree) ExpressionRestOfClauses */
+  final public void ExpressionRestOfClauses() throws ParseException {/*@bgen(jjtree) ExpressionRestOfClauses */
   ASTExpressionRestOfClauses jjtn000 = new ASTExpressionRestOfClauses(JJTEXPRESSIONRESTOFCLAUSES);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -1983,7 +1983,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void ExpressionRestOfClausesWoIdent() throws ParseException {/*@bgen(jjtree) ExpressionRestOfClausesWoIdent */
+  final public void ExpressionRestOfClausesWoIdent() throws ParseException {/*@bgen(jjtree) ExpressionRestOfClausesWoIdent */
   ASTExpressionRestOfClausesWoIdent jjtn000 = new ASTExpressionRestOfClausesWoIdent(JJTEXPRESSIONRESTOFCLAUSESWOIDENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -2011,7 +2011,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void ExpressionAux() throws ParseException {
+  final public void ExpressionAux() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DOT:{
       jj_consume_token(DOT);
@@ -2052,7 +2052,7 @@ if (jjtc001) {
     }
   }
 
-  static final public void AccessingArrayAt() throws ParseException {/*@bgen(jjtree) AccessingArrayAt */
+  final public void AccessingArrayAt() throws ParseException {/*@bgen(jjtree) AccessingArrayAt */
   ASTAccessingArrayAt jjtn000 = new ASTAccessingArrayAt(JJTACCESSINGARRAYAT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -2081,7 +2081,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void ExpressionAuxDot() throws ParseException {/*@bgen(jjtree) ExpressionAuxDot */
+  final public void ExpressionAuxDot() throws ParseException {/*@bgen(jjtree) ExpressionAuxDot */
                          ASTExpressionAuxDot jjtn000 = new ASTExpressionAuxDot(JJTEXPRESSIONAUXDOT);
                          boolean jjtc000 = true;
                          jjtree.openNodeScope(jjtn000);Token t;
@@ -2161,7 +2161,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void ExpressionToken() throws ParseException {/*@bgen(jjtree) ExpressionToken */
+  final public void ExpressionToken() throws ParseException {/*@bgen(jjtree) ExpressionToken */
                         ASTExpressionToken jjtn000 = new ASTExpressionToken(JJTEXPRESSIONTOKEN);
                         boolean jjtc000 = true;
                         jjtree.openNodeScope(jjtn000);Token t;
@@ -2245,7 +2245,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void ExpressionTokenWoIdent() throws ParseException {/*@bgen(jjtree) ExpressionTokenWoIdent */
+  final public void ExpressionTokenWoIdent() throws ParseException {/*@bgen(jjtree) ExpressionTokenWoIdent */
                                ASTExpressionTokenWoIdent jjtn000 = new ASTExpressionTokenWoIdent(JJTEXPRESSIONTOKENWOIDENT);
                                boolean jjtc000 = true;
                                jjtree.openNodeScope(jjtn000);Token t;
@@ -2325,7 +2325,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void ExpressionNew() throws ParseException {/*@bgen(jjtree) ExpressionNew */
+  final public void ExpressionNew() throws ParseException {/*@bgen(jjtree) ExpressionNew */
                        ASTExpressionNew jjtn000 = new ASTExpressionNew(JJTEXPRESSIONNEW);
                        boolean jjtc000 = true;
                        jjtree.openNodeScope(jjtn000);Token t;
@@ -2369,17 +2369,16 @@ if (jjtc000) {
     }
   }
 
-  static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
-  static public ProjectTokenManager token_source;
-  static SimpleCharStream jj_input_stream;
+  public ProjectTokenManager token_source;
+  SimpleCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[42];
+  public Token jj_nt;
+  private int jj_ntk;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[42];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -2399,13 +2398,6 @@ if (jjtc000) {
   }
   /** Constructor with InputStream and supplied encoding */
   public Project(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new ProjectTokenManager(jj_input_stream);
     token = new Token();
@@ -2415,11 +2407,11 @@ if (jjtc000) {
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -2431,13 +2423,6 @@ if (jjtc000) {
 
   /** Constructor. */
   public Project(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new ProjectTokenManager(jj_input_stream);
     token = new Token();
@@ -2447,7 +2432,7 @@ if (jjtc000) {
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -2459,13 +2444,6 @@ if (jjtc000) {
 
   /** Constructor with generated Token Manager. */
   public Project(ProjectTokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
@@ -2483,7 +2461,7 @@ if (jjtc000) {
     for (int i = 0; i < 42; i++) jj_la1[i] = -1;
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -2499,7 +2477,7 @@ if (jjtc000) {
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -2508,7 +2486,7 @@ if (jjtc000) {
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -2517,19 +2495,19 @@ if (jjtc000) {
     return t;
   }
 
-  static private int jj_ntk_f() {
+  private int jj_ntk_f() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[47];
     if (jj_kind >= 0) {
@@ -2563,11 +2541,11 @@ if (jjtc000) {
   }
 
   /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
   }
 
   /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
   }
 
 }
