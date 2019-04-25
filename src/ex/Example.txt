@@ -5,14 +5,17 @@ class Fac extends Something {
         
         int num_aux; 
         myClass2 myVar2;
+        boolean s;
         
         int[] num_array;
         num_array[2] = 0;
         num_array[0].a(num, attr);
 
+        num_aux = s + 1;
+
         num_aux = 3 + 6 / 3;
         num_aux = 3 / 6 + 3;
-        if(foo < 3){
+        if(foo < 3 && 1){
             t = 1;
         }
         else{

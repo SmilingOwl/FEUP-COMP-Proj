@@ -9,7 +9,6 @@ Estrutura da Symbol Table:
  - args: se for função, os seus argumentos
  - functions: se for classe, as suas funções
  - return_type: tipo de retorno (se for função)
- - scope: a que parte da função a tabela pertence (inicio, depois de ifs ou whiles, etc)
 
  Na classe ProjectClassVisitor, está uma lista de tabelas de símbolos, para podermos fazer print de todas, e
 o argumento currentTable que indica em que tabela se está no momento da visita. ou seja, quando estiverem a fazer
@@ -24,7 +23,6 @@ public class SymbolTable {
     private LinkedHashMap<String, String> symbols;
     private LinkedHashMap<String, SymbolTable> functions;
     private String return_type;
-    private int scope;
 
     public SymbolTable(String name, String type, SymbolTable parent) {
         this.symbols = new LinkedHashMap<String, String>();
@@ -32,7 +30,6 @@ public class SymbolTable {
         this.functions = new LinkedHashMap<String, SymbolTable>();
         this.name = name;
         this.type = type;
-        this.scope = 1;
         if(this.type.equals("main")) {
             this.return_type = "void";
         }
@@ -49,10 +46,6 @@ public class SymbolTable {
 
     public String get_type() {
         return this.type;
-    }
-
-    public int get_scope() {
-        return this.scope;
     }
 
     public SymbolTable get_parent() {
@@ -75,10 +68,6 @@ public class SymbolTable {
         this.return_type = ret_type;
     }
 
-    public void set_scope(int scope) {
-        this.scope = scope;
-    }
-
     public String exists(String n) {
         SymbolTable checking = this;
         while(checking != null){
@@ -86,15 +75,6 @@ public class SymbolTable {
                 return checking.get_symbols().get(n);
             if(checking.get_args().get(n) != null)
                 return checking.get_args().get(n);
-            for(String key : functions.keySet()) {
-                if(this.functions.get(key).get_name().equals(n) && this.functions.get(key).get_scope() < this.scope){
-                    checking = this.functions.get(key);
-                    if(checking.get_symbols().get(n) != null)
-                        return checking.get_symbols().get(n);
-                    if(checking.get_args().get(n) != null)
-                        return checking.get_args().get(n);
-                }
-            }
             checking = checking.parent;
         }
         return null;
@@ -104,7 +84,7 @@ public class SymbolTable {
         if(this.type.equals("class"))
             System.out.println("\n\n\nclass@" + this.name);
         else 
-            System.out.println("\n\n\nfunction@" + this.name + " -> Scope: " + scope);
+            System.out.println("\n\n\nfunction@" + this.name);
 
         if(this.type.equals("class") && this.functions.size() > 0) {
             System.out.println("\n\n" + this.name + "@functions");
