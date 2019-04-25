@@ -4,6 +4,7 @@ import java.util.LinkedList;
 public class SymbolTablesBuilder implements ProjectVisitor{
   private ArrayList<SymbolTable> symbolTables;
   private SymbolTable currentTable;
+  private boolean show_symbol_tables = true;
 
   public SymbolTablesBuilder() {
     this.symbolTables = new ArrayList<SymbolTable>();
@@ -27,9 +28,11 @@ public class SymbolTablesBuilder implements ProjectVisitor{
   }
   public Object visit(ASTProgram node, Object data){
     node.childrenAccept(this, data);
-    for(int i = 0; i < this.symbolTables.size(); i++) {
-       this.symbolTables.get(i).print();
-       System.out.println("\n");
+    if(show_symbol_tables) {
+        for(int i = 0; i < this.symbolTables.size(); i++) {
+        this.symbolTables.get(i).print();
+        System.out.println("\n");
+        }
     }
     return data;
   }
