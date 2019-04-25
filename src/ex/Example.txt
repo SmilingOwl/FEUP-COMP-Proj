@@ -2,11 +2,10 @@ class Fac extends Something {
     int global1; 
     myClass myVar;
     public int ComputeFac(int num, boolean attr){
+        
         int num_aux; 
         myClass2 myVar2;
-
-/*ola
-sgfuycdbsj*/
+        
         int[] num_array;
         num_array[2] = 0;
         num_array[0].a(num, attr);

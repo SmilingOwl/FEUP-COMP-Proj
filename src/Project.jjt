@@ -19,47 +19,57 @@ public class Project
 
     public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
-        if(args.length != 1) {
+        if(args.length < 1) {
             System.out.println("ERROR: Wrong number of arguments");
             return;
         }
+        ArrayList<SimpleNode> initial_nodes = new ArrayList<SimpleNode>();
+        SymbolTablesBuilder builder = new SymbolTablesBuilder();
         FileReader file = null;
-        try {
-            file = new FileReader(args[0]);
-        } catch (Exception exc) {
-            System.out.println("File not found");
-            return;
-        }
-        Project myCalc = new Project(file); 
-        myCalc.errors = new ArrayList<ParseException>();
-        try {
-            SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
-            ProjectClassVisitor v=new ProjectClassVisitor();
-            root.jjtAccept(v, null);
-            if(myCalc.errors.size() != 0) {
-                for(int i = 0; i < myCalc.errors.size(); ){
-                    System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.next.image + "\" occurred after" 
-                        + " Line:" + myCalc.errors.get(i).currentToken.next.beginLine 
-                        + ", Column:" + myCalc.errors.get(i).currentToken.next.beginColumn);
-                        i++;
-                        if(i >= MAX_ERRORS){
-                            int remErrors = (myCalc.errors.size()-i);
-                            if(remErrors == 1)
-                                System.out.println("There is " + remErrors + " more error.");
-                            else if(remErrors == 0)
+        for(int n = 0; n < args.length; n++) {
+            try {
+                file = new FileReader(args[n]);
+            } catch (Exception exc) {
+                System.out.println("File " + args[n] + " not found");
+                return;
+            }
+            Project myCalc = new Project(file); 
+            myCalc.errors = new ArrayList<ParseException>();
+            try {
+                SimpleNode root = myCalc.Program(); // devolve referência para o nó raiz da árvore
+                initial_nodes.add(root);
+                if(myCalc.errors.size() != 0) {
+                    for(int i = 0; i < myCalc.errors.size(); ){
+                        System.out.println("Unexpected symbol \"" + myCalc.errors.get(i).currentToken.next.image + "\" occurred after" 
+                            + " Line:" + myCalc.errors.get(i).currentToken.next.beginLine 
+                            + ", Column:" + myCalc.errors.get(i).currentToken.next.beginColumn);
+                            i++;
+                            if(i >= MAX_ERRORS){
+                                int remErrors = (myCalc.errors.size()-i);
+                                if(remErrors == 1)
+                                    System.out.println("There is " + remErrors + " more error.");
+                                else if(remErrors == 0)
+                                    break;
+                                else
+                                    System.out.println("There are " + remErrors + " more errors.");
                                 break;
-                            else
-                                System.out.println("There are " + remErrors + " more errors.");
-                            break;
-                        }
-                }
-            } //else 
-                //root.dump("");// imprime no ecrã a árvore
-       } catch (ParseException e) {
-            System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);
-            System.out.println("\n\n" + e);
+                            }
+                    }
+                    
+                } else {
+                    //root.dump(""); //print AST
+                    root.jjtAccept(builder, null);
+                } 
+            } catch (ParseException e) {
+                System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);
+                System.out.println("\n\n" + e);
+                return;
+            }
         }
-        
+        ProjectClassVisitor visitor=new ProjectClassVisitor(builder.get_symbol_tables());
+        for(int a = 0; a < initial_nodes.size(); a++) {
+            initial_nodes.get(a).jjtAccept(visitor, null);
+        }
        
     }
 }
