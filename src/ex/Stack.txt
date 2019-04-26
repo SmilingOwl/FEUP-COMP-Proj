@@ -1,12 +1,13 @@
 class Fac extends Something {
 
     public int test(){
-        int a;
-        a = 1;
+        //int a;
+        //a = 1;
 
-        a = True && False && True;
+        //a = True && False && True;
 
-        return 1-2+3/4+5;
+        //return 1-2+3/4*5;
+        return 1*2*3*5;
         //return 1*2/3+4-5;
     }
 
