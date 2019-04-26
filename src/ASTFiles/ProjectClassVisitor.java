@@ -5,8 +5,8 @@ public class ProjectClassVisitor implements ProjectVisitor{
   private ArrayList<SymbolTable> symbolTables;
   private SymbolTable currentTable;
   private LinkedList stack = new LinkedList();
-  private boolean show_semantic_analysis = false;
-  private boolean show_code_generation = true;
+  private boolean show_semantic_analysis = true;
+  private boolean show_code_generation = false;
 
   public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
     this.symbolTables = symbolTables;
