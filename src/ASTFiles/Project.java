@@ -49,8 +49,8 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
                 } else {
                     //root.dump(""); //print AST
                     root.jjtAccept(builder, null);
-                    if(builder.get_errors())
-                        return;
+                    //if(builder.get_errors())
+                      //  return;
                 }
             } catch (ParseException e) {
                 System.out.println("Unhandled Exception at line " + e.currentToken.beginLine + " and column " + e.currentToken.beginColumn);

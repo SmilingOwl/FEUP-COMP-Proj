@@ -22,7 +22,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
   }
   public Object visit(ASTIntegerLiteral node, Object data){
     node.childrenAccept(this, data);
-    return data;
+    return "int";
   }
   public Object visit(ASTIdentifier node, Object data){
     node.childrenAccept(this, data);
@@ -197,7 +197,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
   }
   public Object visit(ASTCondition node, Object data){
     node.childrenAccept(this, data);
-    return data;
+    return "boolean";
   }
   public Object visit(ASTIfBody node, Object data){
     node.childrenAccept(this, data);
@@ -245,10 +245,9 @@ public class SymbolTablesBuilder implements ProjectVisitor{
           }
       }
       if(this.currentTable.exists(name) != null) {
-      System.out.println("Semantic Error: variable " + name + " already exists.");
-      errors = true;
-    }
-    else this.currentTable.get_symbols().put(name, type);
+        System.out.println("Semantic Error: variable " + name + " already exists.");
+        errors = true;
+      } else this.currentTable.get_symbols().put(name, type);
     }
     node.childrenAccept(this, data);
     return data;
@@ -274,7 +273,8 @@ public class SymbolTablesBuilder implements ProjectVisitor{
         errors = true;
       }
 
-      else if (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses 
+      else if (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0
                 && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
         ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0);
         name = new_node.getName();
