@@ -4,7 +4,7 @@ class Fac extends Something {
         int a;
         a = 1;
 
-        a = True && False && True;
+        a = true && false && true;
 
         return 1-2+3/4+5;
         //return 1*2/3+4-5;

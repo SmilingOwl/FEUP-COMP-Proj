@@ -5,7 +5,7 @@ class Fac extends Something {
         
         int num_aux; 
         FindMaximum myVar2;
-        boolean s;
+        int s;
         
         int[] num_array;
         num_array[2] = 0+3;
@@ -14,13 +14,12 @@ class Fac extends Something {
         this.ComputeFac();
 
         num_aux = s + 1;
-
         num_aux = 3 + 6 / 3;
         num_aux = 3 / 6 + 3;
         if(foo < 3 && true){
             t = 1;
         }
-        else{
+        else {
             k = 1;
         }
         while(a < 1){

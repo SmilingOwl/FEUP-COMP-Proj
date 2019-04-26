@@ -5,8 +5,8 @@ public class SymbolTablesBuilder implements ProjectVisitor{
   private ArrayList<SymbolTable> symbolTables;
   private SymbolTable currentTable;
   private boolean errors = false;
-  private boolean show_symbol_tables = false;
-  private boolean show_semantic_analysis = false;
+  private boolean show_symbol_tables = true;
+  private boolean show_semantic_analysis = true;
 
   public SymbolTablesBuilder() {
     this.symbolTables = new ArrayList<SymbolTable>();
@@ -106,6 +106,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
   }
   public Object visit(ASTMainDeclaration node, Object data){
     SymbolTable table = new SymbolTable("main", "main", this.currentTable);
+    table.get_args().put(node.getName(), "String[]");
     this.currentTable.get_functions().put("main", table);
     this.currentTable = table;
     node.childrenAccept(this, data);
@@ -505,6 +506,36 @@ public class SymbolTablesBuilder implements ProjectVisitor{
         errors = true;
       }
     }
+    if(node.jjtGetNumChildren() == 2) {
+      if(node.jjtGetChild(0) instanceof ASTExpressionToken) {
+        ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
+        if(new_node.getName() != null && new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+          ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+          if(!new_dot_node.getName().equals("length")) {
+            SymbolTable table = this.currentTable.get_parent().get_functions().get(new_dot_node.getName());
+            if(table != null) {
+              if(table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
+                System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
+                errors = true;
+              }
+              else {
+                node.childrenAccept(this, data);
+                return table.get_return_type();
+              }
+            //check types of arguments
+            } else if(show_semantic_analysis) {
+              System.out.println("Semantic Error: Function " + new_dot_node.getName() + " doesn't exist.");
+              errors = true;
+            }
+          } else {
+            node.childrenAccept(this, data);
+            return "int";
+          }
+        }
+      }
+    } else if(node.jjtGetNumChildren() == 1) {
+      return node.jjtGetChild(0).jjtAccept(this, data);
+    }
     node.childrenAccept(this, data);
     return data;
   }
@@ -532,6 +563,8 @@ public class SymbolTablesBuilder implements ProjectVisitor{
     return data;
   }
   public Object visit(ASTExpressionToken node, Object data){
+    if(node.jjtGetNumChildren() == 1)
+      return node.jjtGetChild(0).jjtAccept(this, data);
     node.childrenAccept(this, data);
     return data;
   }

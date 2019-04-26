@@ -293,23 +293,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
     if(node.jjtGetNumChildren() == 2) {
       if(node.jjtGetChild(0) instanceof ASTExpressionToken) {
         ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
-        if(new_node.getName() != null && new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
-          ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
-          if(!new_dot_node.getName().equals("length")) {
-            SymbolTable table = this.currentTable.get_parent().get_functions().get(new_dot_node.getName());
-            if(table != null) {
-              System.out.println("I'm " + new_dot_node.getName() + ". I have " + new_dot_node.jjtGetNumChildren() + " children");
-              if(table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
-                System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
-                System.exit(-1);
-              }
-            //check types of arguments
-            } else if(show_semantic_analysis) {
-              System.out.println("Semantic Error: Function " + new_dot_node.getName() + " doesn't exist.");
-              System.exit(-1);
-            }
-          }
-        } else if(new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+        if(new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
           ASTIdentifier new_id_node = (ASTIdentifier) new_node.jjtGetChild(0);
           String type = this.currentTable.exists(new_id_node.getName());
           if(type == null && show_semantic_analysis) {
