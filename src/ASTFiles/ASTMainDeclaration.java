@@ -16,6 +16,10 @@ class ASTMainDeclaration extends SimpleNode {
     name = n;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public String toString() {
     return "MainDeclaration | Argument: " + name;
   }
