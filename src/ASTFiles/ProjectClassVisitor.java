@@ -5,8 +5,8 @@ public class ProjectClassVisitor implements ProjectVisitor{
   private ArrayList<SymbolTable> symbolTables;
   private SymbolTable currentTable;
   private LinkedList stack = new LinkedList();
-  private boolean show_semantic_analysis = true;
-  private boolean show_code_generation = false;
+  private boolean show_semantic_analysis = false;
+  private boolean show_code_generation = true;
 
   public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
     this.symbolTables = symbolTables;
@@ -144,10 +144,10 @@ public class ProjectClassVisitor implements ProjectVisitor{
     {
 
     System.out.println("\nAdd: ");
-    //System.out.println("\t" + node.jjtGetChild(0).jjtGetChild(0).getClass());
-    //System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-    //System.out.println("\t" + node.jjtGetChild(0).getClass());
     
+    //System.out.println("\t" + node.jjtGetChild(0).getClass());
+    //System.out.println("\t" + node.jjtGetChild(1).getClass());
+    /*
     if(node.jjtGetChild(0) instanceof ASTADD){ // Second and foward
       System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
     }
@@ -155,6 +155,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
       System.out.println("\t" + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
       System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
     }
+    */
     }
     
     return data;
