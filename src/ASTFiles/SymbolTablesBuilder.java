@@ -30,7 +30,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
   }
   public Object visit(ASTProgram node, Object data){
     node.childrenAccept(this, data);
-    if(show_symbol_tables) {
+    if(show_symbol_tables && !errors) {
         for(int i = 0; i < this.symbolTables.size(); i++) {
         this.symbolTables.get(i).print();
         System.out.println("\n");
@@ -273,7 +273,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
 
       else if (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses 
                 && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-        ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(1);
+        ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0);
         name = new_node.getName();
         type = this.currentTable.exists(name);
 
@@ -283,7 +283,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
         }
       }
     }
-    return data;
+    return "boolean";
   }
 
   public Object visit(ASTMINOR node, Object data) {
@@ -318,7 +318,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
             }
         }
     }
-    return data;
+    return "boolean";
   }
 
   public Object visit(ASTADD node, Object data) {
@@ -329,7 +329,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
         if (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses 
                 && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral) {
             if (node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses
-                    && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+                    && node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
 
               ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0);
               name = new_node.getName();
@@ -353,7 +353,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
             }
         }
     }
-    return data;
+    return "int";
   }
 
   public Object visit(ASTSUB node, Object data) {
@@ -388,7 +388,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
             }
         }
     }
-    return data;
+    return "int";
   }
 
   public Object visit(ASTMULT node, Object data) {
@@ -423,7 +423,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
             }
         }
     }
-    return data;
+    return "int";
   }
 
   public Object visit(ASTDIV node, Object data) {
@@ -458,7 +458,7 @@ public class SymbolTablesBuilder implements ProjectVisitor{
             }
         }
     }
-    return data;
+    return "int";
   }
   public Object visit(ASTEQUAL node, Object data){
     if(node.jjtGetChild(0) instanceof ASTIdentifier) {
@@ -468,7 +468,13 @@ public class SymbolTablesBuilder implements ProjectVisitor{
         errors = true;
       }
     }
-    node.childrenAccept(this, data);
+    //node.childrenAccept(this, data);
+   /* String answer; //all answers must be the same
+    if (node.jjtGetNumChildren() != 0) {
+      for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+        answer = node.jjtGetChild(i).jjtAccept(this, data);
+      }
+    }*/
     return data;
   }
   public Object visit(ASTStatementAux2 node, Object data){
