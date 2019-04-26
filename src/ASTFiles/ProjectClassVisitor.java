@@ -1,15 +1,35 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class ProjectClassVisitor implements ProjectVisitor{
-  private ArrayList<SymbolTable> symbolTables;
-  private SymbolTable currentTable;
-  private LinkedList stack = new LinkedList();
-  private boolean show_semantic_analysis = false;
-  private boolean show_code_generation = true;
+public class ProjectClassVisitor implements ProjectVisitor {
+    private ArrayList<SymbolTable> symbolTables;
+    private SymbolTable currentTable;
+    private LinkedList stack = new LinkedList();
+    private FileWriter writer;
+    private boolean show_semantic_analysis = false;
+    private boolean show_code_generation = true;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
+        try {
+            File file = new File("myfile.txt");
+            if (file.exists()) {
+                //delete if exists
+                file.delete();
+            }
+            writer = new FileWriter(file); 
+            /* 
+            writer.write("exemplo de como escrever no ficheiro");
+            writer.flush();
+            */
+        } 
+        catch (IOException e) {
+            System.out.println("Something went wrong on ProjectClassVisitor Constructor.");
+        }
+        
     }
 
     public Object defaultVisit(SimpleNode node, Object data) {
@@ -49,7 +69,19 @@ public class ProjectClassVisitor implements ProjectVisitor{
             System.out.println("Symbol Table " + name + " not found.");
             return null;
         }
-        node.childrenAccept(this, data);
+        try {
+            this.writer.write(".class public " + name + "\n");
+            this.writer.write(".super java/lang/Object\n");
+            node.childrenAccept(this, data);
+            this.writer.write("return\n");
+            this.writer.write(".end method\n");
+            /* this.writer.write(".limit stack 3\n");
+            this.writer.write(".limit locals 4\n"); */
+            this.writer.flush();
+        } 
+        catch (IOException e) {
+            System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor.");
+        }
         return data;
     }
 
@@ -100,6 +132,15 @@ public class ProjectClassVisitor implements ProjectVisitor{
     public Object visit(ASTMethodDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get(node.getName());
         node.childrenAccept(this, data);
+        try {
+            this.writer.write(".method " + node.getName() + "()\n");
+            /* this.writer.write(".limit stack 3\n");
+            this.writer.write(".limit locals 4\n"); */
+            this.writer.flush();
+        } 
+        catch (IOException e) {
+            System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor.");
+        }
         this.currentTable = this.currentTable.get_parent();
         return data;
     }
@@ -333,7 +374,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         if (node.jjtGetNumChildren() == 2) {
             if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
                 ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
-                if(new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+                if (new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
                     ASTIdentifier new_id_node = (ASTIdentifier) new_node.jjtGetChild(0);
                     String type = this.currentTable.exists(new_id_node.getName());
                     if (type == null && show_semantic_analysis) {

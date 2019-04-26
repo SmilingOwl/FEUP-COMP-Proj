@@ -1,0 +1,5 @@
+.class public Fac
+.super java/lang/Object
+.method test
+return
+.end method
