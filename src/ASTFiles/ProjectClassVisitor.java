@@ -6,7 +6,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
   private SymbolTable currentTable;
   private LinkedList stack = new LinkedList();
   private boolean show_semantic_analysis = false;
-  private boolean show_code_generation = false;
+  private boolean show_code_generation = true;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
@@ -221,20 +221,16 @@ public class ProjectClassVisitor implements ProjectVisitor{
 
         if (show_code_generation) {
 
-            boolean LHS_instOf_ADD = node.jjtGetChild(0) instanceof ASTADD;
-            boolean RHS_instOf_ADD = node.jjtGetChild(1) instanceof ASTADD;
+            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
+            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
 
-            if(LHS_instOf_ADD) 
-                System.out.println("\tPUSH " + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
-            else 
-                System.out.println("\tPOP");
-
-            if(RHS_instOf_ADD) 
-                System.out.println("\tPUSH " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-            else 
-                System.out.println("\tPOP");
-
-            System.out.println("\tADD\n");
+            if(LHS_instOf){//Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            if(RHS_instOf){ //Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            System.out.println("iadd");
 
         }
 
@@ -247,16 +243,20 @@ public class ProjectClassVisitor implements ProjectVisitor{
         // Code generation
 
         if (show_code_generation) {
-            if (node.jjtGetChild(0) instanceof ASTSUB) {
-                System.out.println("\tSUB " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-            }
 
-            else {
-                System.out.println("\tPUSH " + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
-                System.out.println("\tPUSH " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-                System.out.println("\tSUB");
-            } 
+            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
+            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
+
+            if(LHS_instOf){//Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            if(RHS_instOf){ //Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            System.out.println("isub");
+
         }
+
         return data;
     }
 
@@ -264,23 +264,22 @@ public class ProjectClassVisitor implements ProjectVisitor{
         node.childrenAccept(this, data);
 
         // Code generation
+
         if (show_code_generation) {
 
-            if (node.jjtGetChild(0) instanceof ASTMULT) {
-                System.out.println("\tPOP");
-                System.out.println("\tMULT " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
+            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
+            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
+
+            if(LHS_instOf){//Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
             }
-            else if (!(node.jjtGetChild(1) instanceof ASTMULT)) {
-                System.out.println("\tPOP");
-                System.out.println("\tPUSH " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-                System.out.println("\tMULT");
-            }    
-            else {
-                System.out.println("\tPUSH " + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
-                System.out.println("\tPUSH " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-                System.out.println("\tMULT");
-            } 
+            if(RHS_instOf){ //Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            System.out.println("imult");
+
         }
+
         return data;
     }
 
@@ -288,17 +287,22 @@ public class ProjectClassVisitor implements ProjectVisitor{
         node.childrenAccept(this, data);
 
         // Code generation
-        if (show_code_generation) {
-            if (node.jjtGetChild(0) instanceof ASTDIV) {
-                System.out.println("\tDIV " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-            }
 
-            else {
-                System.out.println("\tPUSH " + node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0));
-                System.out.println("\tPUSH " + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0));
-                System.out.println("\tDIV");
-            } 
+        if (show_code_generation) {
+
+            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
+            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
+
+            if(LHS_instOf){//Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            if(RHS_instOf){ //Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            System.out.println("idiv");
+
         }
+
         return data;
     }
 
@@ -306,9 +310,11 @@ public class ProjectClassVisitor implements ProjectVisitor{
         node.childrenAccept(this, data);
 
         if (show_code_generation) {
+            /*
             System.out.println("\nAssign: ");
             System.out.println("\t" + node.jjtGetChild(0));
             System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).getClass());
+            */
         }
         return data;
     }
@@ -440,4 +446,11 @@ public class ProjectClassVisitor implements ProjectVisitor{
      * 
      * public void push(Object o){ stack.addFirst(o); }
      */
+
+    public String extractLabel(String input){
+        int i = input.indexOf(":");
+        if(i != -1)
+            return input.substring(i+2);
+        return input;
+    }
 }
