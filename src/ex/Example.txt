@@ -4,7 +4,7 @@ class Fac extends Something {
     public int ComputeFac(int num, boolean attr){
         
         int num_aux; 
-        myClass2 myVar2;
+        FindMaximum myVar2;
         boolean s;
         
         int[] num_array;
