@@ -157,8 +157,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
             }
             this.writer.write(")" + methodReturnType + "\n");
             node.childrenAccept(this, data);
-            this.writer.write("\t.limit stack " + "1" + "\n"); //TODO: usar .limit de forma dinamica 
-            this.writer.write("\t.limit locals " + "\n");
+            this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
+            this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n");
             this.writer.write(this.inMethod);
             this.writer.write(".end method\n\n");
             this.writer.flush();

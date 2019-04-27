@@ -1,7 +1,7 @@
 class Fac extends Something {
 
     public int test(int maxSpeed,boolean s){
-        //int a;
+        int c;
         //a = 1;
 
         //a = True && False && True;
