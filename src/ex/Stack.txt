@@ -1,4 +1,5 @@
 class Fac extends Something {
+    int e;
 
     public int test(int maxSpeed,boolean s){
         int c;
@@ -17,7 +18,9 @@ class Fac extends Something {
         //return 1*2/3+4-5;
     }
 
-    public static void main(String[] a){
-        
+    public static void main(String[] arg){
+        int a;
+        a = 1;
+        e = a + 2*3+4;
     }
 }

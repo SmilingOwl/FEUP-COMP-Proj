@@ -119,14 +119,19 @@ public class ProjectClassVisitor implements ProjectVisitor {
             try {
                 this.writer.write(".method public static main([Ljava/lang/String;)V\n");
                 node.childrenAccept(this, data);
+                this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
+                this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
+                this.writer.write(this.inMethod);
+                this.writer.write("\treturn\n");
                 this.writer.write(".end method\n\n");
                 this.writer.flush();
             } 
             catch (IOException e) {
                 System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
             }
-        }
-        node.childrenAccept(this, data);
+            this.inMethod = "";
+            //TODO: nao esquecer de limpar a stack
+        } else node.childrenAccept(this, data);
         this.currentTable = this.currentTable.get_parent();
         return data;
     }
@@ -153,6 +158,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
             }
             this.inMethod = "";
+            //TODO: nao esquecer de limpar a stack
         } else node.childrenAccept(this, data);
 
         this.currentTable = this.currentTable.get_parent();
