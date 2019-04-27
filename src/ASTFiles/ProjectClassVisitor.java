@@ -130,7 +130,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
             this.writer.write("; default constructor\n");
             this.writer.write(".method public <init>()V\n");
             node.childrenAccept(this, data);
-            this.writer.write("\taload_0\n");
+            //TODO: nao sei bem como fazer aqui
+            this.writer.write("\taload_0\n"); 
             this.writer.write("\tinvokespecial java/lang/Object/<init>()V\n");
             this.writer.write("\treturn\n");
             this.writer.write(".end method\n\n");
