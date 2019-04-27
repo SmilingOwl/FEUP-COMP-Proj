@@ -8,29 +8,20 @@
 	return
 .end method
 
-.method public test(IZ)I
+.method public ret5()I
 	.limit stack 0
-	.limit locals 3
+	.limit locals 0
 
-iconst_1
-iconst_2
-iadd
-iconst_3
-iadd
-iconst_2
-iconst_3
-imult
-iconst_1
-iadd
-iconst_1
-iconst_2
-isub
-iconst_3
-iconst_4
-idiv
-iconst_5
-imult
-iadd
+	ireturn
+.end method
+
+.method public test()I
+	.limit stack 0
+	.limit locals 2
+
+	iadd
+	iadd
+	iadd
 	ireturn
 .end method
 

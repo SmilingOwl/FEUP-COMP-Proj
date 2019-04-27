@@ -492,13 +492,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
         
         switch (valLeft) {
             case 0:
-                this.inMethod += ("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 1:
-                this.inMethod += ("iload " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                this.inMethod += ("\tiload " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 2:
-                this.inMethod += ("calling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0) + "\n");
+                this.inMethod += ("\tcalling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0) + "\n");
                 break;
         
             default:
@@ -508,10 +508,10 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         switch (valRight) {
             case 0:
-                this.inMethod += ("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 1:
-                this.inMethod += ("iload " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                this.inMethod += ("\tiload " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
         
             default:
@@ -530,19 +530,19 @@ public class ProjectClassVisitor implements ProjectVisitor {
             */
         switch (op) {
             case "add":
-                this.inMethod += "iadd\n";
+                this.inMethod += "\tiadd\n";
                 break;
 
             case "sub":
-                this.inMethod += "isub\n";
+                this.inMethod += "\tisub\n";
                 break;
 
             case "mult":
-                this.inMethod += "imult\n";
+                this.inMethod += "\timult\n";
                 break;
 
             case "div":
-                this.inMethod += "idiv\n";
+                this.inMethod += "\tidiv\n";
                 break;
         
             default:
