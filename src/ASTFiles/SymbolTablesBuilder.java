@@ -218,7 +218,10 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTCondition node, Object data) {
-    node.childrenAccept(this, data);
+    if(!node.jjtGetChild(0).jjtAccept(this, data).equals("boolean") && show_semantic_analysis) {
+      System.out.println("Semantic Error: Condition must be boolean in if and while statements.");
+      errors = true;
+    }
     return "boolean";
   }
 
@@ -355,9 +358,15 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTADD node, Object data) {
+    /*System.out.println("\nADD - " + node.jjtGetNumChildren());
+    for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+      System.out.println(node.jjtGetChild(i).getClass());
+    }*/
+
     node.childrenAccept(this, data);
     String name = null;
     String type = null;
+
     if (node.jjtGetNumChildren() == 2) {
       if (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses
           && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral) {
@@ -495,6 +504,11 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTEQUAL node, Object data) {
+    /*System.out.println("\nEQUAL - " + node.jjtGetNumChildren());
+    for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+      System.out.println(node.jjtGetChild(i).getClass());
+    }*/
+    
     if (node.jjtGetChild(0) instanceof ASTIdentifier) {
       ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
       if (currentTable.exists(new_node.getName()) == null && show_semantic_analysis) {
@@ -502,7 +516,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         errors = true;
       }
     }
-    /*String[] answer = new String[node.jjtGetNumChildren()]; //all answers must be the same
+    String[] answer = new String[node.jjtGetNumChildren()]; //all answers must be the same
     if (node.jjtGetNumChildren() != 0) {
       for (int i = 0; i < node.jjtGetNumChildren(); i++) {
         answer[i] = (String) node.jjtGetChild(i).jjtAccept(this, data);
@@ -511,13 +525,19 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         System.out.println("Semantic Error: Variable undefined in assign operation.");
         errors = true;
       } else if(node.jjtGetNumChildren() == 2 && !answer[0].equals(answer[1]) && show_semantic_analysis) {
-        System.out.println("Semantic Error: Different types in assign operation: " + answer[0] + " and " + answer[1]);
-        errors = true;
+        if(answer[1] != null) {
+          System.out.println("Semantic Error: Different types in assign operation: " + answer[0] + " and " + answer[1]);
+          errors = true;
+        } else {
+          System.out.println("Ignored null in EQUAL. Message to be deleted, only for testing purposes ");
+        }
       } else if(node.jjtGetNumChildren() == 3 && !answer[2].equals("int") && show_semantic_analysis) {
-        System.out.println("Semantic Error: Different types in assign operation: int[] and " + answer[1]);
-        errors = true;
+        if(answer[2] != null) {
+          System.out.println("Semantic Error: Different types in assign operation: int[] and " + answer[1]);
+          errors = true;
+        } else {System.out.println("Ignored null in EQUAL. Message to be deleted, only for testing purposes");}
       }
-    }*/
+    }
     return data;
   }
 
@@ -532,14 +552,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTExpressionRestOfClauses node, Object data) {
-    if (node.jjtGetNumChildren() != 0 && node.jjtGetChild(0).jjtGetNumChildren() != 0
-        && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-      ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
-      if (currentTable.exists(new_node.getName()) == null && show_semantic_analysis) {
-        System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
-        errors = true;
-      }
-    }
     if(node.jjtGetNumChildren() == 2) {
       if(node.jjtGetChild(0) instanceof ASTExpressionToken) {
         ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
@@ -565,9 +577,24 @@ public class SymbolTablesBuilder implements ProjectVisitor {
             node.childrenAccept(this, data);
             return "int";
           }
+        } else if(node.jjtGetChild(1) instanceof ASTAccessingArrayAt) {
+          ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
+          if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
+            System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+            errors = true;
+          }
+          node.childrenAccept(this, data);
+          return "int";
         }
       }
     } else if(node.jjtGetNumChildren() == 1) {
+      if(node.jjtGetChild(0).jjtGetNumChildren() == 1 && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+        ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
+        if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
+          System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+          errors = true;
+        }
+      }
       return node.jjtGetChild(0).jjtAccept(this, data);
     }
     node.childrenAccept(this, data);
@@ -575,14 +602,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTExpressionRestOfClausesWoIdent node, Object data) {
-    if (node.jjtGetNumChildren() != 0 && node.jjtGetChild(0).jjtGetNumChildren() != 0
-        && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-      ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
-      if (currentTable.exists(new_node.getName()) == null && show_semantic_analysis) {
-        System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
-        errors = true;
-      }
-    }
     if(node.jjtGetNumChildren() == 2) {
       if(node.jjtGetChild(0) instanceof ASTExpressionToken) {
         ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
@@ -608,9 +627,24 @@ public class SymbolTablesBuilder implements ProjectVisitor {
             node.childrenAccept(this, data);
             return "int";
           }
+        } else if(node.jjtGetChild(1) instanceof ASTAccessingArrayAt) {
+          ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
+          if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
+            System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+            errors = true;
+          }
+          node.childrenAccept(this, data);
+          return "int";
         }
       }
     } else if(node.jjtGetNumChildren() == 1) {
+      if(node.jjtGetChild(0).jjtGetNumChildren() == 1 && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+        ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
+        if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
+          System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+          errors = true;
+        }
+      }
       return node.jjtGetChild(0).jjtAccept(this, data);
     }
     node.childrenAccept(this, data);
@@ -636,32 +670,23 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTExpressionToken node, Object data) {
-    //node.childrenAccept(this, data);
+    
     if(node.jjtGetNumChildren() == 1 && node.getName() == null) {
       return node.jjtGetChild(0).jjtAccept(this, data);
     } else if(node.getName()!= null && node.getName().equals("!")) {
       if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
         String answer = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
         if (answer != null && !answer.equals("boolean") && show_semantic_analysis) {
-          System.out.println("Semantic Error: Expecting boolean in NOT.");
+          System.out.println("Semantic Error: Expected boolean in NOT.");
           errors = true;
         }
       }
       return "boolean";
-    }  else if(node.getName()!= null && (node.getName().equals("true") || node.getName().equals("false"))) {
+    } else if(node.getName()!= null && (node.getName().equals("true") || node.getName().equals("false"))) {
       return "boolean";
+    } else if(node.getName() != null && node.getName().equals("new")) {
+      return node.jjtGetChild(0).jjtAccept(this, data);
     }
-    /*String answers;
-    
-    if (node.getName()!= null && node.getName().equals("!")) {
-
-      if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
-        answers = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
-        System.out.println(answers);
-        if (answers != null && !answers.equals("boolean"))
-          System.out.println(" Semantic error: Expecting boolean in NOT");
-      }
-    }*/
 
     return data;
   }
@@ -675,7 +700,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
       if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
         String answer = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
         if (answer != null && !answer.equals("boolean") && show_semantic_analysis) {
-          System.out.println("Semantic Error: Expecting boolean in NOT.");
+          System.out.println("Semantic Error: Expected boolean in NOT.");
           errors = true;
         }
       }
@@ -683,23 +708,17 @@ public class SymbolTablesBuilder implements ProjectVisitor {
     }  else if(node.getName()!= null && (node.getName().equals("true") || node.getName().equals("false"))) {
       return "boolean";
     }
-    /*String answers;
-
-    if (node.getName()!= null && node.getName().equals("!")) {
-      if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
-        answers = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
-        if (answers != null && !answers.equals("boolean"))
-          System.out.println(" Semantic error: Expecting boolean in NOT");
-
-      }
-
-    }*/
     return data;
   }
 
   public Object visit(ASTExpressionNew node, Object data) {
+
     node.childrenAccept(this, data);
-    return data;
+    if(node.jjtGetChild(0) instanceof ASTIdentifier) {
+      ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
+      return new_node.getName();
+    }
+    return "int[]";
   }
 
   public boolean get_errors() {
