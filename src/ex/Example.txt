@@ -7,6 +7,11 @@ class Fac extends Something {
         int a;
         num = 4 - 2;
 
+        if(!num){
+            num=1+1;
+        }else{
+            num=num+2;
+        }
 
         return a;
     }
