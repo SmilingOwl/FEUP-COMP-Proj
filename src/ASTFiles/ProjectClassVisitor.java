@@ -9,6 +9,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private ArrayList<SymbolTable> symbolTables;
     private SymbolTable currentTable;
     private LinkedList stack = new LinkedList();
+    private String inMethod = "";
     private FileWriter writer;
     private boolean show_semantic_analysis = true;
     private boolean show_code_generation = false;
@@ -100,6 +101,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public Object visit(ASTMainDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get("main");
         try {
+            //TODO: isto e o sitio errado
             this.writer.write("; default constructor\n");
             this.writer.write(".method public <init>()V\n");
             node.childrenAccept(this, data);
@@ -120,12 +122,17 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMethodDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get(node.getName());
-        
+        String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
         try {
-            this.writer.write(".method public" + node.getName() + "("); //TODO: ver a parte do public
-            /* this.writer.write("\t.limit stack 3\n"); //TODO: usar .limit de forma dinamica 
-            this.writer.write("\t.limit locals 4\n"); */
+            this.writer.write(".method public " + node.getName() + "("); //TODO: ver a parte do public
+            for (String arg : this.currentTable.get_args().values()) { 
+                this.writer.write(this.getJasminType(arg, true));
+            }
+            this.writer.write(")" + methodReturnType + "\n");
             node.childrenAccept(this, data);
+            this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
+            this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n");
+            this.writer.write(this.inMethod);
             this.writer.write(".end method\n\n");
             this.writer.flush();
         } 
@@ -143,13 +150,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMethodArgs node, Object data) {
         node.childrenAccept(this, data);
-        try {
-            this.writer.write(")\n");
-            this.writer.flush();
-        } 
-        catch (IOException e) {
-            System.out.println("Something went wrong on visit(ASTReturn) Constructor.");
-        }
         return data;
     }
 
@@ -235,18 +235,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
             
-            try {   
-                if(LHS_instOf){//Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                if(RHS_instOf){ //Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                this.writer.write("\tiadd\n");
+            if(LHS_instOf){//Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
             }
-            catch (IOException e) {
-                System.out.println("Something went wrong on visit(ASTADD) Constructor.");
+            if(RHS_instOf){ //Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
             }
+            this.inMethod += "\tiadd\n";
         }
 
         return data;
@@ -262,18 +257,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
 
-            try {
-                if(LHS_instOf){//Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                if(RHS_instOf){ //Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                this.writer.write("\tisub\n");
-            } 
-            catch (IOException e) {
-                System.out.println("Something went wrong on visit(ASTSUB) Constructor.");
+            if(LHS_instOf){//Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
             }
+            if(RHS_instOf){ //Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
+            }
+            this.inMethod += "\tisub\n";
         }
 
         return data;
@@ -288,19 +278,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-            try {
-                if(LHS_instOf){//Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                if(RHS_instOf){ //Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                this.writer.write("\timult\n");
-            } 
-            catch (IOException e) {
-                System.out.println("Something went wrong on visit(ASTMULT) Constructor.");
-            }
 
+            if(LHS_instOf){//Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
+            }
+            if(RHS_instOf){ //Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
+            }
+            this.inMethod += "\timult\n";
         }
 
         return data;
@@ -315,18 +300,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-            try {
-                if(LHS_instOf){//Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                if(RHS_instOf){ //Push para a stack
-                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
-                }
-                this.writer.write("\tidiv\n");
-            } 
-            catch (IOException e) {
-                System.out.println("Something went wrong on visit(ASTDIV) Constructor.");
+
+            if(LHS_instOf){//Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
             }
+            if(RHS_instOf){ //Push para a stack
+                this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
+            }
+            this.inMethod += "\tidiv\n";
         }
 
         return data;
@@ -489,6 +470,9 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public String getJasminType(String type, boolean upercase){
         if (type.equalsIgnoreCase("int")){
             return upercase ? "I" : "i";
+        }
+        else if (type.equalsIgnoreCase("boolean")){
+            return upercase ? "Z" : "i";
         }
         return null;
     }
