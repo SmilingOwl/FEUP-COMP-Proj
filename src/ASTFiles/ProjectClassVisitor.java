@@ -3,7 +3,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ProjectClassVisitor implements ProjectVisitor {
     private ArrayList<SymbolTable> symbolTables;
@@ -12,24 +11,24 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private String inMethod = "";
     private FileWriter writer;
     private boolean show_semantic_analysis = true;
-    private boolean show_code_generation = false;
+    private boolean show_code_generation = true;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
-        try {
-            File file = new File("myfile.j");
-            if (file.exists()) 
-                file.delete();//delete if exists
-            writer = new FileWriter(file); 
-            /* 
-            writer.write("exemplo de como escrever no ficheiro");
-            writer.flush();
-            */
-        } 
-        catch (IOException e) {
-            System.out.println("Something went wrong on ProjectClassVisitor Constructor.");
+        if (show_code_generation) {
+            try {
+                File file = new File("myfile.j");
+                if (file.exists())
+                    file.delete();// delete if exists
+                writer = new FileWriter(file);
+                /*
+                * writer.write("exemplo de como escrever no ficheiro"); writer.flush();
+                */
+            } catch (IOException e) {
+                System.out.println("Something went wrong on ProjectClassVisitor Constructor [CODE GENERATION].");
+            }
         }
-        
+
     }
 
     public Object defaultVisit(SimpleNode node, Object data) {
@@ -69,22 +68,38 @@ public class ProjectClassVisitor implements ProjectVisitor {
             System.out.println("Symbol Table " + name + " not found.");
             return null;
         }
-        try {
-            this.writer.write(".class public " + name + "\n");
-            this.writer.write(".super java/lang/Object\n\n");
-            this.writer.flush();
-            node.childrenAccept(this, data);
-        } 
-        catch (IOException e) {
-            System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor.");
-        }
-        finally{
+        if (show_code_generation) {
             try {
-                this.writer.close();
-            } catch (IOException e) {
-                System.out.println("Something went wrong while closing the file.");
+                this.writer.write(".class public " + name + "\n");
+                this.writer.write(".super java/lang/Object\n");
+                if (!this.currentTable.get_symbols().isEmpty()){
+                    this.writer.write("\n");
+                    for( String key : this.currentTable.get_symbols().keySet() )
+                        this.writer.write(".field public " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
+                }
+                this.writer.write("\n; default constructor\n");
+                this.writer.write(".method public <init>()V\n");
+                this.writer.write("\taload_0\n"); 
+                this.writer.write("\tinvokespecial java/lang/Object/<init>()V\n");
+                this.writer.write("\treturn\n");
+                this.writer.write(".end method\n\n");
+                this.writer.flush(); 
+                node.childrenAccept(this, data);
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
+            }
+            finally{
+                try {
+                    this.writer.close();
+                    
+                } catch (IOException e) {
+                    System.out.println("Something went wrong while closing the file [CODE GENERATION].");
+                }
             }
         }
+        else node.childrenAccept(this, data);
+        
         return data;
     }
 
@@ -100,20 +115,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMainDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get("main");
-        try {
-            //TODO: isto e o sitio errado
-            this.writer.write("; default constructor\n");
-            this.writer.write(".method public <init>()V\n");
-            node.childrenAccept(this, data);
-            //TODO: nao sei bem como fazer aqui
-            this.writer.write("\taload_0\n"); 
-            this.writer.write("\tinvokespecial java/lang/Object/<init>()V\n");
-            this.writer.write("\treturn\n");
-            this.writer.write(".end method\n\n");
-            this.writer.flush();
-        } 
-        catch (IOException e) {
-            System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor.");
+        if (show_code_generation) {
+            try {
+                this.writer.write(".method public static main([Ljava/lang/String;)V\n");
+                node.childrenAccept(this, data);
+                this.writer.write(".end method\n\n");
+                this.writer.flush();
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
+            }
         }
         node.childrenAccept(this, data);
         this.currentTable = this.currentTable.get_parent();
@@ -122,29 +133,35 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMethodDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get(node.getName());
-        String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
-        try {
-            this.writer.write(".method public " + node.getName() + "("); //TODO: ver a parte do public
-            for (String arg : this.currentTable.get_args().values()) { 
-                this.writer.write(this.getJasminType(arg, true));
+
+        if (show_code_generation) {
+            String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
+            try {
+                this.writer.write(".method public " + node.getName() + "(");
+                for (String arg : this.currentTable.get_args().values())
+                    this.writer.write(this.getJasminType(arg, true));
+                this.writer.write(")" + methodReturnType + "\n");
+                node.childrenAccept(this, data);
+                this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
+                this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
+                this.writer.write(this.inMethod);
+                this.writer.write("\tireturn\n");
+                this.writer.write(".end method\n\n");
+                this.writer.flush();
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
             }
-            this.writer.write(")" + methodReturnType + "\n");
-            node.childrenAccept(this, data);
-            this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
-            this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n");
-            this.writer.write(this.inMethod);
-            this.writer.write(".end method\n\n");
-            this.writer.flush();
-        } 
-        catch (IOException e) {
-            System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor.");
-        }
+            this.inMethod = "";
+        } else node.childrenAccept(this, data);
+
         this.currentTable = this.currentTable.get_parent();
         return data;
     }
 
     public Object visit(ASTReturn node, Object data) {
         node.childrenAccept(this, data);
+        /* this.inMethod += "\t" + getJasminType(node.jjtGetChild(0).toString(), false) + "return\n"; */
         return data;
     }
 
@@ -242,6 +259,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.inMethod += "\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
             }
             this.inMethod += "\tiadd\n";
+            
         }
 
         return data;
@@ -265,7 +283,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             }
             this.inMethod += "\tisub\n";
         }
-
+        
         return data;
     }
 
@@ -287,7 +305,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             }
             this.inMethod += "\timult\n";
         }
-
+        
         return data;
     }
 
@@ -309,7 +327,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             }
             this.inMethod += "\tidiv\n";
         }
-
+        
         return data;
     }
 
@@ -468,12 +486,15 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public String getJasminType(String type, boolean upercase){
-        if (type.equalsIgnoreCase("int")){
+        if (type.equalsIgnoreCase("int") || type.equalsIgnoreCase("Type: int")){
             return upercase ? "I" : "i";
         }
         else if (type.equalsIgnoreCase("boolean")){
             return upercase ? "Z" : "i";
         }
-        return null;
+        else if (type.equalsIgnoreCase("int[]")){
+            return upercase ? "Z" : "i";
+        }
+        return "";
     }
 }
