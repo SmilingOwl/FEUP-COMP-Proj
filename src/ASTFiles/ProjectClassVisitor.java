@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ProjectClassVisitor implements ProjectVisitor {
     private ArrayList<SymbolTable> symbolTables;
@@ -15,11 +16,9 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
         try {
-            File file = new File("myfile.txt");
-            if (file.exists()) {
-                //delete if exists
-                file.delete();
-            }
+            File file = new File("myfile.j");
+            if (file.exists()) 
+                file.delete();//delete if exists
             writer = new FileWriter(file); 
             /* 
             writer.write("exemplo de como escrever no ficheiro");
@@ -71,16 +70,19 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
         try {
             this.writer.write(".class public " + name + "\n");
-            this.writer.write(".super java/lang/Object\n");
-            node.childrenAccept(this, data);
-            this.writer.write("return\n");
-            this.writer.write(".end method\n");
-            /* this.writer.write(".limit stack 3\n");
-            this.writer.write(".limit locals 4\n"); */
+            this.writer.write(".super java/lang/Object\n\n");
             this.writer.flush();
+            node.childrenAccept(this, data);
         } 
         catch (IOException e) {
             System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor.");
+        }
+        finally{
+            try {
+                this.writer.close();
+            } catch (IOException e) {
+                System.out.println("Something went wrong while closing the file.");
+            }
         }
         return data;
     }
@@ -124,6 +126,19 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMainDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get("main");
+        try {
+            this.writer.write("; default constructor\n");
+            this.writer.write(".method public <init>()V\n");
+            node.childrenAccept(this, data);
+            this.writer.write("\taload_0\n");
+            this.writer.write("\tinvokespecial java/lang/Object/<init>()V\n");
+            this.writer.write("\treturn\n");
+            this.writer.write(".end method\n\n");
+            this.writer.flush();
+        } 
+        catch (IOException e) {
+            System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor.");
+        }
         node.childrenAccept(this, data);
         this.currentTable = this.currentTable.get_parent();
         return data;
@@ -131,11 +146,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMethodDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get(node.getName());
-        node.childrenAccept(this, data);
+        
         try {
-            this.writer.write(".method " + node.getName() + "()\n");
-            /* this.writer.write(".limit stack 3\n");
-            this.writer.write(".limit locals 4\n"); */
+            this.writer.write(".method public" + node.getName() + "("); //TODO: ver a parte do public
+            /* this.writer.write("\t.limit stack 3\n"); //TODO: usar .limit de forma dinamica 
+            this.writer.write("\t.limit locals 4\n"); */
+            node.childrenAccept(this, data);
+            this.writer.write(".end method\n\n");
             this.writer.flush();
         } 
         catch (IOException e) {
@@ -152,6 +169,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMethodArgs node, Object data) {
         node.childrenAccept(this, data);
+        try {
+            this.writer.write(")\n");
+            this.writer.flush();
+        } 
+        catch (IOException e) {
+            System.out.println("Something went wrong on visit(ASTReturn) Constructor.");
+        }
         return data;
     }
 
@@ -264,15 +288,19 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            
+            try {   
+                if(LHS_instOf){//Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                if(RHS_instOf){ //Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                this.writer.write("\tiadd\n");
             }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTADD) Constructor.");
             }
-            System.out.println("iadd");
-
         }
 
         return data;
@@ -288,14 +316,18 @@ public class ProjectClassVisitor implements ProjectVisitor {
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
 
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            try {
+                if(LHS_instOf){//Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                if(RHS_instOf){ //Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                this.writer.write("\tisub\n");
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTSUB) Constructor.");
             }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("isub");
-
         }
 
         return data;
@@ -310,14 +342,18 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            try {
+                if(LHS_instOf){//Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                if(RHS_instOf){ //Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                this.writer.write("\timult\n");
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTMULT) Constructor.");
             }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("imult");
 
         }
 
@@ -333,15 +369,18 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
             boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
             boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            try {
+                if(LHS_instOf){//Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                if(RHS_instOf){ //Push para a stack
+                    this.writer.write("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                this.writer.write("\tidiv\n");
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTDIV) Constructor.");
             }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("idiv");
-
         }
 
         return data;
@@ -493,5 +532,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
         if(i != -1)
             return input.substring(i+2);
         return input;
+    }
+
+    public String getJasminType(String type, boolean upercase){
+        if (type.equalsIgnoreCase("int")){
+            return upercase ? "I" : "i";
+        }
+        return null;
     }
 }

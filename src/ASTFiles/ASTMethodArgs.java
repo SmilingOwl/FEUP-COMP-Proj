@@ -19,6 +19,10 @@ class ASTMethodArgs extends SimpleNode {
     args.add(n);
   }
 
+  public List<String> getArgs() {
+      return this.args;
+  }
+
   /** Accept the visitor. **/
   public Object jjtAccept(ProjectVisitor visitor, Object data) {
 
