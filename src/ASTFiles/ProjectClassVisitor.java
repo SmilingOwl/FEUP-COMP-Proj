@@ -10,8 +10,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private SymbolTable currentTable;
     private LinkedList stack = new LinkedList();
     private FileWriter writer;
-    private boolean show_semantic_analysis = false;
-    private boolean show_code_generation = true;
+    private boolean show_semantic_analysis = true;
+    private boolean show_code_generation = false;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
@@ -88,33 +88,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTVarDeclaration node, Object data) {
-        String type = "", name = "";
-        if (node.jjtGetNumChildren() == 2) {
-            if (node.jjtGetChild(0) instanceof ASTType) {
-                ASTType new_node = (ASTType) node.jjtGetChild(0);
-                type = new_node.getName();
-            } else if (node.jjtGetChild(0) instanceof ASTTypeWoIdent) {
-                ASTTypeWoIdent new_node = (ASTTypeWoIdent) node.jjtGetChild(0);
-                type = new_node.getName();
-            }
-            if (node.jjtGetChild(1) instanceof ASTIdentifier) {
-                ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(1);
-                name = new_node.getName();
-            }
-        }
-        if (!type.equals("int") && !type.equals("boolean") && this.currentTable.exists(name) != null) {
-            boolean found = false;
-            for (int i = 0; i < this.symbolTables.size(); i++) {
-                if (this.symbolTables.get(i).get_name().equals(type)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found && show_semantic_analysis) {
-                System.out.println("Semantic Error: Class " + type + " doesn't exist");
-                System.exit(-1);
-            }
-        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -236,34 +209,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTStatementStartIdent node, Object data) {
-        /*if (node.get_type().equals("VarDeclaration")) {
-            String type = "", name = "";
-            if (node.jjtGetNumChildren() == 2) {
-                if (node.jjtGetChild(0) instanceof ASTIdentifier) {
-                    ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
-                    type = new_node.getName();
-                }
-                if (node.jjtGetChild(1) instanceof ASTStatementAux2) {
-                    ASTStatementAux2 new_node = (ASTStatementAux2) node.jjtGetChild(1);
-                    if (new_node.jjtGetNumChildren() == 0 && new_node.getName() != null) {
-                        name = new_node.getName();
-                    }
-                }
-            }
-            if (this.currentTable.exists(name) != null) {
-                boolean found = false;
-                for (int i = 0; i < symbolTables.size(); i++) {
-                    if (symbolTables.get(i).get_name().equals(type)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found && show_semantic_analysis) {
-                    System.out.println("Semantic Error: Class " + type + " doesn't exist");
-                    System.exit(-1);
-                }
-            }
-        }*/
         node.childrenAccept(this, data);
         return data;
     }
@@ -411,35 +356,69 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTExpressionRestOfClauses node, Object data) {
-        /*if (node.jjtGetNumChildren() == 2) {
+        if (node.jjtGetNumChildren() == 2) {
             if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
                 ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
                 if (new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
                     ASTIdentifier new_id_node = (ASTIdentifier) new_node.jjtGetChild(0);
                     String type = this.currentTable.exists(new_id_node.getName());
-                    if (type == null && show_semantic_analysis) {
-                        System.out.println("Semantic Error: Variable " + new_id_node.getName() + " doesn't exist.");
-                        System.exit(-1);
-                    } else if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                    if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
                         ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
-                        if (new_dot_node.getName().equals("length") && !type.equals("int[]")
-                                && show_semantic_analysis) {
-                            System.out.println("Semantic Error: \"length\" only appliable to int[]. In variable "
-                                    + new_id_node.getName() + ".");
-                            System.exit(-1);
-                        } else if (!new_dot_node.getName().equals("length") && show_semantic_analysis
-                                && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
-                            System.out.println(
-                                    "Semantic Error: primitive type can't be called with functions. In variable "
+                        if (!new_dot_node.getName().equals("length") && show_semantic_analysis
+                                && type != null && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
+                            System.out.println("Semantic Error: primitive type can't be called with functions. In variable "
                                             + new_id_node.getName() + ".");
                             System.exit(-1);
-                        } else if (!new_dot_node.getName().equals("length")) {
+                        } else if (!new_dot_node.getName().equals("length") && type != null) {
                             boolean found = false;
                             for (int i = 0; i < this.symbolTables.size(); i++) {
                                 if (this.symbolTables.get(i).get_name().equals(type)) {
                                     found = true;
-                                    SymbolTable table = this.symbolTables.get(i).get_functions()
-                                            .get(new_dot_node.getName());
+                                    SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
+                                    if (table != null) {
+                                        if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
+                                                && show_semantic_analysis) {
+                                            System.out.println("Semantic Error: Wrong number of arguments in function "
+                                                    + new_dot_node.getName());
+                                            System.exit(-1);
+                                        } 
+                                    } else if (show_semantic_analysis) {
+                                        System.out.println("Semantic Error: Function " + new_dot_node.getName()
+                                                + " of class " + new_id_node.getName() + " doesn't exist.");
+                                        System.exit(-1);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        node.childrenAccept(this, data);
+        return data;
+    }
+
+    public Object visit(ASTExpressionRestOfClausesWoIdent node, Object data) {
+        if (node.jjtGetNumChildren() == 2) {
+            if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
+                ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
+                if (new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+                    ASTIdentifier new_id_node = (ASTIdentifier) new_node.jjtGetChild(0);
+                    String type = this.currentTable.exists(new_id_node.getName());
+                    if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                        ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+                        if (!new_dot_node.getName().equals("length") && show_semantic_analysis
+                                && type != null && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
+                            System.out.println("Semantic Error: primitive type can't be called with functions. In variable "
+                                            + new_id_node.getName() + ".");
+                            System.exit(-1);
+                        } else if (!new_dot_node.getName().equals("length") && type != null) {
+                            boolean found = false;
+                            for (int i = 0; i < this.symbolTables.size(); i++) {
+                                if (this.symbolTables.get(i).get_name().equals(type)) {
+                                    found = true;
+                                    SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
                                     if (table != null) {
                                         if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
                                                 && show_semantic_analysis) {
@@ -455,20 +434,11 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                     break;
                                 }
                             }
-                            if (!found) {
-                                System.out.println("Semantic Error: Class " + type + " doesn't exist.");
-                                System.exit(-1);
-                            }
                         }
                     }
                 }
             }
-        }*/
-        node.childrenAccept(this, data);
-        return data;
-    }
-
-    public Object visit(ASTExpressionRestOfClausesWoIdent node, Object data) {
+        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -479,25 +449,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAccessingArrayAt node, Object data) {
-        /*String name = null;
-        String type = null;
-        node.childrenAccept(this, data);
-
-        if (node.jjtGetNumChildren() == 1) {
-
-            if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-
-                ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0);
-                name = new_node.getName();
-                type = this.currentTable.exists(name);
-
-                if (!type.equals("int") && show_semantic_analysis)
-                    System.out.println("Error!");
-            }
-
-        } else {
-            // expression...
-        }*/
         node.childrenAccept(this, data);
         return data;
     }
