@@ -1,15 +1,34 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class ProjectClassVisitor implements ProjectVisitor{
-  private ArrayList<SymbolTable> symbolTables;
-  private SymbolTable currentTable;
-  private LinkedList stack = new LinkedList();
-  private boolean show_semantic_analysis = false;
-  private boolean show_code_generation = true;
+public class ProjectClassVisitor implements ProjectVisitor {
+    private ArrayList<SymbolTable> symbolTables;
+    private SymbolTable currentTable;
+    private LinkedList stack = new LinkedList();
+    private String inMethod = "";
+    private FileWriter writer;
+    private boolean show_semantic_analysis = true;
+    private boolean show_code_generation = true;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
+        if (show_code_generation) {
+            try {
+                File file = new File("myfile.j");
+                if (file.exists())
+                    file.delete();// delete if exists
+                writer = new FileWriter(file);
+                /*
+                * writer.write("exemplo de como escrever no ficheiro"); writer.flush();
+                */
+            } catch (IOException e) {
+                System.out.println("Something went wrong on ProjectClassVisitor Constructor [CODE GENERATION].");
+            }
+        }
+
     }
 
     public Object defaultVisit(SimpleNode node, Object data) {
@@ -49,38 +68,42 @@ public class ProjectClassVisitor implements ProjectVisitor{
             System.out.println("Symbol Table " + name + " not found.");
             return null;
         }
-        node.childrenAccept(this, data);
+        if (show_code_generation) {
+            try {
+                this.writer.write(".class public " + name + "\n");
+                this.writer.write(".super java/lang/Object\n");
+                if (!this.currentTable.get_symbols().isEmpty()){
+                    this.writer.write("\n");
+                    for( String key : this.currentTable.get_symbols().keySet() )
+                        this.writer.write(".field public " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
+                }
+                this.writer.write("\n; default constructor\n");
+                this.writer.write(".method public <init>()V\n");
+                this.writer.write("\taload_0\n"); 
+                this.writer.write("\tinvokespecial java/lang/Object/<init>()V\n");
+                this.writer.write("\treturn\n");
+                this.writer.write(".end method\n\n");
+                this.writer.flush(); 
+                node.childrenAccept(this, data);
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
+            }
+            finally{
+                try {
+                    this.writer.close();
+                    
+                } catch (IOException e) {
+                    System.out.println("Something went wrong while closing the file [CODE GENERATION].");
+                }
+            }
+        }
+        else node.childrenAccept(this, data);
+        
         return data;
     }
 
     public Object visit(ASTVarDeclaration node, Object data) {
-        String type = "", name = "";
-        if (node.jjtGetNumChildren() == 2) {
-            if (node.jjtGetChild(0) instanceof ASTType) {
-                ASTType new_node = (ASTType) node.jjtGetChild(0);
-                type = new_node.getName();
-            } else if (node.jjtGetChild(0) instanceof ASTTypeWoIdent) {
-                ASTTypeWoIdent new_node = (ASTTypeWoIdent) node.jjtGetChild(0);
-                type = new_node.getName();
-            }
-            if (node.jjtGetChild(1) instanceof ASTIdentifier) {
-                ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(1);
-                name = new_node.getName();
-            }
-        }
-        if (!type.equals("int") && !type.equals("boolean") && this.currentTable.exists(name) != null) {
-            boolean found = false;
-            for (int i = 0; i < this.symbolTables.size(); i++) {
-                if (this.symbolTables.get(i).get_name().equals(type)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found && show_semantic_analysis) {
-                System.out.println("Semantic Error: Class " + type + " doesn't exist");
-                System.exit(-1);
-            }
-        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -92,6 +115,17 @@ public class ProjectClassVisitor implements ProjectVisitor{
 
     public Object visit(ASTMainDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get("main");
+        if (show_code_generation) {
+            try {
+                this.writer.write(".method public static main([Ljava/lang/String;)V\n");
+                node.childrenAccept(this, data);
+                this.writer.write(".end method\n\n");
+                this.writer.flush();
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
+            }
+        }
         node.childrenAccept(this, data);
         this.currentTable = this.currentTable.get_parent();
         return data;
@@ -99,13 +133,35 @@ public class ProjectClassVisitor implements ProjectVisitor{
 
     public Object visit(ASTMethodDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get(node.getName());
-        node.childrenAccept(this, data);
+
+        if (show_code_generation) {
+            String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
+            try {
+                this.writer.write(".method public " + node.getName() + "(");
+                for (String arg : this.currentTable.get_args().values())
+                    this.writer.write(this.getJasminType(arg, true));
+                this.writer.write(")" + methodReturnType + "\n");
+                node.childrenAccept(this, data);
+                this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
+                this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
+                this.writer.write(this.inMethod);
+                this.writer.write("\tireturn\n");
+                this.writer.write(".end method\n\n");
+                this.writer.flush();
+            } 
+            catch (IOException e) {
+                System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
+            }
+            this.inMethod = "";
+        } else node.childrenAccept(this, data);
+
         this.currentTable = this.currentTable.get_parent();
         return data;
     }
 
     public Object visit(ASTReturn node, Object data) {
         node.childrenAccept(this, data);
+        /* this.inMethod += "\t" + getJasminType(node.jjtGetChild(0).toString(), false) + "return\n"; */
         return data;
     }
 
@@ -170,34 +226,6 @@ public class ProjectClassVisitor implements ProjectVisitor{
     }
 
     public Object visit(ASTStatementStartIdent node, Object data) {
-        if (node.get_type().equals("VarDeclaration")) {
-            String type = "", name = "";
-            if (node.jjtGetNumChildren() == 2) {
-                if (node.jjtGetChild(0) instanceof ASTIdentifier) {
-                    ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
-                    type = new_node.getName();
-                }
-                if (node.jjtGetChild(1) instanceof ASTStatementAux2) {
-                    ASTStatementAux2 new_node = (ASTStatementAux2) node.jjtGetChild(1);
-                    if (new_node.jjtGetNumChildren() == 0 && new_node.getName() != null) {
-                        name = new_node.getName();
-                    }
-                }
-            }
-            if (this.currentTable.exists(name) != null) {
-                boolean found = false;
-                for (int i = 0; i < symbolTables.size(); i++) {
-                    if (symbolTables.get(i).get_name().equals(type)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found && show_semantic_analysis) {
-                    System.out.println("Semantic Error: Class " + type + " doesn't exist");
-                    System.exit(-1);
-                }
-            }
-        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -234,7 +262,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         if (show_code_generation) {
             aritmaticOps("sub", node);
         }
-
+        
         return data;
     }
 
@@ -246,7 +274,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         if (show_code_generation) {
             aritmaticOps("mult", node);
         }
-
+        
         return data;
     }
 
@@ -258,7 +286,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         if (show_code_generation) {
             aritmaticOps("div", node);
         }
-
+        
         return data;
     }
 
@@ -289,32 +317,66 @@ public class ProjectClassVisitor implements ProjectVisitor{
         if (node.jjtGetNumChildren() == 2) {
             if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
                 ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
-                if(new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+                if (new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
                     ASTIdentifier new_id_node = (ASTIdentifier) new_node.jjtGetChild(0);
                     String type = this.currentTable.exists(new_id_node.getName());
-                    if (type == null && show_semantic_analysis) {
-                        System.out.println("Semantic Error: Variable " + new_id_node.getName() + " doesn't exist.");
-                        System.exit(-1);
-                    } else if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                    if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
                         ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
-                        if (new_dot_node.getName().equals("length") && !type.equals("int[]")
-                                && show_semantic_analysis) {
-                            System.out.println("Semantic Error: \"length\" only appliable to int[]. In variable "
-                                    + new_id_node.getName() + ".");
-                            System.exit(-1);
-                        } else if (!new_dot_node.getName().equals("length") && show_semantic_analysis
-                                && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
-                            System.out.println(
-                                    "Semantic Error: primitive type can't be called with functions. In variable "
+                        if (!new_dot_node.getName().equals("length") && show_semantic_analysis
+                                && type != null && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
+                            System.out.println("Semantic Error: primitive type can't be called with functions. In variable "
                                             + new_id_node.getName() + ".");
                             System.exit(-1);
-                        } else if (!new_dot_node.getName().equals("length")) {
+                        } else if (!new_dot_node.getName().equals("length") && type != null) {
                             boolean found = false;
                             for (int i = 0; i < this.symbolTables.size(); i++) {
                                 if (this.symbolTables.get(i).get_name().equals(type)) {
                                     found = true;
-                                    SymbolTable table = this.symbolTables.get(i).get_functions()
-                                            .get(new_dot_node.getName());
+                                    SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
+                                    if (table != null) {
+                                        if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
+                                                && show_semantic_analysis) {
+                                            System.out.println("Semantic Error: Wrong number of arguments in function "
+                                                    + new_dot_node.getName());
+                                            System.exit(-1);
+                                        } 
+                                    } else if (show_semantic_analysis) {
+                                        System.out.println("Semantic Error: Function " + new_dot_node.getName()
+                                                + " of class " + new_id_node.getName() + " doesn't exist.");
+                                        System.exit(-1);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        node.childrenAccept(this, data);
+        return data;
+    }
+
+    public Object visit(ASTExpressionRestOfClausesWoIdent node, Object data) {
+        if (node.jjtGetNumChildren() == 2) {
+            if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
+                ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
+                if (new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+                    ASTIdentifier new_id_node = (ASTIdentifier) new_node.jjtGetChild(0);
+                    String type = this.currentTable.exists(new_id_node.getName());
+                    if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                        ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+                        if (!new_dot_node.getName().equals("length") && show_semantic_analysis
+                                && type != null && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
+                            System.out.println("Semantic Error: primitive type can't be called with functions. In variable "
+                                            + new_id_node.getName() + ".");
+                            System.exit(-1);
+                        } else if (!new_dot_node.getName().equals("length") && type != null) {
+                            boolean found = false;
+                            for (int i = 0; i < this.symbolTables.size(); i++) {
+                                if (this.symbolTables.get(i).get_name().equals(type)) {
+                                    found = true;
+                                    SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
                                     if (table != null) {
                                         if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
                                                 && show_semantic_analysis) {
@@ -330,20 +392,11 @@ public class ProjectClassVisitor implements ProjectVisitor{
                                     break;
                                 }
                             }
-                            if (!found) {
-                                System.out.println("Semantic Error: Class " + type + " doesn't exist.");
-                                System.exit(-1);
-                            }
                         }
                     }
                 }
             }
         }
-        node.childrenAccept(this, data);
-        return data;
-    }
-
-    public Object visit(ASTExpressionRestOfClausesWoIdent node, Object data) {
         node.childrenAccept(this, data);
         return data;
     }
@@ -354,25 +407,6 @@ public class ProjectClassVisitor implements ProjectVisitor{
     }
 
     public Object visit(ASTAccessingArrayAt node, Object data) {
-        String name = null;
-        String type = null;
-        node.childrenAccept(this, data);
-
-        if (node.jjtGetNumChildren() == 1) {
-
-            if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-
-                ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0);
-                name = new_node.getName();
-                type = this.currentTable.exists(name);
-
-                if (!type.equals("int") && show_semantic_analysis)
-                    System.out.println("Error!");
-            }
-
-        } else {
-            // expression...
-        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -458,13 +492,13 @@ public class ProjectClassVisitor implements ProjectVisitor{
         
         switch (valLeft) {
             case 0:
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+                this.inMethod += ("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 1:
-                System.out.println("iload " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+                this.inMethod += ("iload " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 2:
-                System.out.println("calling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0));
+                this.inMethod += ("calling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0) + "\n");
                 break;
         
             default:
@@ -474,10 +508,10 @@ public class ProjectClassVisitor implements ProjectVisitor{
 
         switch (valRight) {
             case 0:
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+                this.inMethod += ("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 1:
-                System.out.println("iload " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+                this.inMethod += ("iload " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
         
             default:
@@ -496,19 +530,19 @@ public class ProjectClassVisitor implements ProjectVisitor{
             */
         switch (op) {
             case "add":
-                System.out.println("iadd");
+                this.inMethod += "iadd\n";
                 break;
 
             case "sub":
-                System.out.println("isub");
+                this.inMethod += "isub\n";
                 break;
 
             case "mult":
-                System.out.println("imult");
+                this.inMethod += "imult\n";
                 break;
 
             case "div":
-                System.out.println("idiv");
+                this.inMethod += "idiv\n";
                 break;
         
             default:
@@ -523,5 +557,18 @@ public class ProjectClassVisitor implements ProjectVisitor{
         if(i != -1)
             return input.substring(i+2);
         return input;
+    }
+
+    public String getJasminType(String type, boolean upercase){
+        if (type.equalsIgnoreCase("int") || type.equalsIgnoreCase("Type: int")){
+            return upercase ? "I" : "i";
+        }
+        else if (type.equalsIgnoreCase("boolean")){
+            return upercase ? "Z" : "i";
+        }
+        else if (type.equalsIgnoreCase("int[]")){
+            return upercase ? "Z" : "i";
+        }
+        return "";
     }
 }

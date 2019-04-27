@@ -16,6 +16,10 @@ class ASTExpressionTokenWoIdent extends SimpleNode {
     name = n;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public String toString() {
     if(name == null)
       return "";
