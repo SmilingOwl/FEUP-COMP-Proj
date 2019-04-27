@@ -220,18 +220,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         // Code generation
 
         if (show_code_generation) {
-
-            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
-            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("iadd");
-
+            aritmaticOps("add", node);
         }
 
         return data;
@@ -243,18 +232,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         // Code generation
 
         if (show_code_generation) {
-
-            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
-            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("isub");
-
+            aritmaticOps("sub", node);
         }
 
         return data;
@@ -266,18 +244,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         // Code generation
 
         if (show_code_generation) {
-
-            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
-            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("imult");
-
+            aritmaticOps("mult", node);
         }
 
         return data;
@@ -289,18 +256,7 @@ public class ProjectClassVisitor implements ProjectVisitor{
         // Code generation
 
         if (show_code_generation) {
-
-            boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
-            boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("idiv");
-
+            aritmaticOps("div", node);
         }
 
         return data;
@@ -446,6 +402,121 @@ public class ProjectClassVisitor implements ProjectVisitor{
      * 
      * public void push(Object o){ stack.addFirst(o); }
      */
+
+    public void aritmaticOps(String op, Node node){
+/*        if(in_node instanceof ASTADD){
+            in_node = (ASTADD) in_node;
+        }*/
+
+
+            //boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
+            //boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
+/*
+            System.out.println("Adding");
+
+            System.out.println(node.jjtGetChild(0).getClass());
+            System.out.println(node.jjtGetChild(1).getClass());
+            System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
+            System.out.println(node.jjtGetChild(1).jjtGetChild(0).getClass());
+            System.out.println(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).getClass());
+            System.out.println(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).getClass());
+            System.out.println(node.jjtGetNumChildren());
+            System.out.println(node.jjtGetChild(0).jjtGetNumChildren());
+            System.out.println(node.jjtGetChild(1).jjtGetNumChildren());
+            if(node.jjtGetChild(1).jjtGetNumChildren() == 2){
+                System.out.println("IF");
+                System.out.println(node.jjtGetChild(1).jjtGetChild(0));
+                System.out.println(node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0));
+            }
+            */
+
+
+
+        int valLeft = -1;
+        int valRight = -1;
+
+        //Check all possible cases
+
+        if((node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses) && (node.jjtGetChild(0).jjtGetNumChildren() == 1)){
+            if(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                valLeft = 1;
+            }
+            else{
+                valLeft = 0;
+            }   
+        }
+
+
+        if((node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses) && (node.jjtGetChild(1).jjtGetNumChildren() == 1)){
+            if(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                valRight = 1;
+            }
+            else{
+                valRight = 0;
+            }   
+        }
+        
+        switch (valLeft) {
+            case 0:
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+                break;
+            case 1:
+                System.out.println("iload " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+                break;
+            case 2:
+                System.out.println("calling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0));
+                break;
+        
+            default:
+                //System.out.println("DEBUG: ENTERED DEFAULT");
+                break;
+        }
+
+        switch (valRight) {
+            case 0:
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+                break;
+            case 1:
+                System.out.println("iload " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+                break;
+        
+            default:
+                //System.out.println("DEBUG: ENTERED DEFAULT");
+                break;
+        }
+
+            /*
+            if(LHS_instOf){//Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            if(RHS_instOf){ //Push para a stack
+                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+            }
+            System.out.println("iadd");
+            */
+        switch (op) {
+            case "add":
+                System.out.println("iadd");
+                break;
+
+            case "sub":
+                System.out.println("isub");
+                break;
+
+            case "mult":
+                System.out.println("imult");
+                break;
+
+            case "div":
+                System.out.println("idiv");
+                break;
+        
+            default:
+                System.out.println("DEBUG: ENTERED OP DEFAULT");
+                break;
+        }
+
+    }
 
     public String extractLabel(String input){
         int i = input.indexOf(":");
