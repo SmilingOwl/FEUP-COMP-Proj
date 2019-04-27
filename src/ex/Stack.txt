@@ -1,6 +1,6 @@
 class Fac extends Something {
 
-    public int test(){
+    public int test(int maxSpeed,boolean s){
         //int a;
         //a = 1;
 
