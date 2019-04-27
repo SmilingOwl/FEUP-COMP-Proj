@@ -236,7 +236,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTStatementStartIdent node, Object data) {
-        if (node.get_type().equals("VarDeclaration")) {
+        /*if (node.get_type().equals("VarDeclaration")) {
             String type = "", name = "";
             if (node.jjtGetNumChildren() == 2) {
                 if (node.jjtGetChild(0) instanceof ASTIdentifier) {
@@ -263,7 +263,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     System.exit(-1);
                 }
             }
-        }
+        }*/
         node.childrenAccept(this, data);
         return data;
     }
@@ -411,7 +411,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTExpressionRestOfClauses node, Object data) {
-        if (node.jjtGetNumChildren() == 2) {
+        /*if (node.jjtGetNumChildren() == 2) {
             if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
                 ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
                 if (new_node.jjtGetNumChildren() != 0 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
@@ -463,7 +463,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     }
                 }
             }
-        }
+        }*/
         node.childrenAccept(this, data);
         return data;
     }
@@ -479,7 +479,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAccessingArrayAt node, Object data) {
-        String name = null;
+        /*String name = null;
         String type = null;
         node.childrenAccept(this, data);
 
@@ -497,7 +497,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         } else {
             // expression...
-        }
+        }*/
         node.childrenAccept(this, data);
         return data;
     }
