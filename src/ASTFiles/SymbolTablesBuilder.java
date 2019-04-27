@@ -24,12 +24,13 @@ public class SymbolTablesBuilder implements ProjectVisitor {
 
   public Object visit(ASTIntegerLiteral node, Object data) {
     node.childrenAccept(this, data);
-    return data;
+    return "int";
   }
 
   public Object visit(ASTIdentifier node, Object data) {
     node.childrenAccept(this, data);
-    return data;
+    String type = this.currentTable.exists(node.getName());
+    return type;
   }
 
   public Object visit(ASTProgram node, Object data) {
@@ -113,6 +114,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
 
   public Object visit(ASTMainDeclaration node, Object data) {
     SymbolTable table = new SymbolTable("main", "main", this.currentTable);
+    table.get_args().put(node.getName(), "String[]");
     this.currentTable.get_functions().put("main", table);
     this.currentTable = table;
     node.childrenAccept(this, data);
@@ -217,7 +219,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
 
   public Object visit(ASTCondition node, Object data) {
     node.childrenAccept(this, data);
-    return data;
+    return "boolean";
   }
 
   public Object visit(ASTIfBody node, Object data) {
@@ -288,19 +290,22 @@ public class SymbolTablesBuilder implements ProjectVisitor {
 
       if ((node.jjtGetChild(0) instanceof ASTADD | node.jjtGetChild(0) instanceof ASTSUB
           | node.jjtGetChild(0) instanceof ASTMULT | node.jjtGetChild(0) instanceof ASTDIV
-          | (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses
-              && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral)
-          | node.jjtGetChild(1) instanceof ASTADD | node.jjtGetChild(1) instanceof ASTSUB
+          | (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(0).jjtGetNumChildren() > 0
+                && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
+                && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral)
+          | node.jjtGetChild(1) instanceof ASTADD | node.jjtGetChild(1) instanceof ASTSUB 
           | node.jjtGetChild(1) instanceof ASTMULT | node.jjtGetChild(1) instanceof ASTDIV
-          | (node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses
-              && node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral))
-          && show_semantic_analysis) {
+          | (node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0
+                && node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral)) 
+          && show_semantic_analysis){
         System.out.println("Error!");
         errors = true;
       }
 
-      else if (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses
-          && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+      else if (node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0
+                && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
         ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0);
         name = new_node.getName();
         type = this.currentTable.exists(name);
@@ -497,12 +502,22 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         errors = true;
       }
     }
-    // node.childrenAccept(this, data);
-    /*
-     * String answer; //all answers must be the same if (node.jjtGetNumChildren() !=
-     * 0) { for (int i = 0; i < node.jjtGetNumChildren(); i++) { answer =
-     * node.jjtGetChild(i).jjtAccept(this, data); } }
-     */
+    String[] answer = new String[node.jjtGetNumChildren()]; //all answers must be the same
+    if (node.jjtGetNumChildren() != 0) {
+      for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+        answer[i] = (String) node.jjtGetChild(i).jjtAccept(this, data);
+      }
+      if(answer[0] == null) {
+        System.out.println("Semantic Error: Variable undefined in assign operation.");
+        errors = true;
+      } else if(node.jjtGetNumChildren() == 2 && !answer[0].equals(answer[1])) {
+        System.out.println("Semantic Error: Different types in assign operation: " + answer[0] + " and " + answer[1]);
+        errors = true;
+      } else if(node.jjtGetNumChildren() == 3 && !answer[2].equals("int")) {
+        System.out.println("Semantic Error: Different types in assign operation: int[] and " + answer[1]);
+        errors = true;
+      }
+    }
     return data;
   }
 
@@ -524,6 +539,36 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
         errors = true;
       }
+    }
+    if(node.jjtGetNumChildren() == 2) {
+      if(node.jjtGetChild(0) instanceof ASTExpressionToken) {
+        ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
+        if(new_node.getName() != null && new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+          ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+          if(!new_dot_node.getName().equals("length")) {
+            SymbolTable table = this.currentTable.get_parent().get_functions().get(new_dot_node.getName());
+            if(table != null) {
+              if(table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
+                System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
+                errors = true;
+              }
+              else {
+                node.childrenAccept(this, data);
+                return table.get_return_type();
+              }
+            //check types of arguments
+            } else if(show_semantic_analysis) {
+              System.out.println("Semantic Error: Function " + new_dot_node.getName() + " doesn't exist.");
+              errors = true;
+            }
+          } else {
+            node.childrenAccept(this, data);
+            return "int";
+          }
+        }
+      }
+    } else if(node.jjtGetNumChildren() == 1) {
+      return node.jjtGetChild(0).jjtAccept(this, data);
     }
     node.childrenAccept(this, data);
     return data;
