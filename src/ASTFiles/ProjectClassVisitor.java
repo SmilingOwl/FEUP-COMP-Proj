@@ -314,8 +314,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         if (show_code_generation) {
             
-            System.out.println("\nStart: \n");
-            investigateNode(node, 0);
+            //System.out.println("\nStart: \n");
+            //investigateNode(node, 0);
 
             if(node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses){
                 this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
