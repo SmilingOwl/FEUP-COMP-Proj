@@ -232,7 +232,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTStatementStartIdent node, Object data) {
+        if(node.jjtGetChild(0) instanceof ASTIdentifier) {
+            ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
+            this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
+        }
         node.childrenAccept(this, data);
+        this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1);
+        this.inMethod += "\n";
         return data;
     }
 
@@ -418,6 +424,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTExpressionAuxDot node, Object data) {
+        this.inMethod += node.getName()  + "()/";
         node.childrenAccept(this, data);
         return data;
     }

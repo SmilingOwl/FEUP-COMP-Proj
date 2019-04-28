@@ -1,5 +1,7 @@
 class Calculator extends Something {
 
+    int a;
+
 	// centigrade to Farenheit conversion
     // F = 9 * C / 5 + 32
 	public int c2f(int local_1) {
@@ -13,6 +15,11 @@ class Calculator extends Something {
 	// Farenheit to centigrade conversion
 	// C = 5 * (f - 32) / 9
 	public int f2c(int local_1) {
+        io.prinyl();
+        io.prinyl().prinyl();
+        a = 1;
+        int ab2;
+        ab2 = 1;
 		local_1 = local_1 - 32;
 		local_1 = local_1 * 5;
 		local_1 = local_1 / 9;
