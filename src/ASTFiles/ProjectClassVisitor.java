@@ -437,6 +437,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAccessingArrayAt node, Object data) {
+        this.inMethod += node.jjtGetValue()  + "/";/* hmmm nao sei se isto esta bem */
         node.childrenAccept(this, data);
         return data;
     }
@@ -448,11 +449,18 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTExpressionToken node, Object data) {
+        System.out.println(node.jjtGetChild(0).getClass());
+        System.out.println(node.jjtGetParent().getClass());
+        /* if(node.jjtGetParent() instanceof ASTCalling)
+            System.out.println('x'); */
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTExpressionTokenWoIdent node, Object data) {
+        System.out.println(node.jjtGetChild(0).getClass());
+        System.out.println(node.jjtGetParent().getClass());
+        if(node.jjtGetParent() instanceof ASTCalling)
         node.childrenAccept(this, data);
         return data;
     }
