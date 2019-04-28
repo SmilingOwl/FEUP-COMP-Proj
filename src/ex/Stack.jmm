@@ -1,4 +1,4 @@
-class Fac extends Something {
+class Stack{
 
     public int ret5(){
         return 5;
@@ -7,13 +7,13 @@ class Fac extends Something {
     public int test(){
 
         int a;
-        int b;
         a = 1;
-        //b = 1 + 2 + 3 + 4 + a + this.ret5() + 1;
-        
-        //a = b+b+b+b;
-       // a = 1+1+1+1;
-        a = this.ret5() + this.ret5() + this.ret5() + this.ret5();
+
+        int b;
+        b = a + a + a + a;
+
+        //boolean c;
+        //c = true;
 
         return 1;
         //return a-2+b/4*a;

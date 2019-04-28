@@ -8,6 +8,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private ArrayList<SymbolTable> symbolTables;
     private SymbolTable currentTable;
     private LinkedList stack = new LinkedList();
+    private ArrayList<String> localVarsList = new ArrayList<String>(){{add("this");}};
     private String inMethod = "";
     private FileWriter writer;
     private boolean show_semantic_analysis = true;
@@ -105,11 +106,23 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTVarDeclaration node, Object data) {
         node.childrenAccept(this, data);
+
+        if(show_code_generation){
+            //Add var to list //TODO: Check if custom types go to a different list
+            localVarsList.add(extractLabel(node.jjtGetChild(1).toString()));
+        }
+
         return data;
     }
 
     public Object visit(ASTVarDeclarationWoIdent node, Object data) {
         node.childrenAccept(this, data);
+
+        if(show_code_generation){
+            //Add var to list
+            localVarsList.add(extractLabel(node.jjtGetChild(1).toString()));
+        }
+
         return data;
     }
 
@@ -300,11 +313,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
         node.childrenAccept(this, data);
 
         if (show_code_generation) {
-            /*
-            System.out.println("\nAssign: ");
-            System.out.println("\t" + node.jjtGetChild(0));
-            System.out.println("\t" + node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).getClass());
-            */
+            
+            System.out.println("\nStart: \n");
+            investigateNode(node, 0);
+
+            if(node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses){
+                this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+            }
+            
+            this.inMethod += ("\tistore_" + indexLocal(extractLabel(node.jjtGetChild(0).toString())) + "\n");
+               
         }
         return data;
     }
@@ -444,12 +462,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
      */
 
     public void aritmaticOps(String op, Node node){
-/*        if(in_node instanceof ASTADD){
-            in_node = (ASTADD) in_node;
-        }*/
 
-
-            //boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses;  //TODO: Check for ASTExpressionRestOfClausesWoIdent ?
+            //boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses; 
             //boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
 /*
             System.out.println("Adding");
@@ -497,14 +511,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
         
         switch (valLeft) {
-            case 0:
+            case 0://Push para a stack
                 this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 1:
-                this.inMethod += ("\tiload " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                this.inMethod += ("\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
                 break;
             case 2:
-                this.inMethod += ("\tcalling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0) + "\n");
+                //this.inMethod += ("\tcalling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0) + "\n");
                 break;
         
             default:
@@ -513,11 +527,11 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
 
         switch (valRight) {
-            case 0:
+            case 0://Push para a stack
                 this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
             case 1:
-                this.inMethod += ("\tiload " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                this.inMethod += ("\tiload_" + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
                 break;
         
             default:
@@ -525,15 +539,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 break;
         }
 
-            /*
-            if(LHS_instOf){//Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            if(RHS_instOf){ //Push para a stack
-                System.out.println("iconst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
-            }
-            System.out.println("iadd");
-            */
+
         switch (op) {
             case "add":
                 this.inMethod += "\tiadd\n";
@@ -563,6 +569,24 @@ public class ProjectClassVisitor implements ProjectVisitor {
         if(i != -1)
             return input.substring(i+2);
         return input;
+    }
+
+    public int indexLocal(String varName){
+        return localVarsList.indexOf(varName);
+    }
+
+    public void investigateNode(Node node, int depth){
+        String t = "";
+        for(int i = 0; i < depth; i++){
+            t += "\t";
+        }
+        System.out.println();
+        System.out.println(t + "In Node: " + node.getClass());
+        System.out.println(t + "Value: " + node);
+        for(int i = 0; i < node.jjtGetNumChildren(); i++){
+            investigateNode(node.jjtGetChild(i), depth+1);
+        }
+
     }
 
     public String getJasminType(String type, boolean upercase){
