@@ -309,7 +309,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                     ArrayList<String> types_args = new ArrayList<String>(table.get_args().values());
                     for(int n = 0; n < new_dot_node.jjtGetNumChildren(); n++) {
                         String answer = (String) new_dot_node.jjtGetChild(n).jjtAccept(this, data);
-                        if(show_semantic_analysis && !answer.equals(types_args.get(n))) {
+                        if(show_semantic_analysis && answer != null && !answer.equals(types_args.get(n))) {
                             System.out.println("Semantic Error: Wrong type of argument in function "
                             + new_dot_node.getName() + ". Received type: " + answer 
                             + " ; Expected type: " + types_args.get(n));
@@ -319,9 +319,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                   }
                   node.childrenAccept(this, data);
                   return table.get_return_type();
-                } else if (show_semantic_analysis) {
-                  System.out.println("Semantic Error: Function " + new_dot_node.getName() + " of class " + new_id_node.getName() + " doesn't exist.");
-                  errors = true;
                 }
                 break;
               }
@@ -420,7 +417,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
     if (node.jjtGetChild(0) instanceof ASTIdentifier) {
       ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
       if (currentTable.exists(new_node.getName()) == null && show_semantic_analysis) {
-        System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
+        System.out.println("Semantic error: Variable " + new_node.getName() + " doesn't exist.");
         errors = true;
       }
     }
@@ -478,9 +475,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                 return table.get_return_type();
               }
             //check types of arguments
-            } else if(show_semantic_analysis) {
-              System.out.println("Semantic Error: Function " + new_dot_node.getName() + " doesn't exist.");
-              errors = true;
             }
           } else {
             node.childrenAccept(this, data);
@@ -489,7 +483,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         } else if(node.jjtGetChild(1) instanceof ASTAccessingArrayAt) {
           ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
           if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-            System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+            System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
             errors = true;
           }
           node.childrenAccept(this, data);
@@ -531,9 +525,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                   }
                   node.childrenAccept(this, data);
                   return table.get_return_type();
-                } else if (show_semantic_analysis) {
-                  System.out.println("Semantic Error: Function " + new_dot_node.getName() + " of class " + new_id_node.getName() + " doesn't exist.");
-                  errors = true;
                 }
                 break;
               }
@@ -545,7 +536,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
       if(node.jjtGetChild(0).jjtGetNumChildren() == 1 && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
         ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
         if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-          System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+          System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
           errors = true;
         }
       }
@@ -573,9 +564,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                 return table.get_return_type();
               }
               // check types of arguments
-            } else if (show_semantic_analysis) {
-              System.out.println("Semantic Error: Function " + new_dot_node.getName() + " doesn't exist.");
-              errors = true;
             }
           } else {
             node.childrenAccept(this, data);
@@ -584,7 +572,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         } else if (node.jjtGetChild(1) instanceof ASTAccessingArrayAt) {
           ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
           if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-            System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+            System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
             errors = true;
           }
           node.childrenAccept(this, data);
@@ -595,7 +583,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
       if (node.jjtGetChild(0).jjtGetNumChildren() == 1 && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
         ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
         if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-          System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+          System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
           errors = true;
         }
       }
