@@ -18,7 +18,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         this.symbolTables = symbolTables;
         if (show_code_generation) {
             try {
-                File file = new File("myfile.j");
+                File file = new File("JVM.j");
                 if (file.exists())
                     file.delete();// delete if exists
                 writer = new FileWriter(file);
@@ -76,7 +76,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 if (!this.currentTable.get_symbols().isEmpty()){
                     this.writer.write("\n");
                     for( String key : this.currentTable.get_symbols().keySet() )
-                        this.writer.write(".field public " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
+                        this.writer.write(".field private " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
                 }
                 this.writer.write("\n; default constructor\n");
                 this.writer.write(".method public <init>()V\n");
@@ -245,7 +245,22 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTStatementStartIdent node, Object data) {
-        node.childrenAccept(this, data);
+        if(show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier) {
+            ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
+            if (node.toString().equalsIgnoreCase("VarDeclaration ")){
+                this.inMethod += "\tinvokenonvirtual " + new_node.getName() + "/<init>()V";
+                node.childrenAccept(this, data);
+            }
+            else {
+                this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
+                node.childrenAccept(this, data);
+                this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1);
+            }
+            this.inMethod += "\n";
+        }
+        else node.childrenAccept(this, data);
+        
+        
         return data;
     }
 
@@ -329,6 +344,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTStatementAux2 node, Object data) {
+        /* System.out.println(node.jjtGetParent()); */
+
+        /* else if (node.jjtGetParent() instanceof ASTStatementStartIdent){
+            System.out.println('x');
+        } */
+
+        /* System.out.println(node.jjtGetParent() + "aii\n");
+        System.out.println(node.getName() + "\n"); */
         node.childrenAccept(this, data);
         return data;
     }
@@ -375,6 +398,27 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             }
                         }
                     }
+                } else if(new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                            && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                    ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+                    if (!new_dot_node.getName().equals("length")) {
+                        for (int i = 0; i < this.symbolTables.size(); i++) {
+                            SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
+                            if (table != null) {
+                                if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
+                                        && show_semantic_analysis) {
+                                    System.out.println("Semantic Error: Wrong number of arguments in function "
+                                            + new_dot_node.getName());
+                                    System.exit(-1);
+                                }
+                            } else if (show_semantic_analysis) {
+                                System.out.println("Semantic Error: Function " + new_dot_node.getName()
+                                        + " doesn't exist.");
+                                System.exit(-1);
+                            }
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -408,7 +452,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                             System.out.println("Semantic Error: Wrong number of arguments in function "
                                                     + new_dot_node.getName());
                                             System.exit(-1);
-                                        }
+                                        } 
                                     } else if (show_semantic_analysis) {
                                         System.out.println("Semantic Error: Function " + new_dot_node.getName()
                                                 + " of class " + new_id_node.getName() + " doesn't exist.");
@@ -417,6 +461,27 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                     break;
                                 }
                             }
+                        }
+                    }
+                } else if(new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                            && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                    ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+                    if (!new_dot_node.getName().equals("length")) {
+                        for (int i = 0; i < this.symbolTables.size(); i++) {
+                            SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
+                            if (table != null) {
+                                if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
+                                        && show_semantic_analysis) {
+                                    System.out.println("Semantic Error: Wrong number of arguments in function "
+                                            + new_dot_node.getName());
+                                    System.exit(-1);
+                                }
+                            } else if (show_semantic_analysis) {
+                                System.out.println("Semantic Error: Function " + new_dot_node.getName()
+                                        + " doesn't exist.");
+                                System.exit(-1);
+                            }
+                            break;
                         }
                     }
                 }
@@ -432,26 +497,37 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAccessingArrayAt node, Object data) {
+        if (show_code_generation)
+            this.inMethod += node.jjtGetValue()  + "/";/* hmmm nao sei se isto esta bem */
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTExpressionAuxDot node, Object data) {
+        if (show_code_generation)
+            this.inMethod += node.getName()  + "()/";
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTExpressionToken node, Object data) {
+        /* if(node.jjtGetParent() instanceof ASTCalling)
+            System.out.println('x'); */
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTExpressionTokenWoIdent node, Object data) {
+        /* if(node.jjtGetParent() instanceof ASTCalling) */
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTExpressionNew node, Object data) {
+        if (show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier){
+            ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
+            this.inMethod += ("\tnew " + new_node.getName() + "\n");    
+        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -598,7 +674,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             return upercase ? "Z" : "i";
         }
         else if (type.equalsIgnoreCase("int[]")){
-            return upercase ? "Z" : "i";
+            return upercase ? "[I" : "";
         }
         return "";
     }

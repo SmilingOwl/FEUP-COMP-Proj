@@ -280,7 +280,51 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         errors = true;
       } else
         this.currentTable.get_symbols().put(name, type);
-    }
+    } else if(node.jjtGetNumChildren() >= 2 && node.jjtGetChild(0) instanceof ASTIdentifier 
+                  && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                  && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0
+                  && node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionAuxDot){
+          ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0);
+          ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0);
+          String type = this.currentTable.exists(new_id_node.getName());
+          if (new_dot_node.getName().equals("length") && !type.equals("int[]")
+                 && show_semantic_analysis) {
+            System.out.println("Semantic Error: \"length\" only appliable to int[]. In variable " + new_id_node.getName() + ".");
+            errors = true;
+          } else if (!new_dot_node.getName().equals("length") && show_semantic_analysis
+                      && type != null && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
+            System.out.println("Semantic Error: primitive type can't be called with functions. In variable " + new_id_node.getName() + ".");
+            errors = true;
+          } else if (!new_dot_node.getName().equals("length")) {
+            boolean found = false;
+            for (int i = 0; i < this.symbolTables.size(); i++) {
+              if (this.symbolTables.get(i).get_name().equals(type)) {
+                found = true;
+                SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
+                if (table != null) {
+                  if (table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
+                    System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
+                    errors = true;
+                  }else {
+                    ArrayList<String> types_args = new ArrayList<String>(table.get_args().values());
+                    for(int n = 0; n < new_dot_node.jjtGetNumChildren(); n++) {
+                        String answer = (String) new_dot_node.jjtGetChild(n).jjtAccept(this, data);
+                        if(show_semantic_analysis && answer != null && !answer.equals(types_args.get(n))) {
+                            System.out.println("Semantic Error: Wrong type of argument in function "
+                            + new_dot_node.getName() + ". Received type: " + answer 
+                            + " ; Expected type: " + types_args.get(n));
+                           errors = true;
+                        }
+                    }
+                  }
+                  node.childrenAccept(this, data);
+                  return table.get_return_type();
+                }
+                break;
+              }
+            }
+          }
+        }
     node.childrenAccept(this, data);
     return data;
   }
@@ -373,7 +417,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
     if (node.jjtGetChild(0) instanceof ASTIdentifier) {
       ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
       if (currentTable.exists(new_node.getName()) == null && show_semantic_analysis) {
-        System.out.println("Semantic error: variable " + new_node.getName() + " doesn't exist.");
+        System.out.println("Semantic error: Variable " + new_node.getName() + " doesn't exist.");
         errors = true;
       }
     }
@@ -431,9 +475,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                 return table.get_return_type();
               }
             //check types of arguments
-            } else if(show_semantic_analysis) {
-              System.out.println("Semantic Error: Function " + new_dot_node.getName() + " doesn't exist.");
-              errors = true;
             }
           } else {
             node.childrenAccept(this, data);
@@ -442,7 +483,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         } else if(node.jjtGetChild(1) instanceof ASTAccessingArrayAt) {
           ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
           if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-            System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+            System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
             errors = true;
           }
           node.childrenAccept(this, data);
@@ -484,9 +525,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                   }
                   node.childrenAccept(this, data);
                   return table.get_return_type();
-                } else if (show_semantic_analysis) {
-                  System.out.println("Semantic Error: Function " + new_dot_node.getName() + " of class " + new_id_node.getName() + " doesn't exist.");
-                  errors = true;
                 }
                 break;
               }
@@ -498,7 +536,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
       if(node.jjtGetChild(0).jjtGetNumChildren() == 1 && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
         ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
         if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-          System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+          System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
           errors = true;
         }
       }
@@ -526,9 +564,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                 return table.get_return_type();
               }
               // check types of arguments
-            } else if (show_semantic_analysis) {
-              System.out.println("Semantic Error: Function " + new_dot_node.getName() + " doesn't exist.");
-              errors = true;
             }
           } else {
             node.childrenAccept(this, data);
@@ -537,7 +572,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         } else if (node.jjtGetChild(1) instanceof ASTAccessingArrayAt) {
           ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
           if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-            System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+            System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
             errors = true;
           }
           node.childrenAccept(this, data);
@@ -548,7 +583,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
       if (node.jjtGetChild(0).jjtGetNumChildren() == 1 && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
         ASTIdentifier new_id_node = (ASTIdentifier) node.jjtGetChild(0).jjtGetChild(0);
         if (currentTable.exists(new_id_node.getName()) == null && show_semantic_analysis) {
-          System.out.println("Semantic error: variable " + new_id_node.getName() + " doesn't exist.");
+          System.out.println("Semantic error: Variable " + new_id_node.getName() + " doesn't exist.");
           errors = true;
         }
       }
