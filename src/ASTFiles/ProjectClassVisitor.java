@@ -18,7 +18,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         this.symbolTables = symbolTables;
         if (show_code_generation) {
             try {
-                File file = new File("myfile.j");
+                File file = new File("JVM.j");
                 if (file.exists())
                     file.delete();// delete if exists
                 writer = new FileWriter(file);
@@ -76,7 +76,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 if (!this.currentTable.get_symbols().isEmpty()){
                     this.writer.write("\n");
                     for( String key : this.currentTable.get_symbols().keySet() )
-                        this.writer.write(".field public " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
+                        this.writer.write(".field private " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
                 }
                 this.writer.write("\n; default constructor\n");
                 this.writer.write(".method public <init>()V\n");
@@ -247,11 +247,20 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public Object visit(ASTStatementStartIdent node, Object data) {
         if(node.jjtGetChild(0) instanceof ASTIdentifier) {
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
-            this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
+            if (node.toString().equalsIgnoreCase("VarDeclaration ")){
+                this.inMethod += "\tinvokenonvirtual " + new_node.getName() + "/<init>()V";
+                node.childrenAccept(this, data);
+            }
+            else {
+                this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
+                node.childrenAccept(this, data);
+                this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1);
+            }
+            this.inMethod += "\n";
         }
-        node.childrenAccept(this, data);
-        this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1);
-        this.inMethod += "\n";
+        else node.childrenAccept(this, data);
+        
+        
         return data;
     }
 
@@ -334,6 +343,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTStatementAux2 node, Object data) {
+        /* System.out.println(node.jjtGetParent()); */
+
+        /* else if (node.jjtGetParent() instanceof ASTStatementStartIdent){
+            System.out.println('x');
+        } */
+
+        /* System.out.println(node.jjtGetParent() + "aii\n");
+        System.out.println(node.getName() + "\n"); */
         node.childrenAccept(this, data);
         return data;
     }
@@ -491,8 +508,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTExpressionToken node, Object data) {
-        System.out.println(node.jjtGetChild(0).getClass());
-        System.out.println(node.jjtGetParent().getClass());
         /* if(node.jjtGetParent() instanceof ASTCalling)
             System.out.println('x'); */
         node.childrenAccept(this, data);
@@ -500,14 +515,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTExpressionTokenWoIdent node, Object data) {
-        System.out.println(node.jjtGetChild(0).getClass());
-        System.out.println(node.jjtGetParent().getClass());
-        if(node.jjtGetParent() instanceof ASTCalling)
+        /* if(node.jjtGetParent() instanceof ASTCalling) */
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTExpressionNew node, Object data) {
+        if (node.jjtGetChild(0) instanceof ASTIdentifier){
+            ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
+            this.inMethod += ("\tnew " + new_node.getName() + "\n");    
+        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -654,7 +671,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             return upercase ? "Z" : "i";
         }
         else if (type.equalsIgnoreCase("int[]")){
-            return upercase ? "Z" : "i";
+            return upercase ? "[I" : "";
         }
         return "";
     }
