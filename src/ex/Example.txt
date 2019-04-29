@@ -2,10 +2,6 @@ class Fac extends Something {
     int global1; 
     myClass myVar;
 
-    public boolean false_return() {
-        return 1;
-    }
-
     public int ComputeFac(int num, boolean attr){
         int s;
         if(num) {
@@ -18,9 +14,13 @@ class Fac extends Something {
         num_array = new Fac();
 
         s = true;
-        s = 1 + true;
+        s = 1 + this.false_return();
         
     
+        return 1;
+    }
+
+    public boolean false_return() {
         return 1;
     }
 

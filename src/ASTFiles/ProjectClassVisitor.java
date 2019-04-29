@@ -397,6 +397,27 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             }
                         }
                     }
+                } else if(new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                            && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                    ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+                    if (!new_dot_node.getName().equals("length")) {
+                        for (int i = 0; i < this.symbolTables.size(); i++) {
+                            SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
+                            if (table != null) {
+                                if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
+                                        && show_semantic_analysis) {
+                                    System.out.println("Semantic Error: Wrong number of arguments in function "
+                                            + new_dot_node.getName());
+                                    System.exit(-1);
+                                }
+                            } else if (show_semantic_analysis) {
+                                System.out.println("Semantic Error: Function " + new_dot_node.getName()
+                                        + " doesn't exist.");
+                                System.exit(-1);
+                            }
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -430,7 +451,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                             System.out.println("Semantic Error: Wrong number of arguments in function "
                                                     + new_dot_node.getName());
                                             System.exit(-1);
-                                        }
+                                        } 
                                     } else if (show_semantic_analysis) {
                                         System.out.println("Semantic Error: Function " + new_dot_node.getName()
                                                 + " of class " + new_id_node.getName() + " doesn't exist.");
@@ -439,6 +460,27 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                     break;
                                 }
                             }
+                        }
+                    }
+                } else if(new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetNumChildren() > 0
+                            && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
+                    ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
+                    if (!new_dot_node.getName().equals("length")) {
+                        for (int i = 0; i < this.symbolTables.size(); i++) {
+                            SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
+                            if (table != null) {
+                                if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
+                                        && show_semantic_analysis) {
+                                    System.out.println("Semantic Error: Wrong number of arguments in function "
+                                            + new_dot_node.getName());
+                                    System.exit(-1);
+                                }
+                            } else if (show_semantic_analysis) {
+                                System.out.println("Semantic Error: Function " + new_dot_node.getName()
+                                        + " doesn't exist.");
+                                System.exit(-1);
+                            }
+                            break;
                         }
                     }
                 }
