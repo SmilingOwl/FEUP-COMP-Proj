@@ -9,8 +9,11 @@ class Stack{
         int a;
         a = 1;
 
-        int b;
-        b = a + a + a + a;
+        boolean b;
+        b = true;
+
+        //int b;
+        //b = a + a + a + a;
 
         //boolean c;
         //c = true;

@@ -329,9 +329,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         if (show_code_generation) {
             
-            System.out.println("\nStart: \n");
-            investigateNode(node, 0);
-
             if(node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0){
                 if(!(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier)) //to avoid function calls being handled as consts
                     this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
@@ -540,29 +537,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public void aritmaticOps(String op, Node node){
 
-            //boolean LHS_instOf = node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses; 
-            //boolean RHS_instOf = node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses;
-/*
-            System.out.println("Adding");
-
-            System.out.println(node.jjtGetChild(0).getClass());
-            System.out.println(node.jjtGetChild(1).getClass());
-            System.out.println(node.jjtGetChild(0).jjtGetChild(0).getClass());
-            System.out.println(node.jjtGetChild(1).jjtGetChild(0).getClass());
-            System.out.println(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).getClass());
-            System.out.println(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).getClass());
-            System.out.println(node.jjtGetNumChildren());
-            System.out.println(node.jjtGetChild(0).jjtGetNumChildren());
-            System.out.println(node.jjtGetChild(1).jjtGetNumChildren());
-            if(node.jjtGetChild(1).jjtGetNumChildren() == 2){
-                System.out.println("IF");
-                System.out.println(node.jjtGetChild(1).jjtGetChild(0));
-                System.out.println(node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0));
-            }
-            */
-
-
-
         int valLeft = -1;
         int valRight = -1;
 
@@ -591,7 +565,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             case 0://Push para a stack
                 this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
-            case 1:
+            case 1://Load da stack
                 this.inMethod += ("\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
                 break;
             case 2:
@@ -607,7 +581,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             case 0://Push para a stack
                 this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
                 break;
-            case 1:
+            case 1://Load da stack
                 this.inMethod += ("\tiload_" + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
                 break;
         
