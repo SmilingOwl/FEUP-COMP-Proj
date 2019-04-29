@@ -1,45 +1,34 @@
 class Fac extends Something {
     int global1; 
     myClass myVar;
+
+    public boolean false_return() {
+        return 1;
+    }
+
     public int ComputeFac(int num, boolean attr){
-        
-        int num_aux; 
-        FindMaximum myVar2;
         int s;
-        
+        if(num) {
+            t = 2 + 1;
+        } else {
+            s = 3;
+        }
+
         int[] num_array;
-        num_array[2] = 0+3;
-        num_array[0].a(num, attr);
-        this;
-        this.ComputeFac();
+        num_array = new Fac();
 
-        num_aux = s + 1;
-        num_aux = 3 + 6 / 3;
-        num_aux = 3 / 6 + 3;
-        if(foo < 3 && true){
-            t = 1;
-        }
-        else {
-            k = 1;
-        }
-        while(a < 1){
-            j = -1;
-        }
-
-        int a;
-        int b;
-        int c;
-        a = 4 + 2;
-        b = 3 - 1;
-        c = a / b;
-            
-        int aux; 
-
-        return true;
+        s = true;
+        s = 1 + true;
+        
+    
+        return 1;
     }
 
     public static void main(String[] a){
-        FindMaximum f;
-        io.println(f.get_array(a));
+        Fac f;
+        f = new Fac();
+        int i;
+        i = f.ComputeFac();
+        f.ComputeFac(i, true);
     }
 }
