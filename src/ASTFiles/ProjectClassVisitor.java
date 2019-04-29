@@ -245,7 +245,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTStatementStartIdent node, Object data) {
-        if(node.jjtGetChild(0) instanceof ASTIdentifier) {
+        if(show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier) {
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
             if (node.toString().equalsIgnoreCase("VarDeclaration ")){
                 this.inMethod += "\tinvokenonvirtual " + new_node.getName() + "/<init>()V";
@@ -454,13 +454,15 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAccessingArrayAt node, Object data) {
-        this.inMethod += node.jjtGetValue()  + "/";/* hmmm nao sei se isto esta bem */
+        if (show_code_generation)
+            this.inMethod += node.jjtGetValue()  + "/";/* hmmm nao sei se isto esta bem */
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTExpressionAuxDot node, Object data) {
-        this.inMethod += node.getName()  + "()/";
+        if (show_code_generation)
+            this.inMethod += node.getName()  + "()/";
         node.childrenAccept(this, data);
         return data;
     }
@@ -479,7 +481,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTExpressionNew node, Object data) {
-        if (node.jjtGetChild(0) instanceof ASTIdentifier){
+        if (show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier){
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
             this.inMethod += ("\tnew " + new_node.getName() + "\n");    
         }
