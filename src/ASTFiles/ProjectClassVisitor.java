@@ -13,6 +13,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private FileWriter writer;
     private boolean show_semantic_analysis = true;
     private boolean show_code_generation = true;
+    private int label_num = 1;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
@@ -216,16 +217,29 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTCondition node, Object data) {
         node.childrenAccept(this, data);
+        if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+            this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+            if(node.jjtGetNumChildren()==1) {
+                this.inMethod += "\tifne Label" + label_num + "\n";
+            }
+        }
         return data;
     }
 
     public Object visit(ASTIfBody node, Object data) {
         node.childrenAccept(this, data);
+        this.inMethod += "\tgoto Label" + (label_num+1) + "\n";
         return data;
     }
 
     public Object visit(ASTElseBody node, Object data) {
+        this.inMethod += "Label" + label_num + ":\n";
+        label_num++;
         node.childrenAccept(this, data);
+        this.inMethod += "Label" + label_num + ":\n";
+        label_num++;
         return data;
     }
 
@@ -265,14 +279,17 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAND node, Object data) {
-        String type = null;
-        String name = null;
         node.childrenAccept(this, data);
         return data;
     }
 
     public Object visit(ASTMINOR node, Object data) {
         node.childrenAccept(this, data);
+
+        if (show_code_generation) {
+            aritmaticOps("cmp", node);
+        }
+
         return data;
     }
 
@@ -328,6 +345,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         node.childrenAccept(this, data);
 
         if (show_code_generation) {
+            investigateNode(node, 3);
             
             if(node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0){
                 if(!(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier)) //to avoid function calls being handled as consts
@@ -606,6 +624,10 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
             case "div":
                 this.inMethod += "\tidiv\n";
+                break;
+
+            case "cmp":
+                this.inMethod += "\tif_icmplt Label" + label_num + "\n";
                 break;
         
             default:
