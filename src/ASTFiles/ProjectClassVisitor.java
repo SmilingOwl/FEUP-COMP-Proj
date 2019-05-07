@@ -222,7 +222,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
             this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
             if(node.jjtGetNumChildren()==1) {
-                this.inMethod += "\tifne Label" + label_num + "\n";
+                this.inMethod += "\tifeq Label" + label_num + "\n";
             }
         }
         return data;
@@ -280,6 +280,17 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTAND node, Object data) {
         node.childrenAccept(this, data);
+        if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+            this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+            this.inMethod += "\tifeq Label" + label_num + "\n";
+        } else if(node.jjtGetNumChildren() > 1 && node.jjtGetChild(1).jjtGetNumChildren() > 0
+            && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+            this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+            this.inMethod += "\tifeq Label" + label_num + "\n";
+        }
         return data;
     }
 
@@ -626,7 +637,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 break;
 
             case "cmp":
-                this.inMethod += "\tif_icmplt Label" + label_num + "\n";
+                this.inMethod += "\tif_icmpge Label" + label_num + "\n";
                 break;
         
             default:

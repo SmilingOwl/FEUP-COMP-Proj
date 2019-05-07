@@ -3,9 +3,11 @@ class TestIf{
 
         int a;
         int b;
+        boolean c;
         a = 1;
         b = 2;
-        if(a < b) {
+        c = true;
+        if(a < b && c) {
             b = 3;
         } else {
             a = 3;
@@ -19,4 +21,3 @@ class TestIf{
         
     }
 }
-
