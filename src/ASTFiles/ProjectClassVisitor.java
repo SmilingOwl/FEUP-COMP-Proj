@@ -345,7 +345,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
         node.childrenAccept(this, data);
 
         if (show_code_generation) {
-            investigateNode(node, 3);
             
             if(node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0){
                 if(!(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier)) //to avoid function calls being handled as consts
