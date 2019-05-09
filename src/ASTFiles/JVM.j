@@ -12,18 +12,12 @@
 	.limit stack 0
 	.limit locals 3
 
-	iconst_1
-	istore_1
-	iconst_2
 	istore_2
 	istore_3
-	iload_1
 	iload_2
-	if_icmpge Label1
-	iload_3
 	ifeq Label1
-	iconst_3
-	istore_2
+	iconst_0
+	istore_1
 	goto Label2
 Label1:
 	iconst_3

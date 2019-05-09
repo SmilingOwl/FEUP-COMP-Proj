@@ -13,10 +13,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private FileWriter writer;
     private boolean show_semantic_analysis = true;
     private boolean show_code_generation = true;
-    private int label_num = 1;
+    private int label_num = 0;
+    private int max_label_used = 0;
+    private LinkedList<Integer> labels_stack = new LinkedList<Integer>();
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
+        labels_stack.push(0);
         if (show_code_generation) {
             try {
                 File file = new File("JVM.j");
@@ -221,9 +224,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
             this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
-            if(node.jjtGetNumChildren()==1) {
-                this.inMethod += "\tifeq Label" + label_num + "\n";
-            }
+            this.inMethod += "\tifeq Label" + label_num + "\n";
         }
         return data;
     }
@@ -236,15 +237,20 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTElseBody node, Object data) {
         this.inMethod += "Label" + label_num + ":\n";
-        label_num++;
         node.childrenAccept(this, data);
-        this.inMethod += "Label" + label_num + ":\n";
-        label_num++;
+        this.inMethod += "Label" + (label_num + 1) + ":\n";
         return data;
     }
 
     public Object visit(ASTIfElseStatement node, Object data) {
+        System.out.println("ENTERED IFELSE STATEMENT");
+        label_num = max_label_used + 1;
+        max_label_used += 2;
+        labels_stack.push(label_num);
         node.childrenAccept(this, data);
+        label_num = labels_stack.pop();
+        label_num = labels_stack.getFirst();
+        System.out.println("LEFT IFELSE STATEMENT " + label_num);
         return data;
     }
 

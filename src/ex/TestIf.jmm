@@ -2,13 +2,12 @@ class TestIf{
     public int test(){
 
         int a;
-        int b;
+        boolean b;
         boolean c;
-        a = 1;
-        b = 2;
+        b = false;
         c = true;
-        if(a < b && c) {
-            b = 3;
+        if(b) {
+            a=0;
         } else {
             a = 3;
         }
