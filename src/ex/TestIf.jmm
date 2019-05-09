@@ -2,14 +2,20 @@ class TestIf{
     public int test(){
 
         int a;
-        boolean b;
+        int b;
         boolean c;
-        b = false;
+        a = 0;
+        b = 1;
         c = true;
-        if(b) {
+        while(a < b) {
+            
             a=0;
-        } else {
-            a = 3;
+            if(c) {
+            
+                a=1;
+            } else {
+                a = 2;
+            }
         }
 
         

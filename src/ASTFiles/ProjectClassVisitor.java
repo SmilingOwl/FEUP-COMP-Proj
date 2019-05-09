@@ -243,19 +243,25 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTIfElseStatement node, Object data) {
-        System.out.println("ENTERED IFELSE STATEMENT");
         label_num = max_label_used + 1;
         max_label_used += 2;
         labels_stack.push(label_num);
         node.childrenAccept(this, data);
         label_num = labels_stack.pop();
         label_num = labels_stack.getFirst();
-        System.out.println("LEFT IFELSE STATEMENT " + label_num);
         return data;
     }
 
     public Object visit(ASTWhileStatement node, Object data) {
+        label_num = max_label_used + 1;
+        max_label_used += 2;
+        this.inMethod += "Label" + (label_num+1) + ":\n";
+        labels_stack.push(label_num);
         node.childrenAccept(this, data);
+        this.inMethod += "\tgoto Label" + (label_num+1) + "\n";
+        this.inMethod += "Label" + label_num + ":\n";
+        label_num = labels_stack.pop();
+        label_num = labels_stack.getFirst();
         return data;
     }
 
