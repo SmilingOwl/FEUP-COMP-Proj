@@ -272,15 +272,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
         if(show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier) {
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
             if (node.toString().equalsIgnoreCase("VarDeclaration ")){
-                this.inMethod += "\tinvokenonvirtual " + new_node.getName() + "/<init>()V";
+                //this.inMethod += "\tinvokenonvirtual " + new_node.getName() + "/<init>()V\n";
                 node.childrenAccept(this, data);
             }
             else {
-                this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
+                this.inMethod += "\tinvokevirtual " + new_node.getName() + "/\n";
                 node.childrenAccept(this, data);
                 this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1);
             }
-            this.inMethod += "\n";
         }
         else if (show_code_generation && node.jjtGetChild(0) instanceof ASTEQUAL) {
             String Identifier = node.jjtGetChild(0).jjtGetChild(0).toString();
