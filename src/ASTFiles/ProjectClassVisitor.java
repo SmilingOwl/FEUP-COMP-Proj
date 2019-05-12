@@ -26,9 +26,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 if (file.exists())
                     file.delete();// delete if exists
                 writer = new FileWriter(file);
-                /*
-                * writer.write("exemplo de como escrever no ficheiro"); writer.flush();
-                */
             } catch (IOException e) {
                 System.out.println("Something went wrong on ProjectClassVisitor Constructor [CODE GENERATION].");
             }
@@ -97,7 +94,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
             finally{
                 try {
                     this.writer.close();
-                    
                 } catch (IOException e) {
                     System.out.println("Something went wrong while closing the file [CODE GENERATION].");
                 }
@@ -139,8 +135,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
                 this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
                 this.writer.write(this.inMethod);
-                this.writer.write("\treturn\n");
-                this.writer.write(".end method\n\n");
+                this.writer.write("\treturn\n.end method\n\n");
                 this.writer.flush();
             } 
             catch (IOException e) {
@@ -160,15 +155,17 @@ public class ProjectClassVisitor implements ProjectVisitor {
             String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
             try {
                 this.writer.write(".method public " + node.getName() + "(");
-                for (String arg : this.currentTable.get_args().values())
-                    this.writer.write(this.getJasminType(arg, true));
+                this.currentTable.get_args().forEach((argName, argType) -> {
+                    localVarsList.add(argName);
+                });
+                for (String argType : this.currentTable.get_args().values())
+                    this.writer.write(this.getJasminType(argType, true));
                 this.writer.write(")" + methodReturnType + "\n");
                 node.childrenAccept(this, data);
                 this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
                 this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
                 this.writer.write(this.inMethod);
-                this.writer.write("\tireturn\n");
-                this.writer.write(".end method\n\n");
+                this.writer.write("\tireturn\n.end method\n\n");
                 this.writer.flush();
             } 
             catch (IOException e) {
@@ -626,7 +623,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public Object visit(ASTExpressionNew node, Object data) {
         if (show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier){
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
-            this.inMethod += ("\tnew " + new_node.getName() + "\n");    
+            String varName = new_node.getName();
+            this.inMethod += ("\tnew " + varName + "\n");    
+            this.inMethod += ("\tdup\n");    
+            this.inMethod += ("\tinvokenonvirtual " + varName + "/<init>()V\n");    
+            localVarsList.add(varName);
+            this.inMethod += "\tastore " + indexLocal(varName) + "\n";
         }
         else if (show_code_generation && node.jjtGetChild(0) instanceof ASTAccessingArrayAt){
             /* x = new int[5];
