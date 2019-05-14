@@ -397,58 +397,43 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public Object visit(ASTEQUAL node, Object data) {
         node.childrenAccept(this, data);
         
-        System.out.println("aiiiiiiii -> " + node + node.jjtGetChild(1).getClass());
-        /* System.out.println("a333333333333 -> " +  node.jjtGetChild(1).getClass()); */
-        
         if (show_code_generation) {
+            investigateNode(node, 1);
 
             if(node.jjtGetChild(1) instanceof ASTAccessingArrayAt){
-                /* x[2] = 123;
-                aload 1
-                ldc 2
-                ldc 123
-                iastore */
                 String varName = extractLabel(node.jjtGetChild(0).toString()); 
                 String index = extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()); 
                 String value = extractLabel(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0).toString());
-
-                this.inMethod += ("\taload " + indexLocal(varName) + "\n");
-                this.inMethod += ("\tldc " + index + "\n");
-                this.inMethod += ("\tldc " + value + "\n");
-                this.inMethod += ("\tiastore\n");
+                                                                                // x[2] = 123;
+                this.inMethod += ("\taload " + indexLocal(varName) + "\n");     //aload 1
+                this.inMethod += ("\tldc " + index + "\n");                     //ldc 2
+                this.inMethod += ("\tldc " + value + "\n");                     //ldc 123
+                this.inMethod += ("\tiastore\n");                               //iastore
             }
-            /* else if (node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetChild() instanceof ASTAccessingArrayAt){
-                /*y = x[2]; 
-                aload 1
-                ldc 2
-                iaload 
-                String varName = extractLabel(node.jjtGetChild(0).toString()); 
+            else if (node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses 
+                && node.jjtGetChild(1).jjtGetNumChildren() == 2){
+                String varName = extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()); 
                 int indexLocal = indexLocal(varName);
                 String index = extractLabel(node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString());
                 this.inMethod += ("\taload " + indexLocal + "\n");
                 this.inMethod += ("\tldc " + index + "\n");
                 this.inMethod += ("\tiaload\n");
-            } */
-            else {
-                //TODO: rever esta parte ... nao tinha a certeza para que servia :/
-                if(node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0){
-                    ASTExpressionRestOfClauses new_node = (ASTExpressionRestOfClauses) node.jjtGetChild(1);
-                    //TODO: acabar array com o que esta comentado a cima 
-                    if (!(new_node.jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionNew)){
-                        System.out.println("*** ->> " + new_node.getClass());
-                        
-                    }
-                    /* if(!(new_node.jjtGetChild(0) instanceof ASTExpressionToken)){
-                        System.out.println("asdfasdfasdfasdfaasdfasdfasdfasdfaasdfasdfasdfasdfaasdfasdfasdfasdfaasdfasdfasdfasdfa");
-                        System.out.println("a333333333333 -> " +  new_node.jjtGetChild(1).getClass());
-                    }*/
-                    if(!(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier)) //to avoid function calls being handled as consts
-                            this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n"); //acho que a situacao dos arrays e aqui
-                    this.inMethod += ("\tistore_" + indexLocal(extractLabel(node.jjtGetChild(0).toString())) + "\n");
-                } 
             }
-            //tratar da parte do x em x = y 
-            this.inMethod += ("\tistore " + indexLocal(extractLabel(node.jjtGetChild(0).toString())) + "\n");
+            else {
+                if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionToken 
+                    && node.jjtGetChild(1).jjtGetChild(0).toString().matches("true|false")){
+                    this.inMethod += ("\tldc " + (node.jjtGetChild(1).jjtGetChild(0).toString().equals("true") ? "1" : "0") + "\n");
+                }
+                else if (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral 
+                    && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() == 1) {
+                    this.inMethod += ("\tldc " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                }
+                else if (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionNew){
+                    return data;
+                }
+                //tratar da parte do x em x = y 
+                this.inMethod += ("\tistore " + indexLocal(extractLabel(node.jjtGetChild(0).toString())) + "\n");
+            }
 
         }
         return data;
