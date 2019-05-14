@@ -85,7 +85,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.writer.write("\tinvokespecial java/lang/Object/<init>()V\n");
                 this.writer.write("\treturn\n");
                 this.writer.write(".end method\n\n");
-                this.writer.flush(); 
+                this.writer.flush();
                 node.childrenAccept(this, data);
             } 
             catch (IOException e) {
@@ -150,7 +150,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMethodDeclaration node, Object data) {
         this.currentTable = this.currentTable.get_functions().get(node.getName());
-
         if (show_code_generation) {
             String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
             try {
@@ -158,14 +157,26 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.currentTable.get_args().forEach((argName, argType) -> {
                     localVarsList.add(argName);
                 });
-                for (String argType : this.currentTable.get_args().values())
-                    this.writer.write(this.getJasminType(argType, true));
+                for (String argType : this.currentTable.get_args().values())    
+                this.writer.write(this.getJasminType(argType, true));
                 this.writer.write(")" + methodReturnType + "\n");
                 node.childrenAccept(this, data);
-                this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica 
-                this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
+                this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica
+                this.writer.write("\t.limit locals " + localVarsList.size() + "\n\n");
+                //DEBUG:
+                System.out.println( "this.currentTable.get_symbols()\n[");
+                this.currentTable.get_symbols().forEach((a,b) -> {
+                    System.out.println("\t" + a + "," + b + ",");
+                });
+                System.out.println( "]\n");
+                System.out.println( "\nlocalVarsList\n[");
+                localVarsList.forEach((a) -> {
+                    System.out.println("\t" + a + ",");
+                });
+                System.out.println( "]\n");
+                //----------------------------------
                 this.writer.write(this.inMethod);
-                this.writer.write("\tireturn\n.end method\n\n");
+                this.writer.write("\t.end method\n\n");
                 this.writer.flush();
             } 
             catch (IOException e) {
@@ -181,6 +192,29 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTReturn node, Object data) {
         node.childrenAccept(this, data);
+        this.investigateNode(node, 1);
+        if (!(node.jjtGetChild(0) instanceof ASTType)){
+            if (!"".equals(node.jjtGetChild(0).jjtGetChild(0).toString())){
+                if(node.jjtGetChild(0).jjtGetChild(0).toString().equals("true"))
+                    this.inMethod+="\tldc 1\n\tireturn\n";
+                else 
+                    this.inMethod+="\tldc 0\n\tireturn\n";
+
+            }
+            else {
+                if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                    String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString());
+                    this.inMethod += "\tiload " + indexLocal(varName) + "\n";
+                    this.inMethod += "\tireturn\n";
+                }
+                else {
+                    this.inMethod+="\tldc " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n\tireturn\n";
+                }
+            }
+            
+        }
+        
+
         /* this.inMethod += "\t" + getJasminType(node.jjtGetChild(0).toString(), false) + "return\n"; */
         return data;
     }
@@ -271,8 +305,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public Object visit(ASTStatementStartIdent node, Object data) {
         if(show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier) {
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
+            System.out.println(node.toString());
             if (node.toString().equalsIgnoreCase("VarDeclaration ")){
-                //this.inMethod += "\tinvokenonvirtual " + new_node.getName() + "/<init>()V\n";
                 node.childrenAccept(this, data);
             }
             else {
@@ -280,11 +314,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 node.childrenAccept(this, data);
                 this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1);
             }
-        }
-        else if (show_code_generation && node.jjtGetChild(0) instanceof ASTEQUAL) {
-            String Identifier = node.jjtGetChild(0).jjtGetChild(0).toString();
-            System.out.println("Identifier -> " + this.extractLabel(Identifier));//TODO: refazer isto com a parte do identificador
-            node.childrenAccept(this, data);
         }
         else node.childrenAccept(this, data);
         
@@ -373,6 +402,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         /* System.out.println("a333333333333 -> " +  node.jjtGetChild(1).getClass()); */
         
         if (show_code_generation) {
+
             if(node.jjtGetChild(1) instanceof ASTAccessingArrayAt){
                 /* x[2] = 123;
                 aload 1
@@ -382,9 +412,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 String varName = extractLabel(node.jjtGetChild(0).toString()); 
                 String index = extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()); 
                 String value = extractLabel(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0).toString());
-                int indexLocal = indexLocal(varName);
 
-                this.inMethod += ("\taload " + indexLocal + "\n");
+                this.inMethod += ("\taload " + indexLocal(varName) + "\n");
                 this.inMethod += ("\tldc " + index + "\n");
                 this.inMethod += ("\tldc " + value + "\n");
                 this.inMethod += ("\tiastore\n");
@@ -419,6 +448,9 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     this.inMethod += ("\tistore_" + indexLocal(extractLabel(node.jjtGetChild(0).toString())) + "\n");
                 } 
             }
+            //tratar da parte do x em x = y 
+            this.inMethod += ("\tistore " + indexLocal(extractLabel(node.jjtGetChild(0).toString())) + "\n");
+
         }
         return data;
     }
