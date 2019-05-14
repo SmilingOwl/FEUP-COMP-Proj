@@ -176,7 +176,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 System.out.println( "]\n");
                 //----------------------------------
                 this.writer.write(this.inMethod);
-                this.writer.write("\t.end method\n\n");
+                this.writer.write(".end method\n\n");
                 this.writer.flush();
             } 
             catch (IOException e) {
@@ -192,7 +192,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTReturn node, Object data) {
         node.childrenAccept(this, data);
-        this.investigateNode(node, 1);
         if (!(node.jjtGetChild(0) instanceof ASTType)){
             if (!"".equals(node.jjtGetChild(0).jjtGetChild(0).toString())){
                 if(node.jjtGetChild(0).jjtGetChild(0).toString().equals("true"))
