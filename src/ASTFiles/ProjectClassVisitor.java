@@ -304,14 +304,15 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public Object visit(ASTStatementStartIdent node, Object data) {
         if(show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier) {
             ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
-            System.out.println(node.toString());
+            //System.out.println(node.toString());
             if (node.toString().equalsIgnoreCase("VarDeclaration ")){
                 node.childrenAccept(this, data);
             }
             else {
-                this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
+                //this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
+                //investigateNode(node, 1);
                 node.childrenAccept(this, data);
-                this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1) + "\n";
+                //this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1) + "\n";
             }
         }
         else node.childrenAccept(this, data);
@@ -398,7 +399,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         node.childrenAccept(this, data);
         
         if (show_code_generation) {
-            investigateNode(node, 1);
+            //investigateNode(node, 1);
 
             if(node.jjtGetChild(1) instanceof ASTAccessingArrayAt){
                 String varName = extractLabel(node.jjtGetChild(0).toString()); 
@@ -462,6 +463,29 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTCalling node, Object data) {
+        //System.out.println(extractLabel(node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString()));
+        //TODO: perceber que tipo e que a funcao e!
+        if(show_code_generation){
+            //TODO: melhorar isto!
+            String argsStr = "";
+            for(int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++){
+                if (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().matches("true|false")){
+                    this.inMethod += "\tldc " + (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().equalsIgnoreCase("true") ? "1" : "0") +"\n"; 
+                    argsStr += "Z";
+                }
+                else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                    this.inMethod += "\tiload " + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString())) +"\n"; 
+                    argsStr += "I"; //TODO: rever isto
+                }
+                else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral){
+                    this.inMethod += "\tldc " + extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString())+"\n"; 
+                    argsStr += "I"; 
+                }
+
+            }
+            String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
+            this.inMethod += "\tinvokevirtual " + extractLabel(node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString()) + "/" + methodName + "(" + argsStr +")I\n";
+        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -624,7 +648,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     });
                     
                     this.inMethod += ")"+ returnType + "\n";    
-                    System.out.println(this.currentTable.get_parent().get_functions().containsKey(methodName) +className + "\n" + methodCall+ "\n"+returnType+ "\n" +"\n");
+                    //System.out.println(this.currentTable.get_parent().get_functions().containsKey(methodName) +className + "\n" + methodCall+ "\n"+returnType+ "\n" +"\n");
                 }
             }
         }
@@ -676,13 +700,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
             String varNamme = extractLabel(node.jjtGetParent().jjtGetParent().jjtGetParent().jjtGetChild(0).toString());
             localVarsList.add(varNamme);
             String sizeSTR;
-            investigateNode(node, 1);
+            //investigateNode(node, 1);
 
             if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier)
                 sizeSTR = "\taload " + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
             else 
                 sizeSTR = "\tldc " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n";
-            //TODO: e se... for uma variavel
                                                                                                                                             //x = new int[5];
             this.inMethod += sizeSTR;                                                                                                       // » ldc 5 ;tamanho 
             this.inMethod += "\tnewarray int\n";                                                                                            // » newarray int
