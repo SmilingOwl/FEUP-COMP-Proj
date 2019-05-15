@@ -265,12 +265,27 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTCondition node, Object data) {
         node.childrenAccept(this, data);
+        this.investigateNode(node, 5);
         if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
-            && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() == 1
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-            this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+            this.inMethod+="\tiload " + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
             this.inMethod += "\tifeq Label" + label_num + "\n";
             this.incrementStackLimit();
+        } else if (node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionToken) {
+            ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0).jjtGetChild(0);
+            if(new_node.getName().equals("true")) {
+                this.inMethod+="\tldc 1\n";
+                this.inMethod += "\tifeq Label" + label_num + "\n";
+            } else if(new_node.getName().equals("false")) {
+                this.inMethod+="\tldc 0\n";
+                this.inMethod += "\tifeq Label" + label_num + "\n";
+            } else if(new_node.getName().equals("this")) {
+                this.inMethod += "\tifeq Label" + label_num + "\n";
+            } else if(new_node.jjtGetNumChildren() > 1 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+                this.inMethod += "\tifeq Label" + label_num + "\n";
+            }
         }
         return data;
     }
@@ -341,13 +356,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
         if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-            this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+            this.inMethod+="\tiload " + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
             this.inMethod += "\tifeq Label" + label_num + "\n";
             this.incrementStackLimit();
         } else if(node.jjtGetNumChildren() > 1 && node.jjtGetChild(1).jjtGetNumChildren() > 0
             && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-            this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+            this.inMethod+="\tiload " + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
             this.inMethod += "\tifeq Label" + label_num + "\n";
             this.incrementStackLimit();
         }
@@ -781,14 +796,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
         
         switch (valLeft) {
             case 0://Push para a stack
-                this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                try {
+                    Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+                    this.inMethod += ("\tldc " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                } catch (Exception e) {
+                    break;
+                }
                 break;
             case 1://Load da stack
-                this.inMethod += ("\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
+                this.inMethod += ("\tiload " + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
                 this.incrementStackLimit();
-                break;
-            case 2:
-                //this.inMethod += ("\tcalling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0) + "\n");
                 break;
         
             default:
@@ -798,10 +815,15 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         switch (valRight) {
             case 0://Push para a stack
-                this.inMethod += ("\ticonst_" + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                try {
+                    Integer.parseInt(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+                    this.inMethod += ("\tldc " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                } catch (Exception e) {
+                    break;
+                }
                 break;
             case 1://Load da stack
-                this.inMethod += ("\tiload_" + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
+                this.inMethod += ("\tiload " + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
                 this.incrementStackLimit();
                 break;
         
@@ -821,7 +843,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 break;
 
             case "mult":
-                this.inMethod += "\timult\n";
+                this.inMethod += "\timul\n";
                 break;
 
             case "div":
