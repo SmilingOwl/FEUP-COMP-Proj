@@ -9,12 +9,16 @@
 .end method
 
 .method public performSingleEstimate()Z
-	.limit stack 0
+	.limit stack 32
 	.limit locals 5
 
-	ldc 1
+	ldc 0
+	ldc 100
+	isub
 	istore 1
-	ldc 2
+	ldc 0
+	ldc 100
+	isub
 	istore 2
 	iload 1
 	iload 1
@@ -41,7 +45,7 @@ Label2:
 .end method
 
 .method public estimatePi100(I)I
-	.limit stack 0
+	.limit stack 32
 	.limit locals 5
 
 	ldc 0
@@ -79,7 +83,7 @@ Label3:
 .end method
 
 .method public static main([Ljava/lang/String;)V
-	.limit stack 0
+	.limit stack 32
 	.limit locals 2
 
 	return
