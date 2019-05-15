@@ -22,14 +22,12 @@
 
 	ldc 800000
 	istore 3
-	iload_3
-	iload_3
+	iload 3
+	iload 3
 	iadd
-	iconst_+
-	iload_3
+	iload 3
 	iadd
-	iconst_+
-	iload_3
+	iload 3
 	iadd
 	istore 4
 	ldc 1
