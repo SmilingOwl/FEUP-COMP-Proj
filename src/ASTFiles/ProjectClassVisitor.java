@@ -775,13 +775,15 @@ public class ProjectClassVisitor implements ProjectVisitor {
         
         switch (valLeft) {
             case 0://Push para a stack
-                this.inMethod += ("\tldc " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                try {
+                    Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()));
+                    this.inMethod += ("\tldc " + extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                } catch (Exception e) {
+                    break;
+                }
                 break;
             case 1://Load da stack
                 this.inMethod += ("\tiload " + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
-                break;
-            case 2:
-                //this.inMethod += ("\tcalling " + node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0) + "\n");
                 break;
         
             default:
@@ -791,7 +793,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         switch (valRight) {
             case 0://Push para a stack
-                this.inMethod += ("\tldc " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                try {
+                    Integer.parseInt(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()));
+                    this.inMethod += ("\tldc " + extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()) + "\n");
+                } catch (Exception e) {
+                    break;
+                }
                 break;
             case 1://Load da stack
                 this.inMethod += ("\tiload " + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString())) + "\n");
