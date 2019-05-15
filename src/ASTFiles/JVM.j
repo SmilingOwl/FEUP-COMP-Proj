@@ -1,4 +1,4 @@
-.class public MonteCarloPi
+.class public TestIf
 .super java/lang/Object
 
 ; default constructor
@@ -8,68 +8,39 @@
 	return
 .end method
 
-.method public performSingleEstimate()Z
-	.limit stack 0
-	.limit locals 4
-
-random()/	iconst_0
-	iconst_100
-	isub
-	istore_1
-random()/	iconst_0
-	iconst_100
-	isub
-	istore_2
-	iload_1
-	iload_1
-	imult
-	iload_2
-	iload_2
-	imult
-	iadd
-	iconst_+
-	iconst_100
-	idiv
-	istore_4
-	istore_3
-	istore_3
-	ireturn
-.end method
-
-.method public estimatePi100(I)I
+.method public test()I
 	.limit stack 0
 	.limit locals 3
 
 	iconst_0
-	istore_6
+	istore_1
+	iconst_1
+	istore_2
+	istore_3
+Label2:
+	iload_1
+	iload_2
+	if_icmpge Label1
 	iconst_0
-	istore_5
-performSingleEstimate()/	iload_5
+	istore_1
+	iload_3
+	ifeq Label3
 	iconst_1
-	iadd
-	istore_5
-	iload_6
-	iconst_1
-	iadd
-	istore_6
-	iconst_400
-	iload_5
-	imult
-	iload_-1
-	idiv
-	istore_7
+	istore_1
+	goto Label4
+Label3:
+	iconst_2
+	istore_1
+Label4:
+	goto Label2
+Label1:
 	ireturn
 .end method
 
 .method public static main([Ljava/lang/String;)V
 	.limit stack 0
-	.limit locals 2
+	.limit locals 0
 
-requestNumber()/	istore_9
-	new MonteCarloPi
-estimatePi100()/	iconst_
-	istore_8
-	invokevirtual ioPlus/printResult()
 	return
 .end method
 

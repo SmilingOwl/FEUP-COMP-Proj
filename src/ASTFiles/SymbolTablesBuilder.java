@@ -5,7 +5,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   private ArrayList<SymbolTable> symbolTables;
   private SymbolTable currentTable;
   private boolean errors = false;
-  private boolean show_symbol_tables = true;
+  private boolean show_symbol_tables = false;
   private boolean show_semantic_analysis = true;
 
   public SymbolTablesBuilder() {
