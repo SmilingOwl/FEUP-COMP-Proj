@@ -256,6 +256,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
             this.inMethod+="\tiload_" + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
             this.inMethod += "\tifeq Label" + label_num + "\n";
+        } else if (node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionToken) {
+            ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0).jjtGetChild(0);
+            if(new_node.getName().equals("true")) {
+                this.inMethod+="\ticonst_1\n";
+                this.inMethod += "\tifeq Label" + label_num + "\n";
+            } else if(new_node.getName().equals("false")) {
+                this.inMethod+="\ticonst_0\n";
+                this.inMethod += "\tifeq Label" + label_num + "\n";
+            }
         }
         return data;
     }
