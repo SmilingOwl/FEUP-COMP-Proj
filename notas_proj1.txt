@@ -14,4 +14,9 @@ JavaCC => void VarDecl() : {}
         }
 
 
+javac file.java
+javap -c file.class // javap -verbose file.class
+hexdump -c file.class 
+
+
 
