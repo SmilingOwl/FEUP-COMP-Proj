@@ -18,11 +18,20 @@
 
 .method public test(II)I
 	.limit stack 0
-	.limit locals 4
+	.limit locals 5
 
-	aload 0			; Method ret5() call
-	ldc 1
-	invokevirtual Stack/ret5(I)I
+	ldc 800000
+	istore 3
+	iload_3
+	iload_3
+	iadd
+	iconst_+
+	iload_3
+	iadd
+	iconst_+
+	iload_3
+	iadd
+	istore 4
 	ldc 1
 	ireturn
 .end method

@@ -8,14 +8,13 @@ class Stack{
     public int test(int QWERTY, int HELLO){
 
         int a;
-        //int a;
-        //a = 800000;
-        this.ret5(1);
+        a = 800000;
+
         //boolean b;
         //b = true;
 
-        //int b;
-        //b = a + a + a + a;
+        int b;
+        b = ((a + a) + a) + a;
 
         //boolean c;
         //c = true;
