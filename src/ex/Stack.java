@@ -1,16 +1,18 @@
 class Stack{
 
-    public int ret5(){
+    public int ret5(int HELP){
+        int a;
         return 5;
     }
 
-    public int test(){
+    public int test(int QWERTY, int HELLO){
 
         int a;
-        a = 800000;
-
-        boolean b;
-        b = true;
+        //int a;
+        //a = 800000;
+        this.ret5(1);
+        //boolean b;
+        //b = true;
 
         //int b;
         //b = a + a + a + a;
