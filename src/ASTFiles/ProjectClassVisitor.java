@@ -136,7 +136,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             try {
                 this.writer.write(".method public static main([Ljava/lang/String;)V\n");
                 node.childrenAccept(this, data);
-                this.writer.write("\t.limit stack " + this.MaxStackSize + "\n"); //TODO: usar .limit de forma dinamica 
+                this.writer.write("\t.limit stack " + this.MaxStackSize + "\n"); 
                 this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
                 this.writer.write(this.inMethod);
                 this.writer.write("\treturn\n.end method\n\n");
@@ -146,7 +146,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
             }
             this.inMethod = "";
-            //TODO: nao esquecer de limpar a stack
         } else node.childrenAccept(this, data);
         this.currentTable = this.currentTable.get_parent();
         return data;
@@ -166,8 +165,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.writer.write(this.getJasminType(argType, true));
                 this.writer.write(")" + methodReturnType + "\n");
                 node.childrenAccept(this, data);
-                this.writer.write("\t.limit stack " + this.MaxStackSize + "\n"); //TODO: usar .limit de forma dinamica
-                this.writer.write("\t.limit locals " + this.localVarsList.size() + "\n\n"); //TODO: perceber se aqui e isto ou localVarsList.size()
+                this.writer.write("\t.limit stack " + this.MaxStackSize + "\n"); 
+                this.writer.write("\t.limit locals " + this.localVarsList.size() + "\n\n"); 
                 //DEBUG:
                 System.out.println( "this.currentTable.get_symbols()\n[");
                 this.currentTable.get_symbols().forEach((a,b) -> {
@@ -190,7 +189,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 System.out.println("Something went wrong on visit(ASTClassDeclaration) Constructor [CODE GENERATION].");
             }
             this.inMethod = "";
-            //TODO: nao esquecer de limpar a stack
         } else node.childrenAccept(this, data);
 
         this.currentTable = this.currentTable.get_parent();
