@@ -9,6 +9,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private SymbolTable currentTable;
     private LinkedList stack = new LinkedList();
     private ArrayList<String> localVarsList = new ArrayList<String>(){{add("this");}};
+    //private LinkedList<ArrayList<String>> localVarsStack = new LinkedList<ArrayList<String>>(); TODO: Maybe delete
     private String inMethod = "";
     private FileWriter writer;
     private boolean show_semantic_analysis = true;
@@ -162,7 +163,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.writer.write(")" + methodReturnType + "\n");
                 node.childrenAccept(this, data);
                 this.writer.write("\t.limit stack " + this.stack.size() + "\n"); //TODO: usar .limit de forma dinamica
-                this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n"); //TODO: perceber se aqui e isto ou localVarsList.size()
+                this.writer.write("\t.limit locals " + this.localVarsList.size() + "\n\n"); //TODO: perceber se aqui e isto ou localVarsList.size()
                 //DEBUG:
                 System.out.println( "this.currentTable.get_symbols()\n[");
                 this.currentTable.get_symbols().forEach((a,b) -> {
@@ -174,6 +175,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     System.out.println("\t" + a + ",");
                 });
                 System.out.println( "]\n");
+                localVarsList = new ArrayList<String>(){{add("this");}}; // Reset the localVarsList para uma nova função puder ser chamada
+                
                 //----------------------------------
                 this.writer.write(this.inMethod);
                 this.writer.write(".end method\n\n");
@@ -220,11 +223,19 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTMethodArgs node, Object data) {
         node.childrenAccept(this, data);
+
+        if(show_code_generation){
+            
+        }
+
         return data;
     }
 
     public Object visit(ASTArgument node, Object data) {
         node.childrenAccept(this, data);
+        if(show_code_generation){
+
+        }
         return data;
     }
 

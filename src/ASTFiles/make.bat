@@ -1,9 +1,9 @@
 @ECHO OFF
 ECHO ============================
 cd ..
-call jjtree Project.jjt
+:: call jjtree Project.jjt
 ECHO ============================
 cd ASTFiles
-call javacc Project.jj
+:: call javacc Project.jj
 ECHO ============================
 call javac *.java
