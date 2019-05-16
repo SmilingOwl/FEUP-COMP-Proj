@@ -108,6 +108,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         return data;
     }
 
+    //TODO: REVER ESTA PARTE DAS VARS
     public Object visit(ASTVarDeclaration node, Object data) {
         node.childrenAccept(this, data);
 
@@ -240,26 +241,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
             
         }
         
-
-        /* this.inMethod += "\t" + getJasminType(node.jjtGetChild(0).toString(), false) + "return\n"; */
         return data;
     }
 
     public Object visit(ASTMethodArgs node, Object data) {
         node.childrenAccept(this, data);
-
-        if(show_code_generation){
-            
-        }
-
         return data;
     }
 
     public Object visit(ASTArgument node, Object data) {
         node.childrenAccept(this, data);
-        if(show_code_generation){
-
-        }
         return data;
     }
 
@@ -351,23 +342,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
         return data;
     }
 
-    public Object visit(ASTStatementStartIdent node, Object data) {
-        if(show_code_generation && node.jjtGetChild(0) instanceof ASTIdentifier) {
-            ASTIdentifier new_node = (ASTIdentifier) node.jjtGetChild(0);
-            //System.out.println(node.toString());
-            if (node.toString().equalsIgnoreCase("VarDeclaration ")){
-                node.childrenAccept(this, data);
-            }
-            else {
-                //this.inMethod += "\tinvokevirtual " + new_node.getName() + "/";
-                //investigateNode(node, 1);
-                node.childrenAccept(this, data);
-                //this.inMethod = this.inMethod.substring(0, this.inMethod.length() - 1) + "\n";
-            }
-        }
-        else node.childrenAccept(this, data);
-        
-        
+    public Object visit(ASTStatementStartIdent node, Object data) {  
+        node.childrenAccept(this, data);
         return data;
     }
 
@@ -808,7 +784,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
         else if (show_code_generation && node.jjtGetChild(0) instanceof ASTAccessingArrayAt){
             String varNamme = extractLabel(node.jjtGetParent().jjtGetParent().jjtGetParent().jjtGetChild(0).toString());
-            localVarsList.add(varNamme);
             String sizeSTR;
             //investigateNode(node, 1);
 
@@ -1012,19 +987,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
     
     public String loadVar(String identifierName) {
-        String rtrnStr = "";
         SymbolTable classTable = this.currentTable.get_parent();
         if (classTable.get_symbols().containsKey(identifierName)){
-            rtrnStr += "\t" + "aload_0" + "\n"; 
-            rtrnStr += "\t" + "getfield " + classTable.get_name() + "/" + identifierName + " " + this.getJasminType(classTable.get_symbols().get(identifierName), true) + "\n";
+            return "\t" + "aload_0" + "\n" 
+                    + "\t" + "getfield " + classTable.get_name() + "/" + identifierName + " " 
+                    + this.getJasminType(classTable.get_symbols().get(identifierName), true) + "\n";
         }
-        else 
-            rtrnStr = "\t" + this.loadLocal(indexLocal(identifierName)) + "\n"; 
-        return rtrnStr;
+        return "\t" + this.loadLocal(indexLocal(identifierName)) + "\n"; 
     }
-
-    
-    
 
     public void resetStackLimit() {
         this.CurrentStackSize = 0;
