@@ -137,7 +137,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
         this.currentTable = this.currentTable.get_functions().get("main");
         if (show_code_generation) {
             this.resetStackLimit();
-            investigateNode(node, 1);
             try {
                 this.writer.write(".method public static main([Ljava/lang/String;)V\n");
                 node.childrenAccept(this, data);
@@ -852,7 +851,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
         else if (show_code_generation && node.jjtGetChild(0) instanceof ASTAccessingArrayAt){
             String varNamme = extractLabel(node.jjtGetParent().jjtGetParent().jjtGetParent().jjtGetChild(0).toString());
             String sizeSTR;
-            //investigateNode(node, 1);
 
             if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
                 sizeSTR = "\taload " + indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
