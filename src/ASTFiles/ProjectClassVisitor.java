@@ -20,6 +20,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private int CurrentStackSize = 0;
     private int MaxStackSize = 0;
     private boolean isOptmized = true;
+    private boolean not_oper = false;
+    boolean not_and = false;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
         this.symbolTables = symbolTables;
@@ -170,7 +172,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.writer.write("\t.limit stack " + this.MaxStackSize + "\n"); 
                 this.writer.write("\t.limit locals " + this.localVarsList.size() + "\n\n"); 
                 //DEBUG:
-                System.out.println( "this.currentTable.get_symbols()\n[");
+               /* System.out.println( "this.currentTable.get_symbols()\n[");
                 this.currentTable.get_symbols().forEach((a,b) -> {
                     System.out.println("\t" + a + "," + b + ",");
                 });
@@ -181,7 +183,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 });
                 System.out.println( "]\n");
                 localVarsList = new ArrayList<String>(){{add("this");}}; // Reset the localVarsList para uma nova função puder ser chamada
-                
+                */
                 //----------------------------------
                 this.writer.write(this.inMethod);
                 this.writer.write(".end method\n\n");
@@ -276,6 +278,13 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTCondition node, Object data) {
+        if (node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionToken) {
+            ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0).jjtGetChild(0);
+            if(new_node.getName() != null && new_node.getName().equals("!")) {
+                not_oper = true;
+            }
+        }
         node.childrenAccept(this, data);
         if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() == 1
@@ -296,12 +305,37 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.inMethod += "\tifeq Label" + label_num + "\n";
             } else if(new_node.jjtGetNumChildren() > 1 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
                 this.inMethod += "\tifeq Label" + label_num + "\n";
+            } else if(new_node.getName().equals("!") && new_node.jjtGetChild(0) instanceof ASTExpressionToken) {
+                not_oper = false;
+                if(new_node.jjtGetChild(0).jjtGetNumChildren() > 0 && new_node.jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+                    this.inMethod+="\t" + this.loadLocal(indexLocal(extractLabel(new_node.jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
+                    this.inMethod += "\tifne Label" + label_num + "\n";
+                    this.incrementStackLimit();
+                } else {
+                    ASTExpressionToken new_child_node = (ASTExpressionToken) new_node.jjtGetChild(0);
+                    if(new_child_node.getName() != null && new_child_node.getName().equals("true")) {
+                        this.inMethod+="\t" + this.pushConstant(1) + "\n";
+                        this.inMethod += "\tifne Label" + label_num + "\n";
+                    } else if(new_child_node.getName() != null && new_child_node.getName().equals("false")) {
+                        this.inMethod+="\t" + this.pushConstant(0) + "\n";
+                        this.inMethod += "\tifne Label" + label_num + "\n";
+                    } else if(new_child_node.getName() != null && new_child_node.getName().equals("this")) {
+                        this.inMethod += "\tifne Label" + label_num + "\n";
+                    } else if(new_child_node.getName() != null && new_child_node.jjtGetNumChildren() > 1 && new_node.jjtGetChild(0) instanceof ASTIdentifier) {
+                        this.inMethod += "\tifne Label" + label_num + "\n";
+                    }
+                }
             }
         }
         return data;
     }
 
     public Object visit(ASTIfBody node, Object data) {
+        if(this.not_and) {
+            System.out.println("Entered " + (label_num+2));
+            this.not_and = false;
+            this.inMethod += "Label" + (label_num+2) + "\n";
+        }
         node.childrenAccept(this, data);
         this.inMethod += "\tgoto Label" + (label_num+1) + "\n";
         return data;
@@ -338,6 +372,11 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTWhileBody node, Object data) {
+        if(this.not_and) {
+            System.out.println("Entered " + (label_num+2));
+            this.not_and = false;
+            this.inMethod += "Label" + (label_num+2) + "\n";
+        }
         node.childrenAccept(this, data);
         return data;
     }
@@ -348,7 +387,19 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAND node, Object data) {
-        node.childrenAccept(this, data);
+        boolean save_not_and = false;
+        this.not_and = false;
+        if(this.not_oper) {
+            this.max_label_used += 1;
+            this.not_and = true;
+            save_not_and = true;
+        }
+        node.jjtGetChild(0).jjtAccept(this, data);
+        this.not_and = false;
+        node.jjtGetChild(1).jjtAccept(this, data);
+        if(save_not_and) {
+            this.not_and = true;
+        }
         if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
@@ -898,7 +949,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 break;
 
             case "cmp":
-                this.inMethod += "\tif_icmpge Label" + label_num + "\n";
+                if(this.not_and) {
+                    this.inMethod += "\tif_icmpge Label" + (label_num+2) + "\n";
+                } else if(this.not_oper) {
+                    this.inMethod += "\tif_icmplt Label" + label_num + "\n";
+                    this.not_oper = false;
+                } else {
+                    this.inMethod += "\tif_icmpge Label" + label_num + "\n";
+                }
                 break;
         
             default:
