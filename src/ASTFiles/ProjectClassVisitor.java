@@ -332,7 +332,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public Object visit(ASTIfBody node, Object data) {
         if(this.not_and) {
-            System.out.println("Entered " + (label_num+2));
             this.not_and = false;
             this.inMethod += "Label" + (label_num+2) + "\n";
         }
@@ -395,22 +394,31 @@ public class ProjectClassVisitor implements ProjectVisitor {
             save_not_and = true;
         }
         node.jjtGetChild(0).jjtAccept(this, data);
+        if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
+            && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
+            this.inMethod+="\t" + this.loadLocal(indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
+            if(this.not_and)
+                this.inMethod += "\tifeq Label" + (label_num+2) + "\n";
+            else
+                this.inMethod += "\tifeq Label" + label_num + "\n";
+            this.incrementStackLimit();
+        }
         this.not_and = false;
         node.jjtGetChild(1).jjtAccept(this, data);
         if(save_not_and) {
             this.not_and = true;
         }
-        if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
-            && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
-            && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
-            this.inMethod+="\t" + this.loadLocal(indexLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
-            this.inMethod += "\tifeq Label" + label_num + "\n";
-            this.incrementStackLimit();
-        } else if(node.jjtGetNumChildren() > 1 && node.jjtGetChild(1).jjtGetNumChildren() > 0
+        if(node.jjtGetNumChildren() > 1 && node.jjtGetChild(1).jjtGetNumChildren() > 0
             && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
             this.inMethod+="\t" + this.loadLocal(indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
-            this.inMethod += "\tifeq Label" + label_num + "\n";
+            if(this.not_oper) {
+                this.inMethod += "\tifne Label" + label_num + "\n";
+                this.not_oper = false;
+            }
+            else
+                this.inMethod += "\tifeq Label" + label_num + "\n";
             this.incrementStackLimit();
         }
         return data;
