@@ -160,6 +160,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         if (show_code_generation) {
             String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
             this.resetStackLimit();
+            localVarsList = new ArrayList<String>(){{add("this");}}; // Reset the localVarsList para uma nova função puder ser chamada
             try {
                 this.writer.write(".method public " + node.getName() + "(");
                 this.currentTable.get_args().forEach((argName, argType) -> {
@@ -182,7 +183,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     System.out.println("\t" + a + ",");
                 });
                 System.out.println( "]\n");
-                localVarsList = new ArrayList<String>(){{add("this");}}; // Reset the localVarsList para uma nova função puder ser chamada
                 
                 //----------------------------------
                 this.writer.write(this.inMethod);
