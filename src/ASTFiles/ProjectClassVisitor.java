@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javafx.event.EventTarget;
+
 public class ProjectClassVisitor implements ProjectVisitor {
     private ArrayList<SymbolTable> symbolTables;
     private SymbolTable currentTable;
@@ -137,11 +139,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
         this.currentTable = this.currentTable.get_functions().get("main");
         if (show_code_generation) {
             this.resetStackLimit();
+            investigateNode(node, 1);
             try {
                 this.writer.write(".method public static main([Ljava/lang/String;)V\n");
                 node.childrenAccept(this, data);
                 this.writer.write("\t.limit stack " + this.MaxStackSize + "\n"); 
-                this.writer.write("\t.limit locals " + this.currentTable.get_symbols().size() + "\n\n");
+                this.writer.write("\t.limit locals " + this.localVarsList.size() + "\n\n");
                 this.writer.write(this.inMethod);
                 this.writer.write("\treturn\n.end method\n\n");
                 this.writer.flush();
@@ -568,23 +571,29 @@ public class ProjectClassVisitor implements ProjectVisitor {
             else {
                 node.childrenAccept(this, data);
 
-                if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionToken 
-                    && node.jjtGetChild(1).jjtGetChild(0).toString().matches("true|false")){
-                    this.inMethod += ("\t" + (node.jjtGetChild(1).jjtGetChild(0).toString().equals("true") ? this.pushConstant(1) : this.pushConstant(0)) + "\n");
+                if (node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses 
+                && node.jjtGetChild(1).jjtGetNumChildren() == 2
+                && node.jjtGetChild(1).jjtGetChild(1) instanceof ASTAcessing){
+                    this.getInvokeVirtual(node, false);
                 }
-                else if (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral 
-                    && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() == 1) {
-                    this.inMethod += ("\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n");
+                else {
+                    if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionToken 
+                        && node.jjtGetChild(1).jjtGetChild(0).toString().matches("true|false")){
+                        this.inMethod += ("\t" + (node.jjtGetChild(1).jjtGetChild(0).toString().equals("true") ? this.pushConstant(1) : this.pushConstant(0)) + "\n");
+                    }
+                    else if (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral 
+                        && node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren() == 1) {
+                        this.inMethod += ("\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n");
+                    }
+                    else if  (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                        String YidentifierName = this.extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString());
+                        this.inMethod += this.loadVar(YidentifierName);
+                        this.incrementStackLimit();
+                    }
+                    else if (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionNew){
+                        return data;
+                    }
                 }
-                else if  (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
-                    String YidentifierName = this.extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString());
-                    this.inMethod += this.loadVar(YidentifierName);
-                    this.incrementStackLimit();
-                }
-                else if (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionNew){
-                    return data;
-                }
-                
                 //tratar da parte do x em x = y 
                 if (xIsField)
                     this.inMethod += "\t" + "putfield " + classTable.get_name() + "/" + XidentifierName + " " + this.getJasminType(classTable.get_symbols().get(XidentifierName), true) + "\n";
@@ -608,7 +617,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
         //TODO: perceber que tipo e que a funcao e!
         if(show_code_generation){
             //TODO: melhorar isto!
-            String argsStr = "";
+            this.getInvokeVirtual(node, true);
+            /* String argsStr = "";
             for(int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++){
                 if (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().matches("true|false")){
                     this.inMethod += "\t" + (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().equalsIgnoreCase("true") ? this.pushConstant(1) : this.pushConstant(0)) +"\n"; 
@@ -626,8 +636,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
             }
             String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
-            this.inMethod += "\tinvokevirtual " + extractLabel(node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString()) + "/" + methodName + "(" + argsStr +")I\n";
-        }
+            this.inMethod += "\tinvokevirtual " + extractLabel(node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString()) + "/" + methodName + "(" + argsStr +")V\n";
+         */}
         node.childrenAccept(this, data);
         return data;
     }
@@ -1078,4 +1088,36 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 && !(node instanceof ASTMULT) 
                 && !(node instanceof ASTDIV);
     }
+
+    public void getInvokeVirtual(Node node, boolean calling) {
+        node = calling ? node : node.jjtGetChild(1).jjtGetChild(1);
+        String className = extractLabel(calling ? node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString() : node.jjtGetParent().jjtGetChild(0).jjtGetChild(0).toString());
+        String type = "V";
+        if (!calling){
+            String identifierName = this.extractLabel(node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString());
+            type = this.getJasminType(this.currentTable.get_symbols().get(identifierName), true);
+        }
+        String argsStr = "";
+        for(int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++){
+            if (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().matches("true|false")){
+                this.inMethod += "\t" + (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().equalsIgnoreCase("true") ? this.pushConstant(1) : this.pushConstant(0)) +"\n"; 
+                argsStr += "Z";
+            }
+            else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString());
+                this.inMethod += "\t" + this.loadLocal(indexLocal(varName)) +"\n";
+                argsStr += this.getJasminType(this.currentTable.get_symbols().get(varName),true);
+                this.incrementStackLimit();
+            }
+            else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral){
+                this.inMethod += "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString())))+"\n"; 
+                argsStr += "I"; 
+            }
+
+        }
+        String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
+        this.inMethod += "\tinvokevirtual " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";
+    }
+
+    
 }
