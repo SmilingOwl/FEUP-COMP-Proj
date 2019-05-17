@@ -172,7 +172,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.writer.write("\t.limit stack " + this.MaxStackSize + "\n"); 
                 this.writer.write("\t.limit locals " + this.localVarsList.size() + "\n\n"); 
                 //DEBUG:
-               /* System.out.println( "this.currentTable.get_symbols()\n[");
+                System.out.println( "this.currentTable.get_symbols()\n[");
                 this.currentTable.get_symbols().forEach((a,b) -> {
                     System.out.println("\t" + a + "," + b + ",");
                 });
@@ -183,7 +183,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 });
                 System.out.println( "]\n");
                 localVarsList = new ArrayList<String>(){{add("this");}}; // Reset the localVarsList para uma nova função puder ser chamada
-                */
+                
                 //----------------------------------
                 this.writer.write(this.inMethod);
                 this.writer.write(".end method\n\n");
