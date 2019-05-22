@@ -1088,6 +1088,11 @@ public class ProjectClassVisitor implements ProjectVisitor {
     public void getInvokeVirtual(Node node, boolean calling) {
         node = calling ? node : node.jjtGetChild(1).jjtGetChild(1);
         String className = extractLabel(calling ? node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString() : node.jjtGetParent().jjtGetChild(0).jjtGetChild(0).toString());
+        String invokeMethod = "invokevirtual";
+        if(this.currentTable.exists(className) == null) {
+            invokeMethod = "invokestatic";
+        }
+
         String type = "V";
         if (!calling){
             String identifierName = this.extractLabel(node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString());
@@ -1112,7 +1117,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         }
         String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
-        this.inMethod += "\tinvokevirtual " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";
+        this.inMethod += "\t" + invokeMethod + " " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";
     }
 
     
