@@ -1134,8 +1134,11 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
         String className = extractLabel(aux);
         String invokeMethod = "invokevirtual";
-        if(this.currentTable.exists(className) == null) {
+        if(this.currentTable.exists(className) == null && className != "") {
             invokeMethod = "invokestatic";
+        }
+        if (className.equals("")) {
+            className = this.currentTable.get_parent().get_name();
         }
 
         String type = "V";

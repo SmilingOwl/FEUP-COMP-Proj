@@ -218,7 +218,8 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTCondition node, Object data) {
-    if (!node.jjtGetChild(0).jjtAccept(this, data).equals("boolean") && show_semantic_analysis) {
+    Object answer = node.jjtGetChild(0).jjtAccept(this, data);
+    if (answer != null && !answer.equals("boolean") && show_semantic_analysis) {
       System.out.println("Semantic Error: Condition must be boolean in if and while statements.");
       errors = true;
     }
