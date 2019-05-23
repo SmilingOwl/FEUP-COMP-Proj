@@ -664,6 +664,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTCalling node, Object data) {
+        if(show_code_generation)
+            this.getInvokeVirtual(node, true);
         node.childrenAccept(this, data);
         return data;
     }
