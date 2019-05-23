@@ -1067,7 +1067,11 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public String loadLocal(String localName, boolean opt) {
         int indexLocal = indexLocal(localName);
-        String typeLocal = this.getJasminType(this.currentTable.get_symbols().get(localName), false);
+        String typeLocal;
+        if(this.currentTable.get_symbols().get(localName) != null)
+            typeLocal = this.getJasminType(this.currentTable.get_symbols().get(localName), false);
+        else
+            typeLocal = this.getJasminType(this.currentTable.get_args().get(localName), false);
         String optChange = (opt && indexLocal >= 0 && indexLocal <= 3) ? "_" : " "; //store [0-3] com _
         return typeLocal + "load" + optChange + indexLocal;
     }
