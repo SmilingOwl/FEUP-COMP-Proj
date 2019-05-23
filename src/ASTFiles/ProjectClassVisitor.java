@@ -137,6 +137,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
         this.currentTable = this.currentTable.get_functions_key("main");
         if (show_code_generation) {
             this.resetStackLimit();
+            localVarsList = new ArrayList<String>(){{add("this");}};
             try {
                 this.writer.write(".method public static main([Ljava/lang/String;)V\n");
                 node.childrenAccept(this, data);
