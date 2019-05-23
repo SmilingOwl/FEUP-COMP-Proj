@@ -1177,6 +1177,9 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 argsStr += "Z";
             }
         }
+        if(this.currentTable.exists(className) != null) {
+            className = this.currentTable.exists(className);
+        }
         String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
         this.inMethod += "\t" + invokeMethod + " " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";
     }
