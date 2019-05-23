@@ -1175,7 +1175,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             int num = indexLocal(className);
             if(num >= 0 && num <= 3)
                 this.inMethod += "\taload_" + num + "\n";
-            else
+            else if (num >= 0)
                 this.inMethod += "\taload " + num + "\n";
         }
         this.inMethod += "\t" + invokeMethod + " " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";
