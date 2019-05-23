@@ -72,7 +72,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         name = new_node.getName();
       }
     }
-    if (this.currentTable.exists(name) != null) {
+    if (this.currentTable.exists_local(name) != null) {
       System.out.println("Semantic Error: variable " + name + " already exists.");
       errors = true;
     } else
@@ -103,7 +103,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         name = new_node.getName();
       }
     }
-    if (this.currentTable.exists(name) != null) {
+    if (this.currentTable.exists_local(name) != null) {
       System.out.println("Semantic Error: variable " + name + " already exists.");
       errors = true;
     } else
@@ -188,7 +188,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         name = new_node.getName();
       }
     }
-    if (this.currentTable.exists(name) != null) {
+    if (this.currentTable.exists_local(name) != null) {
       System.out.println("Semantic Error: variable " + name + " already exists.");
       errors = true;
     } else
@@ -276,7 +276,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
           }
         }
       }
-      if (this.currentTable.exists(name) != null) {
+      if (this.currentTable.exists_local(name) != null) {
         System.out.println("Semantic Error: variable " + name + " already exists.");
         errors = true;
       } else
@@ -408,7 +408,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         } /*else {
           System.out.println("Ignored null in EQUAL. Message to be deleted, only for testing purposes ");
         }*/
-      } else if (node.jjtGetNumChildren() == 3 && !answer[2].equals("int") && show_semantic_analysis) {
+      } else if (node.jjtGetNumChildren() == 3 && answer[2] != null && !answer[2].equals("int") && show_semantic_analysis) {
         if (answer[2] != null) {
           System.out.println("Semantic Error: Different types in assign operation: int[] and " + answer[1]);
           errors = true;
@@ -522,7 +522,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
     String type = null;
     if (node.jjtGetNumChildren() == 1) {
       type = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      if (!type.equals("int[]") && !type.equals("int") && show_semantic_analysis) {
+      if (type != null && !type.equals("int[]") && !type.equals("int") && show_semantic_analysis) {
         System.out.println("Semantic Error: Expected int in array access. Received type: " + type + ".");
       }
     }
@@ -542,7 +542,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
     if (node.jjtGetNumChildren() == 1 && node.getName() == null) {
       return node.jjtGetChild(0).jjtAccept(this, data);
     } else if (node.getName() != null && node.getName().equals("!")) {
-      if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
+      if (node.jjtGetChild(0) instanceof ASTExpressionToken && node.jjtGetChild(0).jjtGetNumChildren() > 0) {
         String answer = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
         if (answer != null && !answer.equals("boolean") && show_semantic_analysis) {
           System.out.println("Semantic Error: Expected boolean in NOT.");

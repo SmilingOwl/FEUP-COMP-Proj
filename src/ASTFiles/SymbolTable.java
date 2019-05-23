@@ -80,6 +80,14 @@ public class SymbolTable {
         return null;
     }
 
+    public String exists_local(String n) {
+        if(this.get_symbols().get(n) != null)
+            return this.get_symbols().get(n);
+        if(this.get_args().get(n) != null)
+            return this.get_args().get(n);
+        return null;
+    }
+
     public SymbolTable get_functions_key(String name) {
         for(int i = 0; i < this.functions.size(); i++) {
             if(this.functions.get(i).get_name().equals(name)) {
