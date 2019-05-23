@@ -537,7 +537,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 }
                 
                 String indexSTR = "";
-                if (this.notAritmaticOps(node.jjtGetChild(1).jjtGetChild(0))){
+                if (!this.isAritmaticOps(node.jjtGetChild(1).jjtGetChild(0))){
                     if (node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
                         String identifierName = this.extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString());
                         indexSTR += this.loadVar(identifierName);
@@ -547,7 +547,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                         indexSTR = "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
                 }
                 String valueSTR = "";
-                if (this.notAritmaticOps(node.jjtGetChild(2))){
+                if (!this.isAritmaticOps(node.jjtGetChild(2))){
                     if (node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
 
                         String identifierName = this.extractLabel(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0).toString());
@@ -580,7 +580,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     arrayVarSTR = ("\taload " + indexLocal(varName) + "\n"); 
 
                 String indexSTR = "";
-                if (this.notAritmaticOps(node.jjtGetChild(1))){
+                if (!this.isAritmaticOps(node.jjtGetChild(1))){
                     if (node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
                         indexSTR = "\taload " + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
                         this.incrementStackLimit();
@@ -1114,11 +1114,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
         this.MaxStackSize = this.CurrentStackSize > this.MaxStackSize ? this.CurrentStackSize : this.MaxStackSize;
     }
 
-    public boolean notAritmaticOps(Node node) {
-        return !(node instanceof ASTSUB) 
-                && !(node instanceof ASTADD) 
-                && !(node instanceof ASTMULT) 
-                && !(node instanceof ASTDIV);
+    public boolean isAritmaticOps(Node node) {
+        return (node instanceof ASTSUB) 
+                || (node instanceof ASTADD) 
+                || (node instanceof ASTMULT) 
+                || (node instanceof ASTDIV);
+    }
+
+    public boolean isBoolOps(Node node) {
+        return (node instanceof ASTMINOR) 
+                || (node instanceof ASTAND);
     }
 
     public void getInvokeVirtual(Node node, boolean calling) {
@@ -1141,16 +1146,29 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 argsStr += "Z";
             }
             else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
-                String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString());
-                this.inMethod += "\t" + this.loadLocal(indexLocal(varName)) +"\n";
-                argsStr += this.getJasminType(this.currentTable.get_symbols().get(varName),true);
-                this.incrementStackLimit();
+                if (node.jjtGetChild(0).jjtGetChild(i).jjtGetNumChildren() == 1){
+                    //identificador normal
+                    String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString());
+                    this.inMethod += "\t" + this.loadLocal(indexLocal(varName)) +"\n";
+                    argsStr += this.getJasminType(this.currentTable.get_symbols().get(varName),true);
+                    this.incrementStackLimit();
+                }
+                else if (node.jjtGetChild(0).jjtGetChild(i).jjtGetNumChildren() == 2){
+                    //invoke function 
+                    //TODO: rever isto
+                    argsStr += "I"; 
+                }
             }
             else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral){
                 this.inMethod += "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString())))+"\n"; 
                 argsStr += "I"; 
             }
-
+            else if (this.isAritmaticOps(node.jjtGetChild(0).jjtGetChild(i))){
+                argsStr += "I";
+            }
+            else if (this.isBoolOps(node.jjtGetChild(0).jjtGetChild(i))){
+                argsStr += "Z";
+            }
         }
         String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
         if(invokeMethod.equals("invokevirtual")) {
