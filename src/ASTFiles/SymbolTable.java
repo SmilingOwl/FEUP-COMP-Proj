@@ -21,13 +21,13 @@ public class SymbolTable {
     private SymbolTable parent;
     private LinkedHashMap<String, String> args;
     private LinkedHashMap<String, String> symbols;
-    private LinkedHashMap<String, SymbolTable> functions;
+    private ArrayList<SymbolTable> functions;
     private String return_type;
 
     public SymbolTable(String name, String type, SymbolTable parent) {
         this.symbols = new LinkedHashMap<String, String>();
         this.args = new LinkedHashMap<String, String>();
-        this.functions = new LinkedHashMap<String, SymbolTable>();
+        this.functions = new ArrayList<SymbolTable>();
         this.name = name;
         this.type = type;
         if(this.type.equals("main")) {
@@ -60,7 +60,7 @@ public class SymbolTable {
         return this.args;
     }
 
-    public LinkedHashMap<String, SymbolTable> get_functions() {
+    public ArrayList<SymbolTable> get_functions() {
         return this.functions;
     }
 
@@ -80,6 +80,23 @@ public class SymbolTable {
         return null;
     }
 
+    public String exists_local(String n) {
+        if(this.get_symbols().get(n) != null)
+            return this.get_symbols().get(n);
+        if(this.get_args().get(n) != null)
+            return this.get_args().get(n);
+        return null;
+    }
+
+    public SymbolTable get_functions_key(String name) {
+        for(int i = 0; i < this.functions.size(); i++) {
+            if(this.functions.get(i).get_name().equals(name)) {
+                return this.functions.get(i);
+            }
+        }
+        return null;
+    }
+
     public void print() {
         if(this.type.equals("class"))
             System.out.println("\n\n\nclass@" + this.name);
@@ -89,12 +106,9 @@ public class SymbolTable {
         if(this.type.equals("class") && this.functions.size() > 0) {
             System.out.println("\n\n" + this.name + "@functions");
             ArrayList<String> appeared = new ArrayList<String>();
-            for(String key : functions.keySet()) {
-                if(appeared.contains(this.functions.get(key).get_name()))
-                    continue;
-                System.out.println(" - " + this.functions.get(key).get_name() + " -> Type: " 
-                                    + this.functions.get(key).get_return_type());
-                appeared.add(this.functions.get(key).get_name());
+            for(int i = 0; i < this.functions.size(); i++) {
+                System.out.println(" - " + this.functions.get(i).get_name() + " -> Type: " 
+                                    + this.functions.get(i).get_return_type());
             }
         }
         
@@ -112,8 +126,8 @@ public class SymbolTable {
             }
         }
 
-        for(String key : functions.keySet()){
-            functions.get(key).print();
+        for(int i = 0; i < this.functions.size(); i++){
+            this.functions.get(i).print();
         }
     }
 }

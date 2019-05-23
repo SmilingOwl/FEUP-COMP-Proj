@@ -134,7 +134,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTMainDeclaration node, Object data) {
-        this.currentTable = this.currentTable.get_functions().get("main");
+        this.currentTable = this.currentTable.get_functions_key("main");
         if (show_code_generation) {
             this.resetStackLimit();
             try {
@@ -156,7 +156,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTMethodDeclaration node, Object data) {
-        this.currentTable = this.currentTable.get_functions().get(node.getName());
+        int num_args = node.jjtGetChild(1).jjtGetNumChildren();
+        for(int a = 0; a < this.currentTable.get_functions().size(); a++) {
+            if(this.currentTable.get_functions().get(a).get_name().equals(node.getName())
+                && this.currentTable.get_functions().get(a).get_args().size() == num_args)
+            this.currentTable = this.currentTable.get_functions().get(a);
+        }
         if (show_code_generation) {
             String methodReturnType = this.getJasminType(this.currentTable.get_return_type(), true);
             this.resetStackLimit();
@@ -701,25 +706,22 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                             + new_id_node.getName() + ".");
                             System.exit(-1);
                         } else if (!new_dot_node.getName().equals("length") && type != null) {
-                            boolean found = false;
-                            for (int i = 0; i < this.symbolTables.size(); i++) {
-                                if (this.symbolTables.get(i).get_name().equals(type)) {
-                                    found = true;
-                                    SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
-                                    if (table != null) {
-                                        if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
-                                                && show_semantic_analysis) {
-                                            System.out.println("Semantic Error: Wrong number of arguments in function "
-                                                    + new_dot_node.getName());
-                                            System.exit(-1);
-                                        } 
-                                    } else if (show_semantic_analysis) {
-                                        System.out.println("Semantic Error: Function " + new_dot_node.getName()
-                                                + " of class " + new_id_node.getName() + " doesn't exist.");
-                                        System.exit(-1);
-                                    }
-                                    break;
+                            SymbolTable table = null;
+                            boolean entered = false;
+                            for(int n = 0; n < this.currentTable.get_parent().get_functions().size(); n++) {
+                                if(this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())
+                                    && this.currentTable.get_parent().get_functions().get(n).get_args().size() == new_dot_node.jjtGetNumChildren()) {
+                                    table = this.currentTable.get_parent().get_functions().get(n);
+                                } else if (this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())){
+                                    entered = true;
                                 }
+                            }
+                            if(table != null) {
+                                node.childrenAccept(this, data);
+                                return table.get_return_type();
+                            } else if(entered) {
+                                System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
+                                System.exit(-1);
                             }
                         }
                     }
@@ -727,21 +729,22 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
                     ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
                     if (!new_dot_node.getName().equals("length")) {
-                        for (int i = 0; i < this.symbolTables.size(); i++) {
-                            SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
-                            if (table != null) {
-                                if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
-                                        && show_semantic_analysis) {
-                                    System.out.println("Semantic Error: Wrong number of arguments in function "
-                                            + new_dot_node.getName());
-                                    System.exit(-1);
-                                }
-                            } else if (show_semantic_analysis) {
-                                System.out.println("Semantic Error: Function " + new_dot_node.getName()
-                                        + " doesn't exist.");
-                                System.exit(-1);
+                        SymbolTable table = null;
+                        boolean entered = false;
+                        for(int n = 0; n < this.currentTable.get_parent().get_functions().size(); n++) {
+                            if(this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())
+                                && this.currentTable.get_parent().get_functions().get(n).get_args().size() == new_dot_node.jjtGetNumChildren()) {
+                                table = this.currentTable.get_parent().get_functions().get(n);
+                            } else if (this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())){
+                                entered = true;
                             }
-                            break;
+                        }
+                        if(table != null) {
+                            node.childrenAccept(this, data);
+                            return table.get_return_type();
+                        } else if(entered) {
+                            System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
+                            System.exit(-1);
                         }
                     }
                 }
@@ -766,25 +769,22 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                             + new_id_node.getName() + ".");
                             System.exit(-1);
                         } else if (!new_dot_node.getName().equals("length") && type != null) {
-                            boolean found = false;
-                            for (int i = 0; i < this.symbolTables.size(); i++) {
-                                if (this.symbolTables.get(i).get_name().equals(type)) {
-                                    found = true;
-                                    SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
-                                    if (table != null) {
-                                        if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
-                                                && show_semantic_analysis) {
-                                            System.out.println("Semantic Error: Wrong number of arguments in function "
-                                                    + new_dot_node.getName());
-                                            System.exit(-1);
-                                        } 
-                                    } else if (show_semantic_analysis) {
-                                        System.out.println("Semantic Error: Function " + new_dot_node.getName()
-                                                + " of class " + new_id_node.getName() + " doesn't exist.");
-                                        System.exit(-1);
-                                    }
-                                    break;
+                            SymbolTable table = null;
+                            boolean entered = false;
+                            for(int n = 0; n < this.currentTable.get_parent().get_functions().size(); n++) {
+                                if(this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())
+                                    && this.currentTable.get_parent().get_functions().get(n).get_args().size() == new_dot_node.jjtGetNumChildren()) {
+                                    table = this.currentTable.get_parent().get_functions().get(n);
+                                } else if (this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())){
+                                    entered = true;
                                 }
+                            }
+                            if(table != null) {
+                                node.childrenAccept(this, data);
+                                return table.get_return_type();
+                            } else if(entered) {
+                                System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
+                                System.exit(-1);
                             }
                         }
                     }
@@ -792,21 +792,22 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
                     ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
                     if (!new_dot_node.getName().equals("length")) {
-                        for (int i = 0; i < this.symbolTables.size(); i++) {
-                            SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
-                            if (table != null) {
-                                if (table.get_args().size() != new_dot_node.jjtGetNumChildren()
-                                        && show_semantic_analysis) {
-                                    System.out.println("Semantic Error: Wrong number of arguments in function "
-                                            + new_dot_node.getName());
-                                    System.exit(-1);
-                                }
-                            } else if (show_semantic_analysis) {
-                                System.out.println("Semantic Error: Function " + new_dot_node.getName()
-                                        + " doesn't exist.");
-                                System.exit(-1);
+                        SymbolTable table = null;
+                        boolean entered = false;
+                        for(int n = 0; n < this.currentTable.get_parent().get_functions().size(); n++) {
+                            if(this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())
+                                && this.currentTable.get_parent().get_functions().get(n).get_args().size() == new_dot_node.jjtGetNumChildren()) {
+                                table = this.currentTable.get_parent().get_functions().get(n);
+                            } else if (this.currentTable.get_parent().get_functions().get(n).get_name().equals(new_dot_node.getName())){
+                                entered = true;
                             }
-                            break;
+                        }
+                        if(table != null) {
+                            node.childrenAccept(this, data);
+                            return table.get_return_type();
+                        } else if(entered) {
+                            System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
+                            System.exit(-1);
                         }
                     }
                 }
@@ -823,8 +824,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
             if(methodCall.contains(")")){
                 String returnType;
                 String methodName = methodCall.split("\\(")[0];
-                if (this.currentTable.get_parent().get_functions().containsKey(methodName)){
-                    returnType = this.getJasminType(this.currentTable.get_parent().get_functions().get(methodName).get_return_type().toString(), true);
+                if (this.currentTable.get_parent().get_functions_key(methodName) != null){
+                    returnType = this.getJasminType(this.currentTable.get_parent().get_functions_key(methodName).get_return_type().toString(), true);
                     this.inMethod += "\taload 0\t\t\t; Method " + methodName + "() call\n";         //aload 0 para ir buscar o this
                     this.incrementStackLimit();
                     for(int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++){
@@ -841,7 +842,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
                     }
                     this.inMethod += "\tinvokevirtual " + className + "/" + methodName + "("; 
-                    this.currentTable.get_parent().get_functions().get(methodName).get_args().forEach((arg, type) ->{
+                    this.currentTable.get_parent().get_functions_key(methodName).get_args().forEach((arg, type) ->{
                         this.inMethod += getJasminType(type, true);
                     });
                     
@@ -1128,16 +1129,30 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public void getInvokeVirtual(Node node, boolean calling) {
         node = calling ? node : node.jjtGetChild(1).jjtGetChild(1);
-        String className = extractLabel(calling ? node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString() : node.jjtGetParent().jjtGetChild(0).jjtGetChild(0).toString());
+        String aux = null;
+        if(calling) {
+            aux = node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString();
+        } else if(node.jjtGetParent().jjtGetChild(0).jjtGetNumChildren() > 0) {
+            aux = node.jjtGetParent().jjtGetChild(0).jjtGetChild(0).toString();
+        } else { //this
+            aux = this.currentTable.get_parent().get_name();
+        }
+        String className = extractLabel(aux);
         String invokeMethod = "invokevirtual";
-        if(this.currentTable.exists(className) == null) {
+        if(this.currentTable.exists(className) == null && className != "") {
             invokeMethod = "invokestatic";
+        }
+        if (className.equals("")) {
+            className = this.currentTable.get_parent().get_name();
         }
 
         String type = "V";
         if (!calling){
             String identifierName = this.extractLabel(node.jjtGetParent().jjtGetParent().jjtGetChild(0).toString());
-            type = this.getJasminType(this.currentTable.get_symbols().get(identifierName), true);
+            if(this.currentTable.get_symbols().get(identifierName) != null)
+                type = this.getJasminType(this.currentTable.get_symbols().get(identifierName), true);
+            else
+                type = this.getJasminType(this.currentTable.get_args().get(identifierName), true);
         }
         String argsStr = "";
         for(int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++){
@@ -1150,14 +1165,17 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     //identificador normal
                     String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString());
                     this.inMethod += "\t" + this.loadLocal(indexLocal(varName)) +"\n";
-                    argsStr += this.getJasminType(this.currentTable.get_symbols().get(varName),true);
+                    if(this.currentTable.get_symbols().get(varName) != null)
+                        argsStr += this.getJasminType(this.currentTable.get_symbols().get(varName),true);
+                    else
+                        argsStr += this.getJasminType(this.currentTable.get_args().get(varName),true);
                     this.incrementStackLimit();
                 }
                 else if (node.jjtGetChild(0).jjtGetChild(i).jjtGetNumChildren() == 2){
                     //invoke function 
                     //TODO: rever isto
                     argsStr += "I"; 
-                }
+                }                
             }
             else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral){
                 this.inMethod += "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString())))+"\n"; 
@@ -1175,7 +1193,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             int num = indexLocal(className);
             if(num >= 0 && num <= 3)
                 this.inMethod += "\taload_" + num + "\n";
-            else
+            else if (num >= 0)
                 this.inMethod += "\taload " + num + "\n";
         }
         this.inMethod += "\t" + invokeMethod + " " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";

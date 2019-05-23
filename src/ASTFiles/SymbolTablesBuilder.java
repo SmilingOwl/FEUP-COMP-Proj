@@ -72,7 +72,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         name = new_node.getName();
       }
     }
-    if (this.currentTable.exists(name) != null) {
+    if (this.currentTable.exists_local(name) != null) {
       System.out.println("Semantic Error: variable " + name + " already exists.");
       errors = true;
     } else
@@ -103,7 +103,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         name = new_node.getName();
       }
     }
-    if (this.currentTable.exists(name) != null) {
+    if (this.currentTable.exists_local(name) != null) {
       System.out.println("Semantic Error: variable " + name + " already exists.");
       errors = true;
     } else
@@ -115,7 +115,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   public Object visit(ASTMainDeclaration node, Object data) {
     SymbolTable table = new SymbolTable("main", "main", this.currentTable);
     table.get_args().put(node.getName(), "String[]");
-    this.currentTable.get_functions().put("main", table);
+    this.currentTable.get_functions().add(table);
     this.currentTable = table;
     node.childrenAccept(this, data);
     this.currentTable = this.currentTable.get_parent();
@@ -124,7 +124,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
 
   public Object visit(ASTMethodDeclaration node, Object data) {
     SymbolTable table = new SymbolTable(node.getName(), "method", this.currentTable);
-    this.currentTable.get_functions().put(node.getName(), table);
+    this.currentTable.get_functions().add(table);
     this.currentTable = table;
     node.childrenAccept(this, data);
     this.currentTable = this.currentTable.get_parent();
@@ -188,7 +188,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         name = new_node.getName();
       }
     }
-    if (this.currentTable.exists(name) != null) {
+    if (this.currentTable.exists_local(name) != null) {
       System.out.println("Semantic Error: variable " + name + " already exists.");
       errors = true;
     } else
@@ -218,7 +218,8 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   }
 
   public Object visit(ASTCondition node, Object data) {
-    if (!node.jjtGetChild(0).jjtAccept(this, data).equals("boolean") && show_semantic_analysis) {
+    Object answer = node.jjtGetChild(0).jjtAccept(this, data);
+    if (answer != null && !answer.equals("boolean") && show_semantic_analysis) {
       System.out.println("Semantic Error: Condition must be boolean in if and while statements.");
       errors = true;
     }
@@ -275,7 +276,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
           }
         }
       }
-      if (this.currentTable.exists(name) != null) {
+      if (this.currentTable.exists_local(name) != null) {
         System.out.println("Semantic Error: variable " + name + " already exists.");
         errors = true;
       } else
@@ -295,34 +296,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                       && type != null && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
             System.out.println("Semantic Error: primitive type can't be called with functions. In variable " + new_id_node.getName() + ".");
             errors = true;
-          } else if (!new_dot_node.getName().equals("length")) {
-            boolean found = false;
-            for (int i = 0; i < this.symbolTables.size(); i++) {
-              if (this.symbolTables.get(i).get_name().equals(type)) {
-                found = true;
-                SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
-                if (table != null) {
-                  if (table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
-                    System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
-                    errors = true;
-                  }else {
-                    ArrayList<String> types_args = new ArrayList<String>(table.get_args().values());
-                    for(int n = 0; n < new_dot_node.jjtGetNumChildren(); n++) {
-                        String answer = (String) new_dot_node.jjtGetChild(n).jjtAccept(this, data);
-                        if(show_semantic_analysis && answer != null && !answer.equals(types_args.get(n))) {
-                            System.out.println("Semantic Error: Wrong type of argument in function "
-                            + new_dot_node.getName() + ". Received type: " + answer 
-                            + " ; Expected type: " + types_args.get(n));
-                           errors = true;
-                        }
-                    }
-                  }
-                  node.childrenAccept(this, data);
-                  return table.get_return_type();
-                }
-                break;
-              }
-            }
           }
         }
     node.childrenAccept(this, data);
@@ -435,7 +408,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         } /*else {
           System.out.println("Ignored null in EQUAL. Message to be deleted, only for testing purposes ");
         }*/
-      } else if (node.jjtGetNumChildren() == 3 && !answer[2].equals("int") && show_semantic_analysis) {
+      } else if (node.jjtGetNumChildren() == 3 && answer[2] != null && !answer[2].equals("int") && show_semantic_analysis) {
         if (answer[2] != null) {
           System.out.println("Semantic Error: Different types in assign operation: int[] and " + answer[1]);
           errors = true;
@@ -463,20 +436,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         ASTExpressionToken new_node = (ASTExpressionToken) node.jjtGetChild(0);
         if(new_node.getName() != null && new_node.getName().equals("this") && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
           ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
-          if(!new_dot_node.getName().equals("length")) {
-            SymbolTable table = this.currentTable.get_parent().get_functions().get(new_dot_node.getName());
-            if(table != null) {
-              if(table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
-                System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
-                errors = true;
-              }
-              else {
-                node.childrenAccept(this, data);
-                return table.get_return_type();
-              }
-            //check types of arguments
-            }
-          } else {
+          if(new_dot_node.getName().equals("length")) {
             node.childrenAccept(this, data);
             return "int";
           }
@@ -501,34 +461,6 @@ public class SymbolTablesBuilder implements ProjectVisitor {
                       && type != null && (type.equals("int") || type.equals("boolean") || type.equals("int[]"))) {
             System.out.println("Semantic Error: primitive type can't be called with functions. In variable " + new_id_node.getName() + ".");
             errors = true;
-          } else if (!new_dot_node.getName().equals("length")) {
-            boolean found = false;
-            for (int i = 0; i < this.symbolTables.size(); i++) {
-              if (this.symbolTables.get(i).get_name().equals(type)) {
-                found = true;
-                SymbolTable table = this.symbolTables.get(i).get_functions().get(new_dot_node.getName());
-                if (table != null) {
-                  if (table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
-                    System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
-                    errors = true;
-                  }else {
-                    ArrayList<String> types_args = new ArrayList<String>(table.get_args().values());
-                    for(int n = 0; n < new_dot_node.jjtGetNumChildren(); n++) {
-                        String answer = (String) new_dot_node.jjtGetChild(n).jjtAccept(this, data);
-                        if(show_semantic_analysis && !answer.equals(types_args.get(n))) {
-                            System.out.println("Semantic Error: Wrong type of argument in function "
-                            + new_dot_node.getName() + ". Received type: " + answer 
-                            + " ; Expected type: " + types_args.get(n));
-                           errors = true;
-                        }
-                    }
-                  }
-                  node.childrenAccept(this, data);
-                  return table.get_return_type();
-                }
-                break;
-              }
-            }
           }
         }
       }
@@ -553,19 +485,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
         if (new_node.getName() != null && new_node.getName().equals("this")
             && node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionAuxDot) {
           ASTExpressionAuxDot new_dot_node = (ASTExpressionAuxDot) node.jjtGetChild(1).jjtGetChild(0);
-          if (!new_dot_node.getName().equals("length")) {
-            SymbolTable table = this.currentTable.get_parent().get_functions().get(new_dot_node.getName());
-            if (table != null) {
-              if (table.get_args().size() != new_dot_node.jjtGetNumChildren() && show_semantic_analysis) {
-                System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
-                errors = true;
-              } else {
-                node.childrenAccept(this, data);
-                return table.get_return_type();
-              }
-              // check types of arguments
-            }
-          } else {
+          if (new_dot_node.getName().equals("length")) {
             node.childrenAccept(this, data);
             return "int";
           }
@@ -602,7 +522,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
     String type = null;
     if (node.jjtGetNumChildren() == 1) {
       type = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      if (!type.equals("int[]") && !type.equals("int") && show_semantic_analysis) {
+      if (type != null && !type.equals("int[]") && !type.equals("int") && show_semantic_analysis) {
         System.out.println("Semantic Error: Expected int in array access. Received type: " + type + ".");
       }
     }
@@ -622,7 +542,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
     if (node.jjtGetNumChildren() == 1 && node.getName() == null) {
       return node.jjtGetChild(0).jjtAccept(this, data);
     } else if (node.getName() != null && node.getName().equals("!")) {
-      if (node.jjtGetChild(0) instanceof ASTExpressionToken) {
+      if (node.jjtGetChild(0) instanceof ASTExpressionToken && node.jjtGetChild(0).jjtGetNumChildren() > 0) {
         String answer = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
         if (answer != null && !answer.equals("boolean") && show_semantic_analysis) {
           System.out.println("Semantic Error: Expected boolean in NOT.");
