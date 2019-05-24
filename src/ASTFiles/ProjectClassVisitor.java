@@ -569,15 +569,17 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 }
                 String valueSTR = "";
                 if (!this.isAritmaticOps(node.jjtGetChild(2))){
-                    if (node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
-
-                        String identifierName = this.extractLabel(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0).toString());
-                        valueSTR += this.loadVar(identifierName);
-                        this.incrementStackLimit();
+                    if (node.jjtGetChild(2).jjtGetChild(0).toString().equals("")){
+                        if(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                            String identifierName = this.extractLabel(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0).toString());
+                            valueSTR += this.loadVar(identifierName);
+                            this.incrementStackLimit();
+                        }
+                        else if (node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral){
+                            valueSTR = "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
+                        }
                     }
-                    else 
-                        valueSTR = "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(2).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
-                }                                                               // x[2] = 123;
+                }                                                              // x[2] = 123;
                 this.inMethod += arrayVarSTR;                                   // » aload 1
                 this.inMethod += indexSTR;                                      // » ldc 2
                 node.childrenAccept(this, data);                                  
