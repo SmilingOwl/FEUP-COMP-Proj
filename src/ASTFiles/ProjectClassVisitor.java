@@ -653,7 +653,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             int number = indexLocal(varName);
                             if(number >= 0 && number <=3) 
                                 this.inMethod += "\tastore_" + number + "\n";
-                            else
+                            else //Checked
                                 this.inMethod += "\tastore " + number + "\n";
                         }
                         return data;
@@ -911,8 +911,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 this.inMethod += "\t" + "putfield " + classTable.get_name() + "/" + varNamme + " " 
                 + this.getJasminType(classTable.get_symbols().get(varNamme), true) + "\n";
             }                   
-            else
-                this.inMethod += "\tastore" + (idx > 3 ? " " : "_") + idx + "\n";                                                                                                                   
+                                                                                                                                  
         }
         node.childrenAccept(this, data);
         return data;
