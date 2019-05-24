@@ -206,19 +206,18 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTReturn node, Object data) {
-        node.childrenAccept(this, data);
         if (!(node.jjtGetChild(0) instanceof ASTType)){
             if (!"".equals(node.jjtGetChild(0).jjtGetChild(0).toString())){
                 if(node.jjtGetChild(0).jjtGetChild(0).toString().equals("true"))
-                    this.inMethod+="\t" + this.pushConstant(1) + "\n\tireturn\n";
+                this.inMethod+="\t" + this.pushConstant(1) + "\n\tireturn\n";
                 else 
-                    this.inMethod+="\t" + this.pushConstant(0) + "\n\tireturn\n";
-
+                this.inMethod+="\t" + this.pushConstant(0) + "\n\tireturn\n";
+                
             }
             else {
                 if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
                     String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString());
-
+                    
                     if (this.currentTable.get_parent().get_symbols().containsKey(varName)){
                         this.inMethod += "\t" + "aload_0" + "\n"; 
                         this.inMethod += "\t" + "getfield " + this.currentTable.get_parent().get_name() + "/" + varName + " " + this.getJasminType(this.currentTable.get_parent().get_symbols().get(varName), true) + "\n";
@@ -229,7 +228,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                         this.incrementStackLimit();
                         return data;
                     }
-
+                    
                     String type = this.currentTable.get_symbols().get(varName);
                     if (type.equalsIgnoreCase("int[]")){
                         int idx = indexLocal(varName);
@@ -243,7 +242,23 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     this.incrementStackLimit();
                 }
                 else {
-                    this.inMethod+="\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n\tireturn\n";
+                    if (this.isAritmaticOps(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0)) || this.isAritmaticOps(node.jjtGetChild(0))){
+                        node.childrenAccept(this, data);
+                        this.inMethod+="\tireturn\n";
+                        return data;
+                    }
+                    else if (this.isBoolOps(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0))){
+                        node.childrenAccept(this, data);
+                        this.inMethod+="\tireturn\n";
+                        return data;
+                    }
+                    else {
+                        if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionRestOfClauses)
+                            node.childrenAccept(this, data);
+                        else 
+                            this.inMethod+="\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n\tireturn\n";
+                    }
+                    
                 }
             }
             
