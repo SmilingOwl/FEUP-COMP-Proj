@@ -12,7 +12,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     //private LinkedList<ArrayList<String>> localVarsStack = new LinkedList<ArrayList<String>>(); TODO: Maybe delete
     private String inMethod = "";
     private FileWriter writer;
-    private boolean show_semantic_analysis = true;
+    private boolean show_semantic_analysis = false;
     private boolean show_code_generation = true;
     private int label_num = 0;
     private int max_label_used = 0;
@@ -754,7 +754,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             if(table != null) {
                                 node.childrenAccept(this, data);
                                 return table.get_return_type();
-                            } else if(entered) {
+                            } else if(entered && show_semantic_analysis) {
                                 System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
                                 System.exit(-1);
                             }
@@ -777,7 +777,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                         if(table != null) {
                             node.childrenAccept(this, data);
                             return table.get_return_type();
-                        } else if(entered) {
+                        } else if(entered && show_semantic_analysis) {
                             System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
                             System.exit(-1);
                         }
@@ -817,7 +817,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             if(table != null) {
                                 node.childrenAccept(this, data);
                                 return table.get_return_type();
-                            } else if(entered) {
+                            } else if(entered && show_semantic_analysis) {
                                 System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
                                 System.exit(-1);
                             }
@@ -840,7 +840,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                         if(table != null) {
                             node.childrenAccept(this, data);
                             return table.get_return_type();
-                        } else if(entered) {
+                        } else if(entered && show_semantic_analysis) {
                             System.out.println("Semantic Error: Wrong number of arguments in function " + new_dot_node.getName());
                             System.exit(-1);
                         }
@@ -880,7 +880,15 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     }
                     children_accepted = true;
                     this.inMethod += "\tinvokevirtual " + className + "/" + methodName + "("; 
-                    this.currentTable.get_parent().get_functions_key(methodName).get_args().forEach((arg, type) ->{
+                    SymbolTable table = this.currentTable.get_parent().get_functions_key(methodName);
+                    for(int i = 0; i < this.currentTable.get_parent().get_functions().size(); i++) {
+                        if(this.currentTable.get_parent().get_functions().get(i).get_name().equals(methodName) 
+                            && this.currentTable.get_parent().get_functions().get(i).get_args().size() == node.jjtGetChild(0).jjtGetNumChildren()) {
+                                table = this.currentTable.get_parent().get_functions().get(i);
+                                break;
+                        }
+                    }
+                    table.get_args().forEach((arg, type) ->{
                         this.inMethod += getJasminType(type, true);
                     });
 
@@ -1100,6 +1108,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public String pushConstant(int number, boolean opt) {
+        
+        this.incrementStackLimit();
         if (opt) {
             if (number >= 0 && number <= 5)
                 return "iconst_" + number;              //constante [0-5]
@@ -1132,11 +1142,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public String loadLocal(String localName, boolean opt) {
         int indexLocal = indexLocal(localName);
-        String typeLocal;
+        String typeLocal = null;
         if(this.currentTable.get_symbols().get(localName) != null)
             typeLocal = this.getJasminType(this.currentTable.get_symbols().get(localName), false);
-        else
+        else if(this.currentTable.get_args().get(localName) != null)
             typeLocal = this.getJasminType(this.currentTable.get_args().get(localName), false);
+        
         String optChange = (opt && indexLocal >= 0 && indexLocal <= 3) ? "_" : " "; //store [0-3] com _
         return typeLocal + "load" + optChange + indexLocal;
     }
@@ -1225,6 +1236,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
         String argsStr = "";
         for(int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++){
+
             if (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().matches("true|false")){
                 this.inMethod += "\t" + (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().equalsIgnoreCase("true") ? this.pushConstant(1) : this.pushConstant(0)) +"\n"; 
                 argsStr += "Z";
@@ -1253,13 +1265,10 @@ public class ProjectClassVisitor implements ProjectVisitor {
                             }
                         }
                         this.inMethod += "\tiaload\n";
-                        argsStr += "[I";
                     }
-                    else{
                     //invoke function 
                     //TODO: rever isto
                     argsStr += "I";
-                    }
                 }                
             }
             else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral){

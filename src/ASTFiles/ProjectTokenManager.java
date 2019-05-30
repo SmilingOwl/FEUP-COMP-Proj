@@ -413,6 +413,12 @@ private int jjMoveNfa_0(int startState, int curPos)
                   }
                   else if (curChar == 47)
                      { jjAddStates(0, 1); }
+                  else if (curChar == 36)
+                  {
+                     if (kind > 46)
+                        kind = 46;
+                     { jjCheckNAdd(8); }
+                  }
                   if (curChar == 48)
                      { jjCheckNAddTwoStates(19, 20); }
                   if (curChar == 48)
@@ -456,12 +462,19 @@ private int jjMoveNfa_0(int startState, int curPos)
                      kind = 45;
                   { jjCheckNAddStates(5, 7); }
                   break;
-               case 8:
-                  if ((0x3ff000000000000L & l) == 0L)
+               case 7:
+                  if (curChar != 36)
                      break;
                   if (kind > 46)
                      kind = 46;
-                  jjstateSet[jjnewStateCnt++] = 8;
+                  { jjCheckNAdd(8); }
+                  break;
+               case 8:
+                  if ((0x3ff001000000000L & l) == 0L)
+                     break;
+                  if (kind > 46)
+                     kind = 46;
+                  { jjCheckNAdd(8); }
                   break;
                case 9:
                   if (curChar == 47)
@@ -528,7 +541,8 @@ private int jjMoveNfa_0(int startState, int curPos)
             switch(jjstateSet[--i])
             {
                case 2:
-                  if ((0x7fffffe07fffffeL & l) == 0L)
+               case 8:
+                  if ((0x7fffffe87fffffeL & l) == 0L)
                      break;
                   if (kind > 46)
                      kind = 46;
@@ -541,13 +555,6 @@ private int jjMoveNfa_0(int startState, int curPos)
                case 4:
                   if (curChar == 95)
                      { jjAddStates(12, 13); }
-                  break;
-               case 8:
-                  if ((0x7fffffe87fffffeL & l) == 0L)
-                     break;
-                  if (kind > 46)
-                     kind = 46;
-                  { jjCheckNAdd(8); }
                   break;
                case 11:
                   if (kind > 5)

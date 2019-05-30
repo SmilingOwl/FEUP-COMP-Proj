@@ -402,7 +402,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
       if (answer[0] == null && show_semantic_analysis) {
         errors = true;
       } else if (node.jjtGetNumChildren() == 2 && !answer[0].equals(answer[1]) && show_semantic_analysis) {
-        if (answer[1] != null) {
+        if (answer[1] != null && !answer[1].equals(this.currentTable.get_parent().get_name())) {
           System.out.println("Semantic Error: Different types in assign operation: " + answer[0] + " and " + answer[1]);
           errors = true;
         } /*else {
