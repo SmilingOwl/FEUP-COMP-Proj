@@ -628,9 +628,10 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 node.childrenAccept(this, data);
 
                 if (node.jjtGetChild(1) instanceof ASTExpressionRestOfClauses 
-                && node.jjtGetChild(1).jjtGetNumChildren() == 2
-                && node.jjtGetChild(1).jjtGetChild(1) instanceof ASTAcessing){
-                    this.getInvokeVirtual(node, false);
+                        && node.jjtGetChild(1).jjtGetNumChildren() == 2
+                        && node.jjtGetChild(1).jjtGetChild(1) instanceof ASTAcessing) {
+                    if(!(node.jjtGetChild(1).jjtGetChild(0).toString().equals("this")))
+                        this.getInvokeVirtual(node, false);
                 }
                 else {
                     if (node.jjtGetChild(1).jjtGetChild(0) instanceof ASTExpressionToken 
@@ -846,9 +847,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     //System.out.println(this.currentTable.get_parent().get_functions().containsKey(methodName) +className + "\n" + methodCall+ "\n"+returnType+ "\n" +"\n");
                 }
             }
-        }
-        else{
-            //TODO: aqui? quando nao e this...
         }
         node.childrenAccept(this, data);
         return data;
@@ -1139,8 +1137,9 @@ public class ProjectClassVisitor implements ProjectVisitor {
             aux = this.currentTable.get_parent().get_name();
         }
         String className = extractLabel(aux);
+        String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
         String invokeMethod = "invokevirtual";
-        if(this.currentTable.exists(className) == null && className != "") {
+        if(this.currentTable.exists(className) == null && !className.equals("") && !className.equals(this.currentTable.get_parent().get_name())) {
             invokeMethod = "invokestatic";
         }
         if (className.equals("")) {
@@ -1162,7 +1161,17 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 type = this.getJasminType(this.currentTable.get_symbols().get(identifierName), true);
             else
                 type = this.getJasminType(this.currentTable.get_args().get(identifierName), true);
-        }
+        } else if(className.equals(this.currentTable.get_parent().get_name())
+                || (this.currentTable.exists(className) != null 
+                && this.currentTable.exists(className).equals(this.currentTable.get_parent().get_name()))) {
+            for(int g = 0; g < this.currentTable.get_parent().get_functions().size(); g++) {
+                if(methodName.equals(this.currentTable.get_parent().get_functions().get(g).get_name()) 
+                    && this.currentTable.get_parent().get_functions().get(g).get_args().size() == node.jjtGetChild(0).jjtGetNumChildren()) {
+                    type = this.getJasminType(this.currentTable.get_parent().get_functions().get(g).get_return_type(), true);
+                }
+            }
+        } 
+
         String argsStr = "";
         for(int i = 0; i < node.jjtGetChild(0).jjtGetNumChildren(); i++){
             if (node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).toString().matches("true|false")){
@@ -1200,8 +1209,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
         if(this.currentTable.exists(className) != null) {
             className = this.currentTable.exists(className);
         }
-        String methodName = node.jjtGetChild(0).toString().split("\\(")[0];
         this.inMethod += "\t" + invokeMethod + " " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";
+        
+        if(node instanceof ASTCalling && !invokeMethod.equals("invokestatic") && className.equals(this.currentTable.get_parent().get_name())) {
+            if(node.jjtGetParent().jjtGetParent().jjtGetParent() instanceof ASTMainMethodBody
+                || node.jjtGetParent().jjtGetParent().jjtGetParent() instanceof ASTWhileBody
+                || node.jjtGetParent().jjtGetParent().jjtGetParent() instanceof ASTIfBody
+                || node.jjtGetParent().jjtGetParent().jjtGetParent() instanceof ASTElseBody) {
+                this.inMethod += "\tpop\n";
+            }
+        }
     }
 
     
