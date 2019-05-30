@@ -1190,9 +1190,25 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     this.incrementStackLimit();
                 }
                 else if (node.jjtGetChild(0).jjtGetChild(i).jjtGetNumChildren() == 2){
+                    if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(1) instanceof ASTAccessingArrayAt) {
+                        String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString());
+                        this.inMethod += "\t" + this.loadLocal(varName) +"\n";
+                        
+                        if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionToken) {
+                            ASTExpressionToken token_node = (ASTExpressionToken) node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0);
+                            if(token_node.jjtGetNumChildren() == 1 && token_node.jjtGetChild(0) instanceof ASTIdentifier) {
+                                varName = extractLabel(token_node.jjtGetChild(0).toString());
+                                this.inMethod += "\t" + this.loadLocal(varName) +"\n";
+                            }
+                        }
+                        this.inMethod += "\tiaload\n";
+                        argsStr += "[I";
+                    }
+                    else{
                     //invoke function 
                     //TODO: rever isto
-                    argsStr += "I"; 
+                    argsStr += "I";
+                    }
                 }                
             }
             else if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral){
@@ -1210,6 +1226,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
             className = this.currentTable.exists(className);
         }
         this.inMethod += "\t" + invokeMethod + " " + className + "/" + methodName + "(" + argsStr +")" + type + "\n";
+        System.out.print("\t" + invokeMethod + " " + className + "/" + methodName + "(" + argsStr +")" + type + "\n");
         
         if(node instanceof ASTCalling && !invokeMethod.equals("invokestatic") && className.equals(this.currentTable.get_parent().get_name())) {
             if(node.jjtGetParent().jjtGetParent().jjtGetParent() instanceof ASTMainMethodBody
