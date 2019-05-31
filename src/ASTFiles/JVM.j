@@ -9,7 +9,7 @@
 .end method
 
 .method public static main([Ljava/lang/String;)V
-	.limit stack 9
+	.limit stack 12
 	.limit locals 4
 
 	bipush 10
@@ -22,7 +22,7 @@ Label2:
 	aload_1
 	arraylength
 	if_icmpge Label1
-	aload 1
+	aload_1
 	iload_2
 	aload_1
 	arraylength
@@ -41,15 +41,17 @@ Label1:
 	astore_3
 	aload_3
 	aload_1
-	invokevirtual Quicksort/quicksort([I)V
+	invokevirtual Quicksort/quicksort([I)Z
+	pop
 	aload_3
 	aload_1
-	invokevirtual Quicksort/printL([I)V
+	invokevirtual Quicksort/printL([I)Z
+	pop
 	return
 .end method
 
 .method public printL([I)Z
-	.limit stack 3
+	.limit stack 7
 	.limit locals 3
 
 	iconst_0
@@ -59,6 +61,9 @@ Label4:
 	aload_1
 	arraylength
 	if_icmpge Label3
+	aload_1
+	iload_2
+	iaload
 	invokestatic io/println(I)V
 	iload_2
 	iconst_1
@@ -71,18 +76,17 @@ Label3:
 .end method
 
 .method public quicksort([I)Z
-	.limit stack 3
+	.limit stack 5
 	.limit locals 2
 
-	aload 0			; Method quicksort() call
+	aload_0			; Method quicksort() call
 	aload_1
 	iconst_0
-	invokevirtual Quicksort/quicksort([I)Z
 	aload_1
 	arraylength
 	iconst_1
 	isub
-	iconst_0
+	invokevirtual Quicksort/quicksort([III)Z
 	ireturn
 .end method
 
@@ -93,30 +97,28 @@ Label3:
 	iload_2
 	iload_3
 	if_icmpge Label5
-	aload 0			; Method partition() call
+	aload_0			; Method partition() call
 	aload_1
 	iload_2
 	iload_3
 	invokevirtual Quicksort/partition([III)I
-	aload_1
-	iload_2
-	iload_3
-	invokestatic Quicksort/partition([III)I
 	istore 4
-	aload 0			; Method quicksort() call
+	aload_0			; Method quicksort() call
 	aload_1
 	iload_2
-	invokevirtual Quicksort/quicksort([I)Z
 	iload 4
 	iconst_1
 	isub
-	aload 0			; Method quicksort() call
+	invokevirtual Quicksort/quicksort([III)Z
+	pop
+	aload_0			; Method quicksort() call
 	aload_1
-	iload_3
-	invokevirtual Quicksort/quicksort([I)Z
 	iload 4
 	iconst_1
 	iadd
+	iload_3
+	invokevirtual Quicksort/quicksort([III)Z
+	pop
 	goto Label6
 Label5:
 Label6:
@@ -125,10 +127,10 @@ Label6:
 .end method
 
 .method public partition([III)I
-	.limit stack 29
+	.limit stack 32
 	.limit locals 8
 
-	aload 1
+	aload_1
 	iload_3
 	iaload
 	istore 4
@@ -140,17 +142,22 @@ Label8:
 	iload 6
 	iload_3
 	if_icmpge Label7
+	aload_1
+	iload 6
+	iaload
 	iload 4
 	if_icmpge Label9
-	aload 1
+	aload_1
 	iload 5
 	iaload
 	istore 7
-	aload 1
+	aload_1
 	iload 5
 	aload_1
+	iload 6
+	iaload
 	iastore
-	aload 1
+	aload_1
 	iload 6
 	iload 7
 	iastore
@@ -167,15 +174,17 @@ Label10:
 	istore 6
 	goto Label8
 Label7:
-	aload 1
+	aload_1
 	iload 5
 	iaload
 	istore 7
-	aload 1
+	aload_1
 	iload 5
 	aload_1
+	iload_3
+	iaload
 	iastore
-	aload 1
+	aload_1
 	iload_3
 	iload 7
 	iastore
