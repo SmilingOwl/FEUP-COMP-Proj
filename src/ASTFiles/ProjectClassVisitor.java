@@ -466,19 +466,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
             }   
         } else if((node.jjtGetChild(0) instanceof ASTExpressionRestOfClauses) && (node.jjtGetChild(0).jjtGetNumChildren() == 2)){
             if(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier 
-                && node.jjtGetChild(0).jjtGetChild(1) instanceof ASTAccessingArrayAt) {
-                String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString());
-                this.inMethod += "\t" + this.loadLocal(varName) +"\n";
-                        
-                if(node.jjtGetChild(0).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionToken) {
-                    ASTExpressionToken token_node = (ASTExpressionToken) node.jjtGetChild(0).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0);
-                    if(token_node.jjtGetNumChildren() == 1 && token_node.jjtGetChild(0) instanceof ASTIdentifier) {
-                        varName = extractLabel(token_node.jjtGetChild(0).toString());
-                        this.inMethod += "\t" + this.loadLocal(varName) +"\n";
-                    }//TODO check IntegerLiteral... refactoring: separate function to access array
-                }
-                this.inMethod += "\tiaload\n";
-
+                    && node.jjtGetChild(0).jjtGetChild(1) instanceof ASTAccessingArrayAt) {
+                this.load_array((ASTAccessingArrayAt) node.jjtGetChild(0).jjtGetChild(1));
             }
         }
 
@@ -572,7 +561,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                 
                 String varName = extractLabel(node.jjtGetChild(0).toString()); 
                 String arrayVarSTR = "";
-                if (classTable.get_symbols().containsKey(varName)){ //troquei de arrayVarSTR para varName
+                if (classTable.get_symbols().containsKey(varName)){
                     //arrayVarSTR += "\t" + "aload_0" + "\n"; 
                     arrayVarSTR += "\t" + "getfield " + classTable.get_name() + "/" + varName + " " + this.getJasminType(classTable.get_symbols().get(varName), true) + "\n";
                 }
@@ -605,7 +594,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                                     if(token_node.jjtGetNumChildren() == 1 && token_node.jjtGetChild(0) instanceof ASTIdentifier) {
                                         identifierName = extractLabel(token_node.jjtGetChild(0).toString());
                                         valueSTR += "\t" + this.loadLocal(identifierName) +"\n";
-                                    } //TODO check IntegerLiteral... refactoring: separate function to access array
+                                    } //TODO check IntegerLiteral
                                 }
                                 valueSTR += "\tiaload\n";
                             }
@@ -626,35 +615,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 && node.jjtGetChild(1).jjtGetNumChildren() == 2
                 && !(node.jjtGetChild(1).jjtGetChild(1) instanceof ASTAcessing)){
 
-                String varName = extractLabel(node.jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).toString());
-                int indexLocal = indexLocal(varName);
-
-                String arrayVarSTR = "";
-                if (classTable.get_symbols().containsKey(varName)){
-                    arrayVarSTR += "\t" + "aload_0" + "\n"; 
-                    arrayVarSTR += "\t" + "getfield " + classTable.get_name() + "/" + varName + " " + this.getJasminType(classTable.get_symbols().get(varName), true) + "\n";
-                }
-                else {
-                    int idx = indexLocal(varName);
-                    arrayVarSTR = ("\taload" + (idx > 3 ? " " : "_") + idx + "\n");
-
-                }
-
-                String indexSTR = "";
-                if (!this.isAritmaticOps(node.jjtGetChild(1))){
-                    if (node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
-                        //indexSTR = "\taload " + indexLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
-                        indexSTR = "\t" + this.loadLocal(extractLabel(node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
-                        this.incrementStackLimit();
-                    }
-                    else 
-                        indexSTR = "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
-                }                                             
-                                                                                                    // y = x[2];
-                this.inMethod += arrayVarSTR;                                                       // » aload 1 
-                this.inMethod += indexSTR;  
-                node.childrenAccept(this, data);                                                    // » ldc 2      ; pode variar entre var ou integral
-                this.inMethod += ("\tiaload\n");                                                    // » iaload
+                this.load_array((ASTAccessingArrayAt) node.jjtGetChild(1).jjtGetChild(1));                                                 // » iaload
                 if (xIsField) 
                     this.inMethod += "\t" + "putfield " + classTable.get_name() + "/" + XidentifierName + " " + this.getJasminType(classTable.get_symbols().get(XidentifierName), true) + "\n";
                 else
@@ -911,7 +872,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAccessingArrayAt node, Object data) {
-        node.childrenAccept(this, data);
+        //node.childrenAccept(this, data);
         return data;
     }
 
@@ -1254,17 +1215,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 }
                 else if (node.jjtGetChild(0).jjtGetChild(i).jjtGetNumChildren() == 2){
                     if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(1) instanceof ASTAccessingArrayAt) {
-                        String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(0).jjtGetChild(0).toString());
-                        this.inMethod += "\t" + this.loadLocal(varName) +"\n";
-                        
-                        if(node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0) instanceof ASTExpressionToken) {
-                            ASTExpressionToken token_node = (ASTExpressionToken) node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(1).jjtGetChild(0).jjtGetChild(0);
-                            if(token_node.jjtGetNumChildren() == 1 && token_node.jjtGetChild(0) instanceof ASTIdentifier) {
-                                varName = extractLabel(token_node.jjtGetChild(0).toString());
-                                this.inMethod += "\t" + this.loadLocal(varName) +"\n";
-                            }
-                        }
-                        this.inMethod += "\tiaload\n";
+                        this.load_array((ASTAccessingArrayAt)node.jjtGetChild(0).jjtGetChild(i).jjtGetChild(1));
                     }
                     //invoke function 
                     //TODO: rever isto
@@ -1298,5 +1249,36 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
     }
 
-    
+    public void load_array(ASTAccessingArrayAt node) {
+        SymbolTable classTable = this.currentTable.get_parent();
+
+        String varName = extractLabel(node.jjtGetParent().jjtGetChild(0).jjtGetChild(0).toString());
+        int indexLocal = indexLocal(varName);
+
+        String arrayVarSTR = "";
+        if (classTable.get_symbols().containsKey(varName)){
+            arrayVarSTR += "\t" + "aload_0" + "\n"; 
+            arrayVarSTR += "\t" + "getfield " + classTable.get_name() + "/" + varName + " " 
+                + this.getJasminType(classTable.get_symbols().get(varName), true) + "\n";
+        }
+        else {
+            int idx = indexLocal(varName);
+            arrayVarSTR = ("\taload" + (idx > 3 ? " " : "_") + idx + "\n");
+        }
+
+        String indexSTR = "";
+        if (!this.isAritmaticOps(node.jjtGetParent())){
+            if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
+                indexSTR = "\t" + this.loadLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+                this.incrementStackLimit();
+            }
+            else 
+                indexSTR = "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
+        }                                             
+                                                                                            // y = x[2];
+        this.inMethod += arrayVarSTR;                                                       // » aload 1 
+        this.inMethod += indexSTR;  
+        node.childrenAccept(this, null);                                                    // » ldc 2      ; pode variar entre var ou integral
+        this.inMethod += ("\tiaload\n"); 
+    }
 }
