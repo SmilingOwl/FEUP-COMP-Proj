@@ -1396,10 +1396,15 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
 
         String indexSTR = "";
+        boolean is_array = false;
         if (!this.isAritmaticOps(node.jjtGetParent())){
             if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
-                indexSTR = "\t" + this.loadLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
-                this.incrementStackLimit();
+                 if(node.jjtGetChild(0).jjtGetNumChildren() == 1) {
+                    indexSTR = "\t" + this.loadLocal(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString())) + "\n";
+                    this.incrementStackLimit();
+                } else if(node.jjtGetChild(0).jjtGetChild(1) instanceof ASTAccessingArrayAt) {
+                    is_array = true;
+                }
             }
             else 
                 indexSTR = "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
@@ -1408,6 +1413,9 @@ public class ProjectClassVisitor implements ProjectVisitor {
         this.inMethod += arrayVarSTR;                                                       // » aload 1 
         this.inMethod += indexSTR;  
         node.childrenAccept(this, null);                                                    // » ldc 2      ; pode variar entre var ou integral
+        if(is_array) {
+            this.load_array((ASTAccessingArrayAt)node.jjtGetChild(0).jjtGetChild(1));
+        }
         this.inMethod += ("\tiaload\n"); 
     }
 }
