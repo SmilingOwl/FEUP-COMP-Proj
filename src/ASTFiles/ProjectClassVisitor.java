@@ -43,8 +43,8 @@ public class ProjectClassVisitor implements ProjectVisitor {
 
     public void add_java_keywords() {
         java_keywords.add("field"); 
-        java_keywords.add("method"); 
-        java_keywords.add("limit"); 
+        java_keywords.add("method");
+        java_keywords.add("limit");
     }
 
     public Object defaultVisit(SimpleNode node, Object data) {
@@ -600,7 +600,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTADD node, Object data) {
-        node.childrenAccept(this, data);
 
         // Code generation
 
@@ -612,8 +611,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTSUB node, Object data) {
-        node.childrenAccept(this, data);
-
         // Code generation
 
         if (show_code_generation) {
@@ -624,7 +621,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTMULT node, Object data) {
-        node.childrenAccept(this, data);
 
         // Code generation
 
@@ -636,7 +632,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTDIV node, Object data) {
-        node.childrenAccept(this, data);
 
         // Code generation
 
@@ -1176,6 +1171,10 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 break;
         }
 
+        for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+            node.jjtGetChild(i).jjtAccept(this, null);
+        }
+
         switch (valRight) {
             case 0://Push para a stack
                 try {
@@ -1194,7 +1193,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
                 //System.out.println("DEBUG: ENTERED DEFAULT");
                 break;
         }
-
 
         switch (op) {
             case "add":
