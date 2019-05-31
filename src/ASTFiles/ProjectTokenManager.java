@@ -497,7 +497,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                   break;
                case 14:
                   if (curChar == 42)
-                     { jjCheckNAddStates(8, 11); }
+                     jjstateSet[jjnewStateCnt++] = 15;
                   break;
                case 15:
                   if ((0xffff7fffffffffffL & l) != 0L)
@@ -554,7 +554,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                   break;
                case 4:
                   if (curChar == 95)
-                     { jjAddStates(12, 13); }
+                     { jjAddStates(8, 9); }
                   break;
                case 11:
                   if (kind > 5)
@@ -618,7 +618,7 @@ private int jjMoveNfa_0(int startState, int curPos)
    }
 }
 static final int[] jjnextStates = {
-   10, 12, 13, 14, 17, 4, 5, 6, 13, 14, 15, 17, 4, 5, 
+   10, 12, 13, 14, 17, 4, 5, 6, 4, 5, 
 };
 
 /** Token literal values. */
