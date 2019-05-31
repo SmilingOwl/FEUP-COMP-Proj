@@ -18,6 +18,7 @@ semântica, por exemplo, é a que está em currentTable.
 public class SymbolTable {
     private String name;
     private String type; //class, method, main
+    private String extends_class;
     private SymbolTable parent;
     private LinkedHashMap<String, String> args;
     private LinkedHashMap<String, String> symbols;
@@ -30,6 +31,7 @@ public class SymbolTable {
         this.functions = new ArrayList<SymbolTable>();
         this.name = name;
         this.type = type;
+        this.extends_class = null;
         if(this.type.equals("main")) {
             this.return_type = "void";
         }
@@ -64,8 +66,16 @@ public class SymbolTable {
         return this.functions;
     }
 
+    public String get_extends_class() {
+        return this.extends_class;
+    }
+
     public void set_return_type(String ret_type) {
         this.return_type = ret_type;
+    }
+
+    public void set_extends_class(String e_class) {
+        this.extends_class = e_class;
     }
 
     public String exists(String n) {

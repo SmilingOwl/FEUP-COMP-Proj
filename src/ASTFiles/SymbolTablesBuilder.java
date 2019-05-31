@@ -47,6 +47,7 @@ public class SymbolTablesBuilder implements ProjectVisitor {
   public Object visit(ASTClassDeclaration node, Object data) {
     String name = node.getName();
     SymbolTable table = new SymbolTable(name, "class", null);
+    table.set_extends_class(node.getExtends());
     this.currentTable = table;
     this.symbolTables.add(table);
     node.childrenAccept(this, data);
