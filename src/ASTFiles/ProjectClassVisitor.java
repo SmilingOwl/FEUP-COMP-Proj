@@ -21,9 +21,11 @@ public class ProjectClassVisitor implements ProjectVisitor {
     private int MaxStackSize = 0;
     private boolean isOptmized = true;
     private boolean not_oper = false;
+    private ArrayList<String> java_keywords = new ArrayList<String>();
     boolean not_and = false;
 
     public ProjectClassVisitor(ArrayList<SymbolTable> symbolTables) {
+        this.add_java_keywords();
         this.symbolTables = symbolTables;
         labels_stack.push(0);
         if (show_code_generation) {
@@ -37,6 +39,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
             }
         }
 
+    }
+
+    public void add_java_keywords() {
+        java_keywords.add("field"); 
+        java_keywords.add("method"); 
+        java_keywords.add("limit"); 
     }
 
     public Object defaultVisit(SimpleNode node, Object data) {
@@ -85,8 +93,12 @@ public class ProjectClassVisitor implements ProjectVisitor {
                     this.writer.write(".super " + node.getExtends() + "\n");
                 if (!this.currentTable.get_symbols().isEmpty()){
                     this.writer.write("\n");
-                    for( String key : this.currentTable.get_symbols().keySet() )
-                        this.writer.write(".field private " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
+                    for( String key : this.currentTable.get_symbols().keySet() ) {
+                        if(java_keywords.contains(key))
+                            this.writer.write(".field private '" + key + "' " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
+                        else
+                            this.writer.write(".field private " + key + " " + this.getJasminType(this.currentTable.get_symbols().get(key), true) + "\n");
+                    }
                 }
                 this.writer.write("\n; default constructor\n");
                 this.writer.write(".method public <init>()V\n");
