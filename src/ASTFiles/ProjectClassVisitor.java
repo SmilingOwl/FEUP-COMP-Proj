@@ -228,29 +228,30 @@ public class ProjectClassVisitor implements ProjectVisitor {
             else {
                 if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier){
                     String varName = extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString());
-                    
-                    if (this.currentTable.get_parent().get_symbols().containsKey(varName)){
-                        this.inMethod += "\t" + "aload_0" + "\n"; 
-                        this.inMethod += "\t" + "getfield " + this.currentTable.get_parent().get_name() + "/" + varName + " " + this.getJasminType(this.currentTable.get_parent().get_symbols().get(varName), true) + "\n";
-                        if (this.currentTable.get_parent().get_symbols().get(varName).equalsIgnoreCase("int[]"))
-                        this.inMethod += "\tareturn\n";
-                        else 
-                        this.inMethod += "\tireturn\n";
-                        this.incrementStackLimit();
-                        return data;
-                    }
-                    
+
                     String type = this.currentTable.get_symbols().get(varName);
-                    if (type.equalsIgnoreCase("int[]")){
+                    if(type == null)
+                        type = this.currentTable.get_args().get(varName);
+                    if (type != null && type.equalsIgnoreCase("int[]")){
                         int idx = indexLocal(varName);
                         this.inMethod += "\taload" + (idx > 3 ? " " : "_") + idx + "\n";
                         this.inMethod += "\tareturn\n";
                     }
-                    else {
+                    else if (type != null) {
                         this.inMethod += "\t" + this.loadLocal(varName) + "\n";
                         this.inMethod += "\tireturn\n";
                     }
                     this.incrementStackLimit();
+                    
+                    if (type == null && this.currentTable.get_parent().get_symbols().containsKey(varName)){
+                        this.inMethod += "\t" + "aload_0" + "\n"; 
+                        this.inMethod += "\t" + "getfield " + this.currentTable.get_parent().get_name() + "/" + varName + " " + this.getJasminType(this.currentTable.get_parent().get_symbols().get(varName), true) + "\n";
+                        if (this.currentTable.get_parent().get_symbols().get(varName).equalsIgnoreCase("int[]"))
+                            this.inMethod += "\tareturn\n";
+                        else 
+                            this.inMethod += "\tireturn\n";
+                        this.incrementStackLimit();
+                    }
                 }
                 else {
                     
@@ -419,6 +420,7 @@ public class ProjectClassVisitor implements ProjectVisitor {
     }
 
     public Object visit(ASTAND node, Object data) {
+
         boolean save_not_and = false;
         this.not_and = false;
         if(this.not_oper) {
@@ -427,6 +429,10 @@ public class ProjectClassVisitor implements ProjectVisitor {
             save_not_and = true;
         }
         node.jjtGetChild(0).jjtAccept(this, data);
+        if(!(node.jjtGetParent() instanceof ASTIfElseStatement) && !(node.jjtGetParent() instanceof ASTWhileStatement)) {
+            max_label_used += 2;
+            this.inMethod += "\tifeq Label" + (max_label_used-1) + "\n";
+        }
         if(node.jjtGetNumChildren() > 0 && node.jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetNumChildren() > 0
             && node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIdentifier) {
@@ -439,6 +445,14 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
         this.not_and = false;
         node.jjtGetChild(1).jjtAccept(this, data);
+        if(!(node.jjtGetParent() instanceof ASTIfElseStatement) && !(node.jjtGetParent() instanceof ASTWhileStatement)) {
+            this.inMethod += "\tifeq Label" + (max_label_used-1)+ "\n";
+            this.inMethod += "\ticonst_1\n";
+            this.inMethod += "\tgoto Label" + max_label_used + "\n";
+            this.inMethod += "Label" + (max_label_used-1) + ":\n";
+            this.inMethod += "\ticonst_0\n";
+            this.inMethod += "Label" + max_label_used + ":\n";
+        }
         if(save_not_and) {
             this.not_and = true;
         }
@@ -1003,17 +1017,16 @@ public class ProjectClassVisitor implements ProjectVisitor {
             }
             else if (node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0) instanceof ASTIntegerLiteral)
                 sizeSTR = "\t" + this.pushConstant(Integer.parseInt(extractLabel(node.jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).jjtGetChild(0).toString()))) + "\n";
-                                                                                                                                            //x = new int[5];
-            this.inMethod += sizeSTR;
-            node.childrenAccept(this, data);                                                                                                       // » ldc 5 ;tamanho 
-            this.inMethod += "\tnewarray int\n";                                                                                            // » newarray int
-            SymbolTable classTable = this.currentTable.get_parent();                                                                        // » astore 1
+                                                                                            //x = new int[5];
+            this.inMethod += sizeSTR;                                                       // » ldc 5 ;tamanho 
+            node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);                                                // » ldc 5 ;tamanho 
+            this.inMethod += "\tnewarray int\n";                                            // » newarray int
+            SymbolTable classTable = this.currentTable.get_parent();                        // » astore 1
             int idx = indexLocal(varNamme);
             if (idx < 0 && classTable.get_symbols().containsKey(varNamme)){
                 this.inMethod += "\tputfield " + classTable.get_name() + "/" + varNamme + " " 
                 + this.getJasminType(classTable.get_symbols().get(varNamme), true) + "\n";
-            }              
-                                                                                                                                  
+            }                                                                                                                 
         }
         return data;
     }
