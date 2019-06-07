@@ -10,7 +10,7 @@ public class Project/*@bgen(jjtree)*/implements ProjectTreeConstants, ProjectCon
     public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
         if(args.length < 1) {
-            System.out.println("ERROR: Wrong number of arguments");
+            System.out.println("Usage:\u005cn\u005ctjava -jar jmm.jar ex/<filename>\u005cn\u005ctrunjasmin");
             return;
         }
         ArrayList<SimpleNode> initial_nodes = new ArrayList<SimpleNode>();

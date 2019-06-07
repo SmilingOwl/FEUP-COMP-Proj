@@ -7,9 +7,7 @@ import java.util.LinkedList;
 public class ProjectClassVisitor implements ProjectVisitor {
     private ArrayList<SymbolTable> symbolTables;
     private SymbolTable currentTable;
-    private LinkedList stack = new LinkedList();
     private ArrayList<String> localVarsList = new ArrayList<String>(){{add("this");}};
-    //private LinkedList<ArrayList<String>> localVarsStack = new LinkedList<ArrayList<String>>(); TODO: Maybe delete
     private String inMethod = "";
     private FileWriter writer;
     private boolean show_semantic_analysis = false;
@@ -1097,12 +1095,6 @@ public class ProjectClassVisitor implements ProjectVisitor {
         }
         return data;
     }
-
-    /*
-     * public Object pop(){ return stack.removeFirst(); }
-     * 
-     * public void push(Object o){ stack.addFirst(o); }
-     */
 
     public void aritmaticOps(String op, Node node){
 

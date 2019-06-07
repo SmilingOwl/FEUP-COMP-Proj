@@ -21,7 +21,7 @@ public class Project
     public static ArrayList<ParseException> errors;
     public static void main(String args[]) throws ParseException {
         if(args.length < 1) {
-            System.out.println("ERROR: Wrong number of arguments");
+            System.out.println("Usage:\n\tjava -jar jmm.jar ex/<filename>\n\trunjasmin");
             return;
         }
         ArrayList<SimpleNode> initial_nodes = new ArrayList<SimpleNode>();
