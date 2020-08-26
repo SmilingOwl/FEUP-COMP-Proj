@@ -2,13 +2,13 @@
 
 **GROUP: 32** 
 
-**NAME1:** Fernando Alves, **NR1:** up201605270, **GRADE1:** 18, **CONTRIBUTION1:** 25%
-**NAME2:** Helena Montenegro, **NR2:** up201604184, **GRADE2:** 18, **CONTRIBUTION2:** 25%
-**NAME3:** Juliana Marques, **NR3:** up201605568, **GRADE3:** 18, **CONTRIBUTION3:** 25%
-**NAME4:** Ricardo Moura, **NR4:** up201604912, **GRADE4:** 18, **CONTRIBUTION4:** 25% 
+**NAME1:** Fernando Alves, **NR1:** up201605270, **GRADE1:** 18, **CONTRIBUTION1:** 25% <br>
+**NAME2:** Helena Montenegro, **NR2:** up201604184, **GRADE2:** 18, **CONTRIBUTION2:** 25% <br>
+**NAME3:** Juliana Marques, **NR3:** up201605568, **GRADE3:** 18, **CONTRIBUTION3:** 25% <br>
+**NAME4:** Ricardo Moura, **NR4:** up201604912, **GRADE4:** 18, **CONTRIBUTION4:** 25%  <br>
 
 
-**GLOBAL Grade of the project:** 18
+**Grade of the project:** 18
 
 
 ---
